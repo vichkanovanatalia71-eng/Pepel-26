@@ -863,7 +863,12 @@ const MonthlyServices = () => {
       <Dialog open={showDoctorIncomeModal} onOpenChange={setShowDoctorIncomeModal}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
           <DialogHeader>
-            <DialogTitle>👨‍⚕️ Детальна статистика доходу лікарів</DialogTitle>
+            <DialogTitle>
+              👨‍⚕️ {selectedDoctor !== 'all' && doctors.find(d => d.id === selectedDoctor)
+                ? `Детальна статистика - ${doctors.find(d => d.id === selectedDoctor)?.name}`
+                : 'Детальна статистика доходу лікарів'
+              }
+            </DialogTitle>
           </DialogHeader>
           
           {doctorIncomeDetails && dashboardStats && (
