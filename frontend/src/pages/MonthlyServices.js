@@ -321,34 +321,34 @@ const MonthlyServices = () => {
     doc.setTextColor(255, 165, 0);
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('💰 Статистика обороту', 105, yPos, { align: 'center' });
+    doc.text('Статистика обороту', 105, yPos, { align: 'center' });
     
     yPos += 15;
     
     // Загальна інформація
     doc.setFontSize(10);
     doc.setTextColor(200, 200, 200);
-    doc.text(`Оборот: ${dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴`, 20, yPos);
+    doc.text(`Оборот: ${dashboardStats.total_revenue.toLocaleString('uk-UA')} UAH`, 20, yPos);
     doc.text(`Послуг: ${dashboardStats.total_quantity}`, 80, yPos);
-    doc.text(`Середній чек: ${revenueDetails.avgCheck.toFixed(0)} ₴`, 130, yPos);
+    doc.text(`Середній чек: ${revenueDetails.avgCheck.toFixed(0)} UAH`, 130, yPos);
     
     yPos += 10;
     
     // Топ-5 послуг
     doc.setFontSize(12);
     doc.setTextColor(255, 165, 0);
-    doc.text('🏆 Топ-5 послуг:', 20, yPos);
+    doc.text('Top-5 послуг:', 20, yPos);
     yPos += 8;
     
-    doc.autoTable({
+    autoTable(doc, {
       startY: yPos,
       head: [['#', 'Код', 'Назва', 'К-ть', 'Оборот', '%']],
       body: revenueDetails.top5Services.map((s, i) => [
         i + 1,
         s.code,
-        s.name,
+        s.name.substring(0, 30),
         s.quantity,
-        `${s.revenue.toLocaleString('uk-UA')} ₴`,
+        `${s.revenue.toLocaleString('uk-UA')} UAH`,
         `${((s.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%`
       ]),
       theme: 'plain',
@@ -373,15 +373,15 @@ const MonthlyServices = () => {
     if (revenueDetails.doctorsBreakdown.length > 1) {
       doc.setFontSize(12);
       doc.setTextColor(255, 165, 0);
-      doc.text('👥 По лікарях:', 20, yPos);
+      doc.text('По лікарях:', 20, yPos);
       yPos += 8;
       
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [['Лікар', 'Оборот', 'Послуг', '%']],
         body: revenueDetails.doctorsBreakdown.map(d => [
           d.short_name,
-          `${d.revenue.toLocaleString('uk-UA')} ₴`,
+          `${d.revenue.toLocaleString('uk-UA')} UAH`,
           d.quantity,
           `${((d.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%`
         ]),
@@ -407,16 +407,16 @@ const MonthlyServices = () => {
     if (revenueDetails.monthlyBreakdown.length > 0 && yPos < 250) {
       doc.setFontSize(12);
       doc.setTextColor(255, 165, 0);
-      doc.text('📈 Динаміка:', 20, yPos);
+      doc.text('Динаміка:', 20, yPos);
       yPos += 8;
       
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
         head: [['Місяць', 'Рік', 'Оборот']],
         body: revenueDetails.monthlyBreakdown.map(m => [
           monthNames[m.month - 1],
           m.year,
-          `${m.revenue.toLocaleString('uk-UA')} ₴`
+          `${m.revenue.toLocaleString('uk-UA')} UAH`
         ]),
         theme: 'plain',
         styles: { 
