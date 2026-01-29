@@ -24,10 +24,12 @@ const MonthlyServices = () => {
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showRevenueModal, setShowRevenueModal] = useState(false);
   const [modalDoctor, setModalDoctor] = useState('');
   const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
   const [modalYear, setModalYear] = useState(new Date().getFullYear());
   const [quantities, setQuantities] = useState({});
+  const [revenueDetails, setRevenueDetails] = useState(null);
 
   useEffect(() => {
     fetchServices();
