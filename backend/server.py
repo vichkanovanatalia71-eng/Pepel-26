@@ -48,20 +48,33 @@ class DoctorCreate(BaseModel):
     name: str
     short_name: str
 
+class ServiceExpenseItem(BaseModel):
+    """Деталізація витрат для послуги"""
+    material_name: str  # Назва матеріалу
+    quantity: float  # Кількість
+    unit: str  # Одиниця виміру (шт, пара, мл)
+    price_per_unit: float  # Ціна за одиницю
+    total_cost: float  # Загальна вартість
+
 class PaidService(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: Optional[str] = None  # Код послуги
     name: str
-    price: float
-    doctor_share: float = 0.0  # Частка лікаря
-    expenses: float = 0.0  # Витрати на послугу
+    price: float  # Ціна для клієнта
+    doctor_share: float = 0.0  # Кошти лікаря за послугу
+    expense_items: List[ServiceExpenseItem] = Field(default_factory=list)  # Деталізація витрат
+    total_expenses: float = 0.0  # Загальні витрати (автоматично)
+    expenses_with_tax: float = 0.0  # Витрати+ЄП+ВЗ (автоматично)
+    fop_income: float = 0.0  # Дохід ФОП (автоматично)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PaidServiceCreate(BaseModel):
+    code: Optional[str] = None
     name: str
     price: float
     doctor_share: float = 0.0
-    expenses: float = 0.0
+    expense_items: List[ServiceExpenseItem] = Field(default_factory=list)
 
 class Income(BaseModel):
     model_config = ConfigDict(extra="ignore")
