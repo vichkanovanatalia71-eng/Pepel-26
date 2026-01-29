@@ -17,13 +17,17 @@ const MonthlyServices = () => {
   const [dashboardStats, setDashboardStats] = useState(null);
   
   // Фільтри (за замовчуванням - весь період + всі лікарі)
-  const [filterDoctor, setFilterDoctor] = useState('all'); // 'all' | doctor_id
-  const [filterPeriod, setFilterPeriod] = useState('all'); // 'all' | 'month'
-  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
-  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
+  const [activeFilters, setActiveFilters] = useState({
+    doctor: 'all',
+    period: 'all',
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear()
+  });
   
   // Modal states
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [tempFilters, setTempFilters] = useState({ ...activeFilters });
   const [modalDoctor, setModalDoctor] = useState('');
   const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
   const [modalYear, setModalYear] = useState(new Date().getFullYear());
@@ -38,7 +42,7 @@ const MonthlyServices = () => {
     if (doctors.length > 0) {
       fetchFilteredData();
     }
-  }, [filterDoctor, filterPeriod, filterMonth, filterYear, doctors]);
+  }, [activeFilters, doctors]);
 
   const fetchServices = async () => {
     try {
@@ -63,18 +67,19 @@ const MonthlyServices = () => {
 
   const fetchFilteredData = async () => {
     try {
-      // Отримати всі записи
       const response = await axios.get(`${API_URL}/api/monthly-services`);
       let entries = response.data;
       
       // Фільтрувати за лікарем
-      if (filterDoctor !== 'all') {
-        entries = entries.filter(e => e.doctor_id === filterDoctor);
+      if (activeFilters.doctor !== 'all') {
+        entries = entries.filter(e => e.doctor_id === activeFilters.doctor);
       }
       
       // Фільтрувати за періодом
-      if (filterPeriod === 'month') {
-        entries = entries.filter(e => e.month === filterMonth && e.year === filterYear);
+      if (activeFilters.period === 'month') {
+        entries = entries.filter(e => 
+          e.month === activeFilters.month && e.year === activeFilters.year
+        );
       }
       
       // Сортувати від нових до старих
@@ -96,6 +101,23 @@ const MonthlyServices = () => {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const applyFilters = () => {
+    setActiveFilters({ ...tempFilters });
+    setShowFilterModal(false);
+  };
+
+  const resetFilters = () => {
+    const defaultFilters = {
+      doctor: 'all',
+      period: 'all',
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear()
+    };
+    setTempFilters(defaultFilters);
+    setActiveFilters(defaultFilters);
+    setShowFilterModal(false);
   };
 
   const handleBulkAdd = async () => {
@@ -144,24 +166,26 @@ const MonthlyServices = () => {
     'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
   ];
 
-  const getFilterLabel = () => {
+  const getActiveFilterLabel = () => {
     let label = '';
     
-    if (filterDoctor === 'all') {
+    if (activeFilters.doctor === 'all') {
       label = 'Всі лікарі';
     } else {
-      const doc = doctors.find(d => d.id === filterDoctor);
+      const doc = doctors.find(d => d.id === activeFilters.doctor);
       label = doc?.short_name || 'Лікар';
     }
     
-    if (filterPeriod === 'all') {
+    if (activeFilters.period === 'all') {
       label += ' • Весь період';
     } else {
-      label += ` • ${monthNames[filterMonth - 1]} ${filterYear}`;
+      label += ` • ${monthNames[activeFilters.month - 1]} ${activeFilters.year}`;
     }
     
     return label;
   };
+
+  const hasActiveFilters = activeFilters.doctor !== 'all' || activeFilters.period !== 'all';
 
   return (
     <div className="monthly-services-page" data-testid="monthly-services-page">
@@ -176,97 +200,63 @@ const MonthlyServices = () => {
         </button>
       </div>
 
-      {/* Фільтри */}
-      <div className="filters-section">
-        <div className="filter-row">
-          <div className="filter-group-inline">
-            <label>Лікар:</label>
-            <select 
-              value={filterDoctor} 
-              onChange={(e) => setFilterDoctor(e.target.value)}
-              data-testid="filter-doctor"
-              className="filter-select"
-            >
-              <option value="all">Всі лікарі</option>
-              {doctors.map(d => (
-                <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="filter-group-inline">
-            <label>Період:</label>
-            <select 
-              value={filterPeriod} 
-              onChange={(e) => setFilterPeriod(e.target.value)}
-              data-testid="filter-period"
-              className="filter-select"
-            >
-              <option value="all">Весь період</option>
-              <option value="month">По місяцю</option>
-            </select>
-          </div>
-          
-          {filterPeriod === 'month' && (
-            <>
-              <select 
-                value={filterMonth} 
-                onChange={(e) => setFilterMonth(parseInt(e.target.value))}
-                className="filter-select-small"
-              >
-                {monthNames.map((m, i) => (
-                  <option key={i} value={i + 1}>{m}</option>
-                ))}
-              </select>
-              <input 
-                type="number" 
-                value={filterYear} 
-                onChange={(e) => setFilterYear(parseInt(e.target.value))}
-                className="filter-input-year"
-              />
-            </>
-          )}
+      {/* Dashboard Statistics з кнопкою фільтр */}
+      <div className="dashboard-section">
+        <div className="dashboard-header-row">
+          <h3>Dashboard</h3>
+          <button 
+            className="btn-filter" 
+            onClick={() => {
+              setTempFilters({ ...activeFilters });
+              setShowFilterModal(true);
+            }}
+            data-testid="open-filter-btn"
+          >
+            🔍 Фільтр {hasActiveFilters && <span className="filter-badge">●</span>}
+          </button>
         </div>
         
-        <div className="filter-label-active">
-          Відображення: <strong>{getFilterLabel()}</strong>
-        </div>
-      </div>
+        {hasActiveFilters && (
+          <div className="active-filter-label">
+            <span>Фільтр: <strong>{getActiveFilterLabel()}</strong></span>
+            <button className="btn-reset-filter" onClick={resetFilters}>✕ Скинути</button>
+          </div>
+        )}
 
-      {/* Dashboard Statistics */}
-      {dashboardStats && (
-        <div className="summary-cards">
-          <div className="summary-card">
-            <div className="summary-icon">💰</div>
-            <div>
-              <div className="summary-label">Оборот</div>
-              <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
-              <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
+        {dashboardStats && (
+          <div className="summary-cards">
+            <div className="summary-card">
+              <div className="summary-icon">💰</div>
+              <div>
+                <div className="summary-label">Оборот</div>
+                <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
+                <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
+              </div>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon">👨‍⚕️</div>
+              <div>
+                <div className="summary-label">Дохід лікарів</div>
+                <div className="summary-value">{dashboardStats.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
+              </div>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon">📉</div>
+              <div>
+                <div className="summary-label">Витрати</div>
+                <div className="summary-value">{dashboardStats.total_expenses.toLocaleString('uk-UA')} ₴</div>
+              </div>
+            </div>
+            <div className="summary-card highlight">
+              <div className="summary-icon">💵</div>
+              <div>
+                <div className="summary-label">Дохід організації</div>
+                <div className="summary-value">{dashboardStats.total_fop_income.toLocaleString('uk-UA')} ₴</div>
+              </div>
             </div>
           </div>
-          <div className="summary-card">
-            <div className="summary-icon">👨‍⚕️</div>
-            <div>
-              <div className="summary-label">Дохід лікарів</div>
-              <div className="summary-value">{dashboardStats.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
-            </div>
-          </div>
-          <div className="summary-card">
-            <div className="summary-icon">📉</div>
-            <div>
-              <div className="summary-label">Витрати</div>
-              <div className="summary-value">{dashboardStats.total_expenses.toLocaleString('uk-UA')} ₴</div>
-            </div>
-          </div>
-          <div className="summary-card highlight">
-            <div className="summary-icon">💵</div>
-            <div>
-              <div className="summary-label">Дохід організації</div>
-              <div className="summary-value">{dashboardStats.total_fop_income.toLocaleString('uk-UA')} ₴</div>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Список наданих послуг */}
       <div className="card">
@@ -332,6 +322,83 @@ const MonthlyServices = () => {
         )}
       </div>
 
+      {/* Модальне вікно Фільтр */}
+      <Dialog open={showFilterModal} onOpenChange={setShowFilterModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>🔍 Фільтри</DialogTitle>
+          </DialogHeader>
+          
+          <div className="filter-modal-content">
+            <div className="form-group">
+              <label>Лікар</label>
+              <select 
+                value={tempFilters.doctor} 
+                onChange={(e) => setTempFilters({ ...tempFilters, doctor: e.target.value })}
+                data-testid="filter-doctor-select"
+              >
+                <option value="all">Всі лікарі</option>
+                {doctors.map(d => (
+                  <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Період</label>
+              <select 
+                value={tempFilters.period} 
+                onChange={(e) => setTempFilters({ ...tempFilters, period: e.target.value })}
+                data-testid="filter-period-select"
+              >
+                <option value="all">Весь період</option>
+                <option value="month">По місяцю</option>
+              </select>
+            </div>
+
+            {tempFilters.period === 'month' && (
+              <>
+                <div className="form-group">
+                  <label>Місяць</label>
+                  <select 
+                    value={tempFilters.month} 
+                    onChange={(e) => setTempFilters({ ...tempFilters, month: parseInt(e.target.value) })}
+                  >
+                    {monthNames.map((m, i) => (
+                      <option key={i} value={i + 1}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Рік</label>
+                  <input 
+                    type="number" 
+                    value={tempFilters.year} 
+                    onChange={(e) => setTempFilters({ ...tempFilters, year: parseInt(e.target.value) })}
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="filter-modal-actions">
+              <button 
+                className="btn btn-success" 
+                onClick={applyFilters}
+                data-testid="apply-filter-btn"
+              >
+                Застосувати
+              </button>
+              <button 
+                className="btn btn-secondary" 
+                onClick={resetFilters}
+              >
+                Скинути все
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Modal для додавання послуг */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -377,10 +444,10 @@ const MonthlyServices = () => {
               </div>
             </div>
 
-            {/* Список всіх послуг для введення кількостей */}
+            {/* Список всіх послуг */}
             <div className="services-grid-modal">
               <h4 style={{ marginBottom: '12px', color: '#FFA500', fontSize: '14px' }}>
-                Оберіть послуги та вкажіть кількість:
+                Всі послуги (оберіть та вкажіть кількість):
               </h4>
               
               <div className="services-scroll-container">
