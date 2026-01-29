@@ -248,13 +248,15 @@ async def create_service(service: PaidServiceCreate):
     # Розрахунок загальних витрат
     total_expenses = sum(item.total_cost for item in service.expense_items)
     
-    # Розрахунок податків: ЄП (5%) + ВЗ (1%)
-    ep_vz = service.price * 0.06  # 5% + 1% = 6%
+    # Розрахунок податків: ЄП (5%) + ВЗ (1%) = 6%
+    ep = service.price * 0.05  # ЄП 5%
+    vz = service.price * 0.01  # ВЗ 1%
+    ep_vz = ep + vz
     
     # Розрахунок витрат з податками
     expenses_with_tax = total_expenses + ep_vz
     
-    # Розрахунок доходу після податків = Ціна - Витрати - ЄП - ВЗ
+    # Формула: Дохід після податків = Ціна - Витрати - ЄП - ВЗ
     income_after_tax = service.price - total_expenses - ep_vz
     
     # Кошти лікаря = (Дохід після податків) / 2
@@ -264,16 +266,18 @@ async def create_service(service: PaidServiceCreate):
     organization_income = income_after_tax / 2
     
     service_obj = PaidService(
-        **service.model_dump(),
+        code=service.code,
+        name=service.name,
+        price=service.price,
+        doctor_share=doctor_share,
+        expense_items=service.expense_items,
         total_expenses=total_expenses,
         expenses_with_tax=expenses_with_tax,
         fop_income=organization_income
     )
     service_dict = service_obj.model_dump()
     service_dict['created_at'] = service_dict['created_at'].isoformat()
-    service_dict['doctor_share'] = doctor_share  # Оновлюємо кошти лікаря
     await db.services.insert_one(service_dict)
-    service_obj.doctor_share = doctor_share
     return service_obj
 
 @api_router.get("/services", response_model=List[PaidService])
