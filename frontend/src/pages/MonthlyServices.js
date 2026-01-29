@@ -231,6 +231,192 @@ const MonthlyServices = () => {
     }
   };
 
+  const openDoctorIncomeDetails = () => {
+    try {
+      // Групування по місяцях з детальними розрахунками
+      const monthlyData = {};
+      const doctorMonthlyData = {};
+      
+      filteredEntries.forEach(entry => {
+        const monthKey = `${entry.year}-${entry.month}`;
+        const service = services.find(s => s.id === entry.service_id);
+        const doctor = doctors.find(d => d.id === entry.doctor_id);
+        
+        // Загальні дані по місяцях
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            quantity: 0,
+            revenue: 0,
+            expenses: 0,
+            ep: 0,
+            vz: 0,
+            toDistribute: 0,
+            doctorIncome: 0
+          };
+        }
+        
+        monthlyData[monthKey].quantity += entry.quantity;
+        monthlyData[monthKey].revenue += entry.total_revenue;
+        monthlyData[monthKey].expenses += entry.total_expenses;
+        monthlyData[monthKey].doctorIncome += entry.doctor_income;
+        
+        // ЄП та ВЗ розраховуються від обороту
+        const ep = entry.total_revenue * 0.05;
+        const vz = entry.total_revenue * 0.01;
+        monthlyData[monthKey].ep += ep;
+        monthlyData[monthKey].vz += vz;
+        monthlyData[monthKey].toDistribute += (entry.total_revenue - entry.total_expenses - ep - vz);
+        
+        // По лікарях та місяцях
+        const docKey = entry.doctor_id;
+        if (!doctorMonthlyData[docKey]) {
+          doctorMonthlyData[docKey] = {
+            doctor_id: docKey,
+            doctor_name: doctor?.name || 'N/A',
+            short_name: doctor?.short_name || 'N/A',
+            months: {}
+          };
+        }
+        
+        if (!doctorMonthlyData[docKey].months[monthKey]) {
+          doctorMonthlyData[docKey].months[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            quantity: 0,
+            revenue: 0,
+            expenses: 0,
+            ep: 0,
+            vz: 0,
+            toDistribute: 0,
+            doctorIncome: 0
+          };
+        }
+        
+        doctorMonthlyData[docKey].months[monthKey].quantity += entry.quantity;
+        doctorMonthlyData[docKey].months[monthKey].revenue += entry.total_revenue;
+        doctorMonthlyData[docKey].months[monthKey].expenses += entry.total_expenses;
+        doctorMonthlyData[docKey].months[monthKey].ep += ep;
+        doctorMonthlyData[docKey].months[monthKey].vz += vz;
+        doctorMonthlyData[docKey].months[monthKey].toDistribute += (entry.total_revenue - entry.total_expenses - ep - vz);
+        doctorMonthlyData[docKey].months[monthKey].doctorIncome += entry.doctor_income;
+      });
+      
+      const monthlyArray = Object.values(monthlyData).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+      
+      const doctorsArray = Object.values(doctorMonthlyData).map(doc => ({
+        ...doc,
+        monthsArray: Object.values(doc.months).sort((a, b) => {
+          if (a.year !== b.year) return a.year - b.year;
+          return a.month - b.month;
+        })
+      }));
+      
+      setDoctorIncomeDetails({
+        monthlyData: monthlyArray,
+        doctorsData: doctorsArray
+      });
+      
+      setShowDoctorIncomeModal(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Помилка відкриття статистики');
+    }
+  };
+    try {
+      const serviceBreakdown = {};
+      const doctorBreakdown = {};
+      const monthlyBreakdown = {};
+      
+      filteredEntries.forEach(entry => {
+        const service = services.find(s => s.id === entry.service_id);
+        const doctor = doctors.find(d => d.id === entry.doctor_id);
+        
+        // По послугах
+        if (!serviceBreakdown[entry.service_id]) {
+          serviceBreakdown[entry.service_id] = {
+            code: service?.code || 'N/A',
+            name: service?.name || 'N/A',
+            price: service?.price || 0,
+            quantity: 0,
+            revenue: 0
+          };
+        }
+        serviceBreakdown[entry.service_id].quantity += entry.quantity;
+        serviceBreakdown[entry.service_id].revenue += entry.total_revenue;
+        
+        // По лікарях
+        const docKey = entry.doctor_id;
+        if (!doctorBreakdown[docKey]) {
+          doctorBreakdown[docKey] = {
+            name: doctor?.name || 'N/A',
+            short_name: doctor?.short_name || 'N/A',
+            revenue: 0,
+            quantity: 0
+          };
+        }
+        doctorBreakdown[docKey].revenue += entry.total_revenue;
+        doctorBreakdown[docKey].quantity += entry.quantity;
+        
+        // По місяцях
+        const monthKey = `${entry.year}-${entry.month}`;
+        if (!monthlyBreakdown[monthKey]) {
+          monthlyBreakdown[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            revenue: 0
+          };
+        }
+        monthlyBreakdown[monthKey].revenue += entry.total_revenue;
+      });
+      
+      const servicesArray = Object.values(serviceBreakdown).sort((a, b) => b.revenue - a.revenue);
+      const top5Services = servicesArray.slice(0, 5);
+      const topByQuantity = [...servicesArray].sort((a, b) => b.quantity - a.quantity).slice(0, 5);
+      const doctorsArray = Object.values(doctorBreakdown);
+      const monthlyArray = Object.values(monthlyBreakdown).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+      
+      const avgCheck = dashboardStats?.total_quantity > 0 
+        ? dashboardStats.total_revenue / dashboardStats.total_quantity 
+        : 0;
+      
+      let comparison = null;
+      if (monthlyArray.length >= 2) {
+        const current = monthlyArray[monthlyArray.length - 1].revenue;
+        const previous = monthlyArray[monthlyArray.length - 2].revenue;
+        const change = ((current - previous) / previous) * 100;
+        comparison = {
+          current,
+          previous,
+          change,
+          trend: change > 0 ? 'up' : 'down'
+        };
+      }
+      
+      setRevenueDetails({
+        servicesBreakdown: servicesArray,
+        top5Services,
+        topByQuantity,
+        doctorsBreakdown: doctorsArray,
+        monthlyBreakdown: monthlyArray,
+        avgCheck,
+        comparison
+      });
+      
+      setShowRevenueModal(true);
+    } catch (error) {
+      console.error('Error opening revenue details:', error);
+      alert('Помилка відкриття статистики');
+    }
+  };
+
   const resetFilters = () => {
     setSelectedDoctor('all');
     setSelectedYear('all');
