@@ -621,13 +621,6 @@ const MonthlyServices = () => {
             </div>
             <div className="card-click-hint">👁️</div>
           </div>
-          <div className="summary-card">
-            <div className="summary-icon">👨‍⚕️</div>
-            <div>
-              <div className="summary-label">Дохід лікарів</div>
-              <div className="summary-value">{dashboardStats.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
-            </div>
-          </div>
           <div 
             className="summary-card clickable"
             onClick={openDoctorIncomeDetails}
