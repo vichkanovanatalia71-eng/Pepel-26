@@ -621,6 +621,152 @@ async def get_dashboard_stats(month: int, year: int):
         "year": year
     }
 
+# AI Analytics for Revenue
+@api_router.post("/analytics/revenue-insights")
+async def get_revenue_insights(data: Dict[str, Any]):
+    """AI аналіз обороту та прогнозування"""
+    try:
+        # Підготовка даних для AI
+        services_summary = "\n".join([
+            f"{s['code']} {s['name']}: {s['quantity']} шт, {s['revenue']}₴"
+            for s in data.get('services', [])[:10]
+        ])
+        
+        monthly_data = "\n".join([
+            f"{m['month']}/{m['year']}: {m['revenue']}₴"
+            for m in data.get('monthly', [])
+        ])
+        
+        stats = data.get('stats', {})
+        
+        prompt = f"""Проаналізуй фінансові дані медичного ФОП та надай інсайти українською мовою:
+
+ЗАГАЛЬНА СТАТИСТИКА:
+- Оборот: {stats.get('total_revenue', 0)}₴
+- Кількість послуг: {stats.get('total_quantity', 0)}
+- Дохід лікарів: {stats.get('total_doctor_income', 0)}₴
+- Витрати: {stats.get('total_expenses', 0)}₴
+- Дохід організації: {stats.get('total_fop_income', 0)}₴
+
+ТОП ПОСЛУГИ:
+{services_summary}
+
+ДИНАМІКА ПО МІСЯЦЯХ:
+{monthly_data}
+
+Надай:
+1. ПРОГНОЗ на наступний місяць (діапазон мін-макс)
+2. 3-5 КЛЮЧОВИХ ІНСАЙТІВ (що добре, що погано, тренди)
+3. 3-5 РЕКОМЕНДАЦІЙ для збільшення обороту
+4. АНОМАЛІЇ якщо є (різкі зміни, незвичайні показники)
+
+Відповідай структуровано у форматі JSON:
+{{
+  "forecast": {{
+    "next_month_min": 95000,
+    "next_month_max": 115000,
+    "expected": 105000,
+    "confidence": "висока"
+  }},
+  "insights": [
+    "Оборот стабільно зростає на 15% щомісяця",
+    "Послуга 012 (Спеціаліст) приносить найбільше доходу",
+    ...
+  ],
+  "recommendations": [
+    "Збільшити кількість консультацій спеціаліста - висока маржинальність",
+    "Промо акція на послуги з низьким попитом",
+    ...
+  ],
+  "anomalies": [
+    "Різке зростання у лютому на 58% - перевірити причину"
+  ]
+}}"""
+
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"analytics-{uuid.uuid4()}",
+            system_message="Ти експерт фінансовий аналітик для медичного бізнесу. Аналізуй дані та давай практичні рекомендації українською мовою."
+        ).with_model("gemini", "gemini-2.5-flash")
+        
+        message = UserMessage(text=prompt)
+        response = await chat.send_message(message)
+        
+        # Парсинг JSON з відповіді
+        import json
+        import re
+        
+        # Витягти JSON з відповіді
+        json_match = re.search(r'\{.*\}', response, re.DOTALL)
+        if json_match:
+            analysis = json.loads(json_match.group())
+        else:
+            # Fallback якщо AI не повернув JSON
+            analysis = {
+                "forecast": {
+                    "next_month_min": int(stats.get('total_revenue', 0) * 0.9),
+                    "next_month_max": int(stats.get('total_revenue', 0) * 1.1),
+                    "expected": stats.get('total_revenue', 0),
+                    "confidence": "середня"
+                },
+                "insights": ["Аналіз виконується..."],
+                "recommendations": ["Продовжуйте надавати якісні послуги"],
+                "anomalies": []
+            }
+        
+        return {
+            "success": True,
+            "insights": analysis.get('insights', []),
+            "recommendations": analysis.get('recommendations', []),
+            "forecast": analysis.get('forecast', {}),
+            "anomalies": analysis.get('anomalies', [])
+        }
+        
+    except Exception as e:
+        logging.error(f"AI analytics error: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "insights": [],
+            "recommendations": [],
+            "forecast": None,
+            "anomalies": []
+        }
+async def get_dashboard_stats(month: int, year: int):
+    # Get incomes
+    incomes = await db.incomes.find({"month": month, "year": year}, {"_id": 0}).to_list(1000)
+    total_income = sum(inc.get('total_nhs_income', 0) + inc.get('paid_services_income', 0) for inc in incomes)
+    
+    # Get expenses
+    start_date = datetime(year, month, 1)
+    if month == 12:
+        end_date = datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime(year, month + 1, 1)
+    
+    expenses = await db.expenses.find({
+        "date": {"$gte": start_date.isoformat(), "$lt": end_date.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    total_expenses = sum(exp.get('amount', 0) for exp in expenses)
+    
+    # Calculate net profit
+    net_profit = total_income - total_expenses
+    
+    # Get total declarations
+    total_declarations = 0
+    for inc in incomes:
+        declarations = inc.get('declarations', {})
+        total_declarations += sum(declarations.values())
+    
+    return {
+        "total_income": total_income,
+        "total_expenses": total_expenses,
+        "net_profit": net_profit,
+        "total_declarations": total_declarations,
+        "month": month,
+        "year": year
+    }
+
 app.include_router(api_router)
 
 app.add_middleware(
