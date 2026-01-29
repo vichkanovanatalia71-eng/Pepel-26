@@ -714,12 +714,17 @@ const MonthlyServices = () => {
             </div>
             <div className="card-click-hint">👁️</div>
           </div>
-          <div className="summary-card">
+          <div 
+            className="summary-card clickable"
+            onClick={openExpensesDetails}
+            data-testid="expenses-card"
+          >
             <div className="summary-icon">📉</div>
             <div>
               <div className="summary-label">Витрати</div>
               <div className="summary-value">{dashboardStats.total_expenses.toLocaleString('uk-UA')} ₴</div>
             </div>
+            <div className="card-click-hint">👁️</div>
           </div>
           <div className="summary-card highlight">
             <div className="summary-icon">💵</div>
