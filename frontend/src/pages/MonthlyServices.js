@@ -215,7 +215,8 @@ const MonthlyServices = () => {
                 onClick={() => setSelectedDoctor(doc.id)}
                 data-testid={`chip-doctor-${doc.id}`}
               >
-                {doc.short_name}
+                <span className="chip-full-name">{doc.name}</span>
+                <span className="chip-short-name">{doc.short_name}</span>
               </button>
             ))}
           </div>
