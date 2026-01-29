@@ -1119,6 +1119,129 @@
   font-weight: 700;
 }
 
+/* Materials Table */
+.materials-table-wrapper {
+  overflow-x: auto;
+}
+
+.materials-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.materials-table th {
+  text-align: left;
+  padding: 10px;
+  background: rgba(255, 140, 0, 0.15);
+  color: #FFA500;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(255, 140, 0, 0.4);
+}
+
+.materials-table td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #CCCCCC;
+}
+
+.materials-table tbody tr:hover {
+  background: rgba(255, 140, 0, 0.05);
+}
+
+.materials-table tfoot {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+}
+
+.materials-table tfoot td {
+  padding: 12px 10px;
+  border-top: 2px solid #EF4444;
+  color: #EF4444;
+  font-weight: 700;
+}
+
+.services-codes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.service-code-badge-tiny {
+  background: rgba(255, 140, 0, 0.2);
+  color: #FFA500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* Taxes */
+.taxes-breakdown {
+  display: grid;
+  gap: 12px;
+}
+
+.tax-item {
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.tax-item.total-tax {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.tax-label {
+  font-size: 14px;
+  color: #CCCCCC;
+  font-weight: 600;
+}
+
+.tax-value {
+  font-size: 20px;
+  color: #FFA500;
+  font-weight: 700;
+}
+
+.tax-item.total-tax .tax-value {
+  color: #EF4444;
+  font-size: 24px;
+}
+
+.tax-note {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: #888888;
+}
+
+.percent-bar-small {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background: rgba(40, 40, 48, 0.6);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.percent-text-small {
+  position: relative;
+  display: block;
+  line-height: 20px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #FFFFFF;
+  z-index: 1;
+}
+
 /* Mobile optimizations */
 
 /* Mobile */
