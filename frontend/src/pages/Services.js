@@ -44,7 +44,7 @@ const Services = () => {
   };
 
   useEffect(() => {
-    fetchServices();
+    fetchServices(); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
   const handleSubmit = async (e) => {
