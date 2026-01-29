@@ -304,48 +304,9 @@ const MonthlyServices = () => {
     XLSX.writeFile(wb, fileName);
   };
 
-  const exportToPDF = async () => {
-    if (!revenueDetails || !dashboardStats) return;
-    
-    try {
-      // Відправити дані на backend для генерації PDF
-      const response = await axios.post(`${API_URL}/api/export/revenue-pdf`, {
-        stats: {
-          total_revenue: dashboardStats.total_revenue,
-          total_quantity: dashboardStats.total_quantity,
-          avg_check: revenueDetails.avgCheck
-        },
-        services: revenueDetails.servicesBreakdown.map(s => ({
-          code: s.code,
-          name: s.name,
-          quantity: s.quantity,
-          revenue: s.revenue
-        })),
-        doctors: revenueDetails.doctorsBreakdown.map(d => ({
-          short_name: d.short_name,
-          name: d.name,
-          quantity: d.quantity,
-          revenue: d.revenue
-        })),
-        monthly: revenueDetails.monthlyBreakdown.map(m => ({
-          month: m.month,
-          year: m.year,
-          revenue: m.revenue
-        }))
-      }, {
-        responseType: 'blob'
-      });
-      
-      // Завантажити файл
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `Статистика_Оборот_${new Date().toISOString().split('T')[0]}.pdf`;
-      link.click();
-    } catch (error) {
-      console.error('PDF export error:', error);
-      alert('Помилка експорту PDF');
-    }
+  const exportToPDF = () => {
+    // Через проблеми з кирилицею в PDF, використовуємо Excel як основний формат
+    alert('Для збереження звіту використовуйте кнопку "📊 Excel" - файл містить всі дані з українським текстом.\n\nАбо скористайтесь Print to PDF з браузера (Ctrl+P → Save as PDF)');
   };
 
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
