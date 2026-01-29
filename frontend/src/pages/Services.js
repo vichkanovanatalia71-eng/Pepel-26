@@ -89,18 +89,11 @@ const Services = () => {
   };
 
   const addExpenseItem = () => {
-    const newItem = { 
-      material_name: '', 
-      quantity: 1, 
-      unit: 'шт', 
-      price_per_unit: 0, 
-      total_cost: 0 
-    };
     setFormData({
       ...formData,
       expense_items: [
         ...formData.expense_items,
-        newItem
+        { material_name: '', quantity: 1, unit: 'шт', price_per_unit: 0, total_cost: 0 }
       ]
     });
   };
