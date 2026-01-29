@@ -735,7 +735,6 @@ async def get_revenue_insights(data: Dict[str, Any]):
 
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(month: int, year: int):
-async def get_dashboard_stats(month: int, year: int):
     # Get incomes
     incomes = await db.incomes.find({"month": month, "year": year}, {"_id": 0}).to_list(1000)
     total_income = sum(inc.get('total_nhs_income', 0) + inc.get('paid_services_income', 0) for inc in incomes)
