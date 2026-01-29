@@ -142,8 +142,6 @@ const MonthlyServices = () => {
   };
 
   const openRevenueModal = () => setShowRevenueModal(true);
-  const openDoctorIncomeModal = () => setShowDoctorIncomeModal(true);
-  const openExpensesModal = () => setShowExpensesModal(true);
 
   const exportToExcel = () => {
     // Створення Excel файлу з breakdown
