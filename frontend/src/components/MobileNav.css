@@ -4,8 +4,9 @@
   left: 0;
   right: 0;
   height: 64px;
-  background: white;
-  border-top: 1px solid #E5E7EB;
+  background: rgba(26, 26, 29, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 140, 0, 0.15);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -19,20 +20,23 @@
   gap: 4px;
   padding: 8px 12px;
   text-decoration: none;
-  color: #6B7280;
+  color: #888888;
   font-size: 11px;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .mobile-nav-link .icon {
   font-size: 22px;
+  transition: all 0.3s ease;
 }
 
 .mobile-nav-link.active {
-  color: #43A047;
+  color: #FFA500;
 }
 
 .mobile-nav-link.active .icon {
-  transform: scale(1.1);
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.8));
 }
