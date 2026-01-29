@@ -135,21 +135,27 @@ class DocumentResponse(BaseModel):
     created_at: datetime
 
 class MonthlyServiceEntry(BaseModel):
+    """Щомісячний облік кількості послуг по лікарях"""
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     month: int
     year: int
     service_id: str
+    doctor_id: str
     quantity: int
-    doctor_id: Optional[str] = None
+    # Автоматично розраховувані поля
+    total_revenue: float = 0.0  # Загальний дохід (що оплатив клієнт)
+    doctor_income: float = 0.0  # Дохід лікаря
+    total_expenses: float = 0.0  # Загальні витрати
+    fop_income: float = 0.0  # Дохід ФОП
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class MonthlyServiceEntryCreate(BaseModel):
     month: int
     year: int
     service_id: str
+    doctor_id: str
     quantity: int
-    doctor_id: Optional[str] = None
 
 # ==== HELPER FUNCTIONS ====
 
