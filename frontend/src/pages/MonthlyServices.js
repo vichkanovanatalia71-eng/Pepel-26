@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Dialog,
@@ -17,12 +17,12 @@ const MonthlyServices = () => {
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [dashboardStats, setDashboardStats] = useState(null);
   
-  // Фільтри (всі працюють одночасно)
-  const [selectedDoctor, setSelectedDoctor] = useState('all'); // 'all' | doctor_id
-  const [selectedYear, setSelectedYear] = useState('all'); // 'all' | year
-  const [selectedMonth, setSelectedMonth] = useState('all'); // 'all' | month
+  // Фільтри
+  const [selectedDoctor, setSelectedDoctor] = useState('all');
+  const [selectedYear, setSelectedYear] = useState('all');
+  const [selectedMonth, setSelectedMonth] = useState('all');
   
-  // Modal states
+  // Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRevenueModal, setShowRevenueModal] = useState(false);
   const [modalDoctor, setModalDoctor] = useState('');
@@ -31,72 +31,59 @@ const MonthlyServices = () => {
   const [quantities, setQuantities] = useState({});
   const [revenueDetails, setRevenueDetails] = useState(null);
 
-  const fetchServices = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/services`);
-      setServices(response.data.sort((a, b) => (a.code || '').localeCompare(b.code || '')));
-      console.log('✅ Services loaded:', response.data.length);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-    }
-  };
+  const monthNames = [
+    'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
+    'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
+  ];
 
-  const fetchDoctors = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/doctors`);
-      setDoctors(response.data);
-      console.log('✅ Doctors loaded:', response.data.length);
-      if (response.data.length > 0) {
-        setModalDoctor(response.data[0].id);
-      }
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
-    }
-  };
-
-  const fetchAllEntries = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/monthly-services`);
-      const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      console.log('📊 Fetched entries:', sorted.length);
-      setAllEntries(sorted);
-    } catch (error) {
-      console.error('Error fetching entries:', error);
-    }
-  };
-
+  // Initial load
   useEffect(() => {
-    console.log('🚀 Initial load - fetching data...');
-    fetchServices();
-    fetchDoctors();
-    fetchAllEntries();
+    loadData();
   }, []);
 
-  const filterData = useCallback(() => {
+  // Filter when filters change
+  useEffect(() => {
+    applyFilters();
+  }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
+
+  const loadData = async () => {
+    try {
+      const [servicesRes, doctorsRes, entriesRes] = await Promise.all([
+        axios.get(`${API_URL}/api/services`),
+        axios.get(`${API_URL}/api/doctors`),
+        axios.get(`${API_URL}/api/monthly-services`)
+      ]);
+
+      setServices(servicesRes.data.sort((a, b) => (a.code || '').localeCompare(b.code || '')));
+      setDoctors(doctorsRes.data);
+      const sorted = entriesRes.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setAllEntries(sorted);
+
+      if (doctorsRes.data.length > 0) {
+        setModalDoctor(doctorsRes.data[0].id);
+      }
+    } catch (error) {
+      console.error('Load error:', error);
+    }
+  };
+
+  const applyFilters = () => {
     let filtered = [...allEntries];
     
-    console.log('🔍 Filtering - total entries:', allEntries.length, 'filters:', { selectedDoctor, selectedYear, selectedMonth });
-    
-    // Фільтр за лікарем
     if (selectedDoctor !== 'all') {
       filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
     }
     
-    // Фільтр за роком
     if (selectedYear !== 'all') {
       filtered = filtered.filter(e => e.year === selectedYear);
     }
     
-    // Фільтр за місяцем
     if (selectedMonth !== 'all') {
       filtered = filtered.filter(e => e.month === selectedMonth);
     }
     
-    console.log('✅ Filtered:', filtered.length, 'entries');
-    
     setFilteredEntries(filtered);
     
-    // Розрахунок dashboard
     const stats = {
       total_revenue: filtered.reduce((sum, e) => sum + (e.total_revenue || 0), 0),
       total_doctor_income: filtered.reduce((sum, e) => sum + (e.doctor_income || 0), 0),
@@ -106,16 +93,8 @@ const MonthlyServices = () => {
       total_services: filtered.length
     };
     
-    console.log('📊 Dashboard stats:', stats);
-    
     setDashboardStats(stats);
-  }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
-
-  useEffect(() => {
-    if (allEntries.length > 0) {
-      filterData();
-    }
-  }, [allEntries, filterData]);
+  };
 
   const handleBulkAdd = async () => {
     try {
@@ -140,7 +119,7 @@ const MonthlyServices = () => {
       
       setQuantities({});
       setShowAddModal(false);
-      fetchAllEntries();
+      loadData();
     } catch (error) {
       console.error('Error:', error);
       alert('Помилка збереження');
@@ -151,95 +130,86 @@ const MonthlyServices = () => {
     if (window.confirm('Видалити цей запис?')) {
       try {
         await axios.delete(`${API_URL}/api/monthly-services/${entryId}`);
-        fetchAllEntries();
+        loadData();
       } catch (error) {
         console.error('Error:', error);
       }
     }
   };
 
-  const openRevenueDetails = async () => {
-    // Розрахунок детальної статистики по обороту
-    const serviceBreakdown = {};
-    const doctorBreakdown = {};
-    const monthlyBreakdown = {};
-    
-    filteredEntries.forEach(entry => {
-      const service = services.find(s => s.id === entry.service_id);
-      const doctor = doctors.find(d => d.id === entry.doctor_id);
-      
-      // По послугах
-      if (!serviceBreakdown[entry.service_id]) {
-        serviceBreakdown[entry.service_id] = {
-          code: service?.code || 'N/A',
-          name: service?.name || 'N/A',
-          price: service?.price || 0,
-          quantity: 0,
-          revenue: 0
-        };
-      }
-      serviceBreakdown[entry.service_id].quantity += entry.quantity;
-      serviceBreakdown[entry.service_id].revenue += entry.total_revenue;
-      
-      // По лікарях
-      if (!doctorBreakdown[entry.doctor_id]) {
-        doctorBreakdown[entry.doctor_id] = {
-          name: doctor?.name || 'N/A',
-          short_name: doctor?.short_name || 'N/A',
-          revenue: 0,
-          quantity: 0
-        };
-      }
-      doctorBreakdown[entry.doctor_id].revenue += entry.total_revenue;
-      doctorBreakdown[entry.doctor_id].quantity += entry.quantity;
-      
-      // По місяцях
-      const monthKey = `${entry.year}-${entry.month}`;
-      if (!monthlyBreakdown[monthKey]) {
-        monthlyBreakdown[monthKey] = {
-          month: entry.month,
-          year: entry.year,
-          revenue: 0
-        };
-      }
-      monthlyBreakdown[monthKey].revenue += entry.total_revenue;
-    });
-    
-    // Сортування
-    const servicesArray = Object.values(serviceBreakdown).sort((a, b) => b.revenue - a.revenue);
-    const top5Services = servicesArray.slice(0, 5);
-    const topByQuantity = [...servicesArray].sort((a, b) => b.quantity - a.quantity).slice(0, 5);
-    const doctorsArray = Object.values(doctorBreakdown);
-    const monthlyArray = Object.values(monthlyBreakdown).sort((a, b) => {
-      if (a.year !== b.year) return a.year - b.year;
-      return a.month - b.month;
-    });
-    
-    // Середній чек
-    const avgCheck = dashboardStats.total_revenue / dashboardStats.total_quantity;
-    
-    // Порівняння з минулим періодом
-    let comparison = null;
-    if (monthlyArray.length >= 2) {
-      const current = monthlyArray[monthlyArray.length - 1].revenue;
-      const previous = monthlyArray[monthlyArray.length - 2].revenue;
-      const change = ((current - previous) / previous) * 100;
-      comparison = {
-        current,
-        previous,
-        change,
-        trend: change > 0 ? 'up' : 'down'
-      };
-    }
-    
-    // Отримати AI інсайти та прогноз
+  const openRevenueDetails = () => {
     try {
-      const aiResponse = await axios.post(`${API_URL}/api/analytics/revenue-insights`, {
-        services: servicesArray,
-        doctors: doctorsArray,
-        monthly: monthlyArray,
-        stats: dashboardStats
+      const serviceBreakdown = {};
+      const doctorBreakdown = {};
+      const monthlyBreakdown = {};
+      
+      filteredEntries.forEach(entry => {
+        const service = services.find(s => s.id === entry.service_id);
+        const doctor = doctors.find(d => d.id === entry.doctor_id);
+        
+        // По послугах
+        if (!serviceBreakdown[entry.service_id]) {
+          serviceBreakdown[entry.service_id] = {
+            code: service?.code || 'N/A',
+            name: service?.name || 'N/A',
+            price: service?.price || 0,
+            quantity: 0,
+            revenue: 0
+          };
+        }
+        serviceBreakdown[entry.service_id].quantity += entry.quantity;
+        serviceBreakdown[entry.service_id].revenue += entry.total_revenue;
+        
+        // По лікарях
+        const docKey = entry.doctor_id;
+        if (!doctorBreakdown[docKey]) {
+          doctorBreakdown[docKey] = {
+            name: doctor?.name || 'N/A',
+            short_name: doctor?.short_name || 'N/A',
+            revenue: 0,
+            quantity: 0
+          };
+        }
+        doctorBreakdown[docKey].revenue += entry.total_revenue;
+        doctorBreakdown[docKey].quantity += entry.quantity;
+        
+        // По місяцях
+        const monthKey = `${entry.year}-${entry.month}`;
+        if (!monthlyBreakdown[monthKey]) {
+          monthlyBreakdown[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            revenue: 0
+          };
+        }
+        monthlyBreakdown[monthKey].revenue += entry.total_revenue;
       });
+      
+      const servicesArray = Object.values(serviceBreakdown).sort((a, b) => b.revenue - a.revenue);
+      const top5Services = servicesArray.slice(0, 5);
+      const topByQuantity = [...servicesArray].sort((a, b) => b.quantity - a.quantity).slice(0, 5);
+      const doctorsArray = Object.values(doctorBreakdown);
+      const monthlyArray = Object.values(monthlyBreakdown).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+      
+      const avgCheck = dashboardStats?.total_quantity > 0 
+        ? dashboardStats.total_revenue / dashboardStats.total_quantity 
+        : 0;
+      
+      let comparison = null;
+      if (monthlyArray.length >= 2) {
+        const current = monthlyArray[monthlyArray.length - 1].revenue;
+        const previous = monthlyArray[monthlyArray.length - 2].revenue;
+        const change = ((current - previous) / previous) * 100;
+        comparison = {
+          current,
+          previous,
+          change,
+          trend: change > 0 ? 'up' : 'down'
+        };
+      }
       
       setRevenueDetails({
         servicesBreakdown: servicesArray,
@@ -248,27 +218,14 @@ const MonthlyServices = () => {
         doctorsBreakdown: doctorsArray,
         monthlyBreakdown: monthlyArray,
         avgCheck,
-        comparison,
-        aiInsights: aiResponse.data.insights,
-        forecast: aiResponse.data.forecast
+        comparison
       });
+      
+      setShowRevenueModal(true);
     } catch (error) {
-      console.error('AI analysis error:', error);
-      // Без AI (fallback)
-      setRevenueDetails({
-        servicesBreakdown: servicesArray,
-        top5Services,
-        topByQuantity,
-        doctorsBreakdown: doctorsArray,
-        monthlyBreakdown: monthlyArray,
-        avgCheck,
-        comparison,
-        aiInsights: null,
-        forecast: null
-      });
+      console.error('Error opening revenue details:', error);
+      alert('Помилка відкриття статистики');
     }
-    
-    setShowRevenueModal(true);
   };
 
   const resetFilters = () => {
@@ -280,14 +237,14 @@ const MonthlyServices = () => {
   const exportToExcel = () => {
     if (!revenueDetails) return;
     
-    // Створення CSV (простий експорт)
-    let csv = 'Код,Назва послуги,Ціна,Кількість,Оборот,%\n';
+    let csv = 'Код,Назва послуги,Ціна,Кількість,Оборот,%\\n';
     revenueDetails.servicesBreakdown.forEach(service => {
-      const percent = ((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1);
-      csv += `${service.code},"${service.name}",${service.price},${service.quantity},${service.revenue},${percent}%\n`;
+      const percent = dashboardStats?.total_revenue > 0
+        ? ((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)
+        : 0;
+      csv += `${service.code},"${service.name}",${service.price},${service.quantity},${service.revenue},${percent}%\\n`;
     });
     
-    // Download
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -296,18 +253,11 @@ const MonthlyServices = () => {
   };
 
   const exportToPDF = () => {
-    alert('PDF експорт в розробці. Використовуйте Excel експорт.');
+    alert('PDF експорт в розробці. Використовуйте Excel.');
   };
 
-  const monthNames = [
-    'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
-    'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
-  ];
-
-  // Отримати доступні роки
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
 
-  // Отримати доступні місяці для вибраного року (або всіх років якщо 'all')
   const getAvailableMonths = () => {
     const monthsSet = new Set();
     const entries = selectedYear === 'all' 
@@ -333,25 +283,23 @@ const MonthlyServices = () => {
         </button>
       </div>
 
-      {/* Фільтри - всі одночасно */}
+      {/* Фільтри */}
       <div className="filters-panel">
         <div className="filters-header">
           <h3>Фільтри</h3>
           {hasActiveFilters && (
-            <button className="btn-reset-filters" onClick={resetFilters} data-testid="reset-filters-btn">
+            <button className="btn-reset-filters" onClick={resetFilters}>
               ✕ Скинути все
             </button>
           )}
         </div>
 
-        {/* Фільтр: Лікар */}
         <div className="filter-section">
           <label className="filter-label">👨‍⚕️ Лікар:</label>
           <div className="chips-group">
             <button 
               className={`chip ${selectedDoctor === 'all' ? 'active' : ''}`}
               onClick={() => setSelectedDoctor('all')}
-              data-testid="chip-doctor-all"
             >
               Всі
             </button>
@@ -360,7 +308,6 @@ const MonthlyServices = () => {
                 key={doc.id}
                 className={`chip ${selectedDoctor === doc.id ? 'active' : ''}`}
                 onClick={() => setSelectedDoctor(doc.id)}
-                data-testid={`chip-doctor-${doc.id}`}
               >
                 <span className="chip-full-name">{doc.name}</span>
                 <span className="chip-short-name">{doc.short_name}</span>
@@ -369,7 +316,6 @@ const MonthlyServices = () => {
           </div>
         </div>
 
-        {/* Фільтр: Рік */}
         <div className="filter-section">
           <label className="filter-label">📅 Рік:</label>
           <div className="chips-group">
@@ -379,7 +325,6 @@ const MonthlyServices = () => {
                 setSelectedYear('all');
                 setSelectedMonth('all');
               }}
-              data-testid="chip-year-all"
             >
               Весь період
             </button>
@@ -388,7 +333,6 @@ const MonthlyServices = () => {
                 key={year}
                 className={`chip ${selectedYear === year ? 'active' : ''}`}
                 onClick={() => setSelectedYear(year)}
-                data-testid={`chip-year-${year}`}
               >
                 {year}
               </button>
@@ -396,7 +340,6 @@ const MonthlyServices = () => {
           </div>
         </div>
 
-        {/* Фільтр: Місяць (показується якщо обрано рік) */}
         {selectedYear !== 'all' && (
           <div className="filter-section">
             <label className="filter-label">📆 Місяць:</label>
@@ -404,7 +347,6 @@ const MonthlyServices = () => {
               <button 
                 className={`chip ${selectedMonth === 'all' ? 'active' : ''}`}
                 onClick={() => setSelectedMonth('all')}
-                data-testid="chip-month-all"
               >
                 Весь рік
               </button>
@@ -413,7 +355,6 @@ const MonthlyServices = () => {
                   key={monthNum}
                   className={`chip ${selectedMonth === monthNum ? 'active' : ''}`}
                   onClick={() => setSelectedMonth(monthNum)}
-                  data-testid={`chip-month-${monthNum}`}
                 >
                   {monthNames[monthNum - 1]}
                 </button>
@@ -423,7 +364,7 @@ const MonthlyServices = () => {
         )}
       </div>
 
-      {/* Dashboard Statistics */}
+      {/* Dashboard */}
       {dashboardStats && (
         <div className="summary-cards">
           <div 
@@ -463,13 +404,13 @@ const MonthlyServices = () => {
         </div>
       )}
 
-      {/* Список наданих послуг */}
+      {/* Список послуг */}
       <div className="card">
         <h3>Надані послуги ({filteredEntries.length})</h3>
         {filteredEntries.length === 0 ? (
           <div className="empty-state">
-            <p>Записів за обраними фільтрами не знайдено</p>
-            <p className="empty-hint">Спробуйте змінити фільтри або додати нові послуги</p>
+            <p>Записів не знайдено</p>
+            <p className="empty-hint">Змініть фільтри або додайте послуги</p>
           </div>
         ) : (
           <div className="entries-list">
@@ -477,7 +418,7 @@ const MonthlyServices = () => {
               const service = services.find(s => s.id === entry.service_id);
               const doctor = doctors.find(d => d.id === entry.doctor_id);
               return (
-                <div key={entry.id} className="entry-card" data-testid={`entry-${entry.id}`}>
+                <div key={entry.id} className="entry-card">
                   <div className="entry-header">
                     <div className="entry-service">
                       {service?.code && <span className="service-code-small">{service.code}</span>}
@@ -526,7 +467,7 @@ const MonthlyServices = () => {
         )}
       </div>
 
-      {/* Modal для додавання послуг */}
+      {/* Modal додавання */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -537,11 +478,7 @@ const MonthlyServices = () => {
             <div className="selection-section">
               <div className="form-group">
                 <label>Лікар</label>
-                <select 
-                  value={modalDoctor} 
-                  onChange={(e) => setModalDoctor(e.target.value)}
-                  data-testid="modal-doctor-select"
-                >
+                <select value={modalDoctor} onChange={(e) => setModalDoctor(e.target.value)}>
                   {doctors.map(d => (
                     <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
                   ))}
@@ -549,11 +486,7 @@ const MonthlyServices = () => {
               </div>
               <div className="form-group">
                 <label>Місяць</label>
-                <select 
-                  value={modalMonth} 
-                  onChange={(e) => setModalMonth(parseInt(e.target.value))}
-                  data-testid="modal-month-select"
-                >
+                <select value={modalMonth} onChange={(e) => setModalMonth(parseInt(e.target.value))}>
                   {monthNames.map((m, i) => (
                     <option key={i} value={i + 1}>{m}</option>
                   ))}
@@ -565,16 +498,12 @@ const MonthlyServices = () => {
                   type="number" 
                   value={modalYear} 
                   onChange={(e) => setModalYear(parseInt(e.target.value))}
-                  data-testid="modal-year-input"
                 />
               </div>
             </div>
 
             <div className="services-grid-modal">
-              <h4 style={{ marginBottom: '12px', color: '#FFA500', fontSize: '14px' }}>
-                Всі послуги (оберіть та вкажіть кількість):
-              </h4>
-              
+              <h4>Всі послуги:</h4>
               <div className="services-scroll-container">
                 {services.map(service => (
                   <div key={service.id} className="service-input-row">
@@ -602,11 +531,8 @@ const MonthlyServices = () => {
             </div>
 
             <div className="modal-actions">
-              <button 
-                className="btn btn-success" 
-                onClick={handleBulkAdd}
-              >
-                Зберегти обрані
+              <button className="btn btn-success" onClick={handleBulkAdd}>
+                Зберегти
               </button>
               <button 
                 className="btn btn-secondary" 
@@ -622,38 +548,37 @@ const MonthlyServices = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Modal детальної статистики ОБОРОТ */}
+      {/* Modal ОБОРОТ */}
       <Dialog open={showRevenueModal} onOpenChange={setShowRevenueModal}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
           <DialogHeader>
             <DialogTitle>💰 Детальна статистика обороту</DialogTitle>
           </DialogHeader>
           
-          {revenueDetails && (
+          {revenueDetails && dashboardStats && (
             <div className="revenue-details">
-              {/* Кнопки експорту */}
               <div className="export-buttons">
                 <button className="btn btn-secondary btn-sm" onClick={exportToExcel}>
-                  📊 Експорт Excel
+                  📊 Excel
                 </button>
                 <button className="btn btn-secondary btn-sm" onClick={exportToPDF}>
-                  📄 Експорт PDF
+                  📄 PDF
                 </button>
               </div>
 
-              {/* Загальна інформація */}
+              {/* Stats row */}
               <div className="details-summary-row">
                 <div className="detail-card-mini">
-                  <div className="mini-label">Загальний оборот</div>
+                  <div className="mini-label">Оборот</div>
                   <div className="mini-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
                 </div>
                 <div className="detail-card-mini">
-                  <div className="mini-label">Кількість послуг</div>
+                  <div className="mini-label">Послуг</div>
                   <div className="mini-value">{dashboardStats.total_quantity}</div>
                 </div>
                 <div className="detail-card-mini highlight-mini">
                   <div className="mini-label">Середній чек</div>
-                  <div className="mini-value">{revenueDetails.avgCheck.toFixed(2)} ₴</div>
+                  <div className="mini-value">{revenueDetails.avgCheck.toFixed(0)} ₴</div>
                 </div>
                 {revenueDetails.comparison && (
                   <div className={`detail-card-mini ${revenueDetails.comparison.trend === 'up' ? 'success-mini' : 'danger-mini'}`}>
@@ -665,65 +590,9 @@ const MonthlyServices = () => {
                 )}
               </div>
 
-              {/* AI Прогноз */}
-              {revenueDetails.forecast && (
-                <div className="details-section ai-section">
-                  <h4>🔮 AI Прогноз на наступний місяць</h4>
-                  <div className="forecast-card">
-                    <div className="forecast-range">
-                      <div className="forecast-item">
-                        <span>Мінімум:</span>
-                        <strong>{revenueDetails.forecast.next_month_min?.toLocaleString('uk-UA')} ₴</strong>
-                      </div>
-                      <div className="forecast-item expected">
-                        <span>Очікується:</span>
-                        <strong>{revenueDetails.forecast.expected?.toLocaleString('uk-UA')} ₴</strong>
-                      </div>
-                      <div className="forecast-item">
-                        <span>Максимум:</span>
-                        <strong>{revenueDetails.forecast.next_month_max?.toLocaleString('uk-UA')} ₴</strong>
-                      </div>
-                    </div>
-                    <div className="forecast-confidence">
-                      Впевненість прогнозу: <strong>{revenueDetails.forecast.confidence}</strong>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* AI Інсайти */}
-              {revenueDetails.aiInsights && revenueDetails.aiInsights.length > 0 && (
-                <div className="details-section ai-section">
-                  <h4>💡 Ключові інсайти</h4>
-                  <div className="insights-list">
-                    {revenueDetails.aiInsights.map((insight, index) => (
-                      <div key={index} className="insight-item">
-                        <div className="insight-icon">✓</div>
-                        <div className="insight-text">{insight}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* AI Рекомендації */}
-              {revenueDetails.aiInsights && (
-                <div className="details-section ai-section recommendations-section">
-                  <h4>🎯 Рекомендації для збільшення обороту</h4>
-                  <div className="recommendations-list">
-                    {(revenueDetails.aiInsights || []).map((rec, index) => (
-                      <div key={index} className="recommendation-item">
-                        <div className="rec-number">{index + 1}</div>
-                        <div className="rec-text">{rec}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Топ за популярністю (кількість) */}
+              {/* Популярність */}
               <div className="details-section">
-                <h4>📊 Найпопулярніші послуги (за кількістю)</h4>
+                <h4>📊 Найпопулярніші (за кількістю)</h4>
                 <div className="popularity-grid">
                   {revenueDetails.topByQuantity.map((service, index) => (
                     <div key={service.code} className="popularity-item">
@@ -740,9 +609,9 @@ const MonthlyServices = () => {
                 </div>
               </div>
 
-              {/* Топ-5 послуг за оборотом */}
+              {/* Топ-5 */}
               <div className="details-section">
-                <h4>🏆 Топ-5 найприбутковіших послуг</h4>
+                <h4>🏆 Топ-5 за оборотом</h4>
                 <div className="top-services-list">
                   {revenueDetails.top5Services.map((service, index) => (
                     <div key={service.code} className="top-service-item">
@@ -764,105 +633,47 @@ const MonthlyServices = () => {
                 </div>
               </div>
 
-              {/* Breakdown всіх послуг */}
-              <div className="details-section">
-                <h4>📋 Всі послуги (сортовано за оборотом)</h4>
-                <div className="services-breakdown-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Код</th>
-                        <th>Назва послуги</th>
-                        <th>Ціна</th>
-                        <th>К-ть</th>
-                        <th>Оборот</th>
-                        <th>%</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {revenueDetails.servicesBreakdown.map(service => (
-                        <tr key={service.code}>
-                          <td><span className="code-badge-table">{service.code}</span></td>
-                          <td>{service.name}</td>
-                          <td>{service.price.toLocaleString('uk-UA')} ₴</td>
-                          <td><strong>{service.quantity}</strong></td>
-                          <td className="revenue-cell"><strong>{service.revenue.toLocaleString('uk-UA')} ₴</strong></td>
-                          <td>
-                            <div className="percent-bar">
-                              <div 
-                                className="percent-fill" 
-                                style={{ width: `${(service.revenue / dashboardStats.total_revenue) * 100}%` }}
-                              />
-                              <span className="percent-text">
-                                {((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Розподіл по лікарях */}
+              {/* Лікарі */}
               {revenueDetails.doctorsBreakdown.length > 1 && (
-                <>
-                  <div className="details-section">
-                    <h4>👥 Розподіл обороту по лікарях</h4>
-                    <div className="doctors-breakdown">
-                      {revenueDetails.doctorsBreakdown.map(doctor => (
-                        <div key={doctor.short_name} className="doctor-revenue-card">
-                          <div className="doctor-header">
-                            <div className="doctor-name-badge">{doctor.short_name}</div>
-                            <div className="doctor-full-name">{doctor.name}</div>
+                <div className="details-section">
+                  <h4>👥 Розподіл по лікарях</h4>
+                  <div className="doctors-breakdown">
+                    {revenueDetails.doctorsBreakdown.map(doctor => (
+                      <div key={doctor.short_name} className="doctor-revenue-card">
+                        <div className="doctor-header">
+                          <div className="doctor-name-badge">{doctor.short_name}</div>
+                          <div className="doctor-full-name">{doctor.name}</div>
+                        </div>
+                        <div className="doctor-stats-row">
+                          <div className="doctor-stat">
+                            <span>Оборот:</span>
+                            <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
                           </div>
-                          <div className="doctor-stats-row">
-                            <div className="doctor-stat">
-                              <span>Оборот:</span>
-                              <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
-                            </div>
-                            <div className="doctor-stat">
-                              <span>Послуг:</span>
-                              <strong>{doctor.quantity} шт</strong>
-                            </div>
-                            <div className="doctor-stat highlight">
-                              <span>% від загального:</span>
-                              <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
-                            </div>
+                          <div className="doctor-stat">
+                            <span>Послуг:</span>
+                            <strong>{doctor.quantity} шт</strong>
                           </div>
-                          <div className="progress-bar-container">
-                            <div 
-                              className="progress-bar-fill" 
-                              style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
-                            />
+                          <div className="doctor-stat highlight">
+                            <span>%:</span>
+                            <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                        <div className="progress-bar-container">
+                          <div 
+                            className="progress-bar-fill" 
+                            style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-
-                  {/* Comparison Chart ПЛМ vs ОСЛ */}
-                  {revenueDetails.monthlyBreakdown.length > 1 && (
-                    <div className="details-section">
-                      <h4>📊 Порівняння лікарів по місяцях</h4>
-                      <div className="comparison-note">
-                        Оборот кожного лікаря в динаміці
-                      </div>
-                      {/* Тут буде Recharts comparison chart в наступній ітерації */}
-                      <div className="comparison-placeholder">
-                        <p>📈 Comparison chart ПЛМ vs ОСЛ (в розробці)</p>
-                        <p className="note">Буде додано grouped bar chart або multi-line chart</p>
-                      </div>
-                    </div>
-                  )}
-                </>
+                </div>
               )}
 
-              {/* Динаміка по місяцях */}
-              {revenueDetails.monthlyBreakdown.length > 1 && (
+              {/* Динаміка */}
+              {revenueDetails.monthlyBreakdown.length > 0 && (
                 <div className="details-section">
-                  <h4>📈 Динаміка обороту по місяцях</h4>
+                  <h4>📈 Динаміка по місяцях</h4>
                   <div className="monthly-chart">
                     {revenueDetails.monthlyBreakdown.map(item => (
                       <div key={`${item.year}-${item.month}`} className="month-bar-item">
