@@ -105,6 +105,14 @@
   white-space: nowrap;
 }
 
+.chip .chip-full-name {
+  display: inline;
+}
+
+.chip .chip-short-name {
+  display: none;
+}
+
 .chip:hover {
   border-color: rgba(255, 140, 0, 0.4);
   background: rgba(255, 140, 0, 0.1);
