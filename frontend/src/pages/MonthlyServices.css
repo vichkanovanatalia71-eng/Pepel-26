@@ -1215,3 +1215,28 @@
     width: 100%;
   }
 }
+
+/* Print styles for PDF export */
+@media print {
+  .revenue-modal {
+    background: white !important;
+    color: black !important;
+  }
+
+  .export-buttons,
+  button,
+  .btn-delete-entry,
+  .card-click-hint {
+    display: none !important;
+  }
+
+  .details-section {
+    page-break-inside: avoid;
+    background: white !important;
+    border: 1px solid #ddd !important;
+  }
+
+  .revenue-details {
+    color: black !important;
+  }
+}
