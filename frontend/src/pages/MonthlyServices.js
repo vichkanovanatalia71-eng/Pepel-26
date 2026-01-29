@@ -40,6 +40,8 @@ const MonthlyServices = () => {
   const filterData = useCallback(() => {
     let filtered = [...allEntries];
     
+    console.log('🔍 Filtering - total entries:', allEntries.length, 'filters:', { selectedDoctor, selectedYear, selectedMonth });
+    
     // Фільтр за лікарем
     if (selectedDoctor !== 'all') {
       filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
@@ -55,6 +57,8 @@ const MonthlyServices = () => {
       filtered = filtered.filter(e => e.month === selectedMonth);
     }
     
+    console.log('✅ Filtered:', filtered.length, 'entries');
+    
     setFilteredEntries(filtered);
     
     // Розрахунок dashboard
@@ -66,6 +70,8 @@ const MonthlyServices = () => {
       total_quantity: filtered.reduce((sum, e) => sum + (e.quantity || 0), 0),
       total_services: filtered.length
     };
+    
+    console.log('📊 Dashboard stats:', stats);
     
     setDashboardStats(stats);
   }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
