@@ -938,9 +938,14 @@ const MonthlyServices = () => {
                   </div>
                 ))
               ) : (
-                // Один лікар - загальна таблиця
+                // Один лікар або фільтр по одному лікарю - загальна таблиця
                 <div className="details-section">
-                  <h4>Детальна статистика по місяцях</h4>
+                  <h4>
+                    {selectedDoctor !== 'all' && doctors.find(d => d.id === selectedDoctor) 
+                      ? `Дохід ${doctors.find(d => d.id === selectedDoctor)?.name}` 
+                      : 'Детальна статистика по місяцях'
+                    }
+                  </h4>
                   
                   <div className="doctor-income-table-wrapper">
                     <table className="doctor-income-table">
