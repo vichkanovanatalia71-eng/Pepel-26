@@ -184,7 +184,7 @@ const MonthlyServices = () => {
           <div className="summary-card highlight">
             <div className="summary-icon">💵</div>
             <div>
-              <div className="summary-label">Дохід ФОП</div>
+              <div className="summary-label">Дохід організації</div>
               <div className="summary-value">{summary.total_fop_income.toLocaleString('uk-UA')} ₴</div>
             </div>
           </div>
