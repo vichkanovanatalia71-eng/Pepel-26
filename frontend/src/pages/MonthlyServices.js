@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import './MonthlyServices.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -18,10 +17,10 @@ const MonthlyServices = () => {
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [dashboardStats, setDashboardStats] = useState(null);
   
-  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'by-doctor' | 'by-month'
-  const [selectedDoctor, setSelectedDoctor] = useState('all');
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  // Фільтри (всі працюють одночасно)
+  const [selectedDoctor, setSelectedDoctor] = useState('all'); // 'all' | doctor_id
+  const [selectedYear, setSelectedYear] = useState('all'); // 'all' | year
+  const [selectedMonth, setSelectedMonth] = useState('all'); // 'all' | month
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -33,15 +32,14 @@ const MonthlyServices = () => {
   useEffect(() => {
     fetchServices();
     fetchDoctors();
-  }, []);
-
-  useEffect(() => {
     fetchAllEntries();
   }, []);
 
   useEffect(() => {
-    filterData();
-  }, [activeTab, selectedDoctor, selectedYear, selectedMonth, allEntries]);
+    if (allEntries.length > 0) {
+      filterData();
+    }
+  }, [selectedDoctor, selectedYear, selectedMonth, allEntries]);
 
   const fetchServices = async () => {
     try {
@@ -77,15 +75,19 @@ const MonthlyServices = () => {
   const filterData = () => {
     let filtered = [...allEntries];
     
-    if (activeTab === 'by-doctor') {
-      if (selectedDoctor !== 'all') {
-        filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
-      }
-    } else if (activeTab === 'by-month') {
+    // Фільтр за лікарем
+    if (selectedDoctor !== 'all') {
+      filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
+    }
+    
+    // Фільтр за роком
+    if (selectedYear !== 'all') {
       filtered = filtered.filter(e => e.year === selectedYear);
-      if (selectedMonth !== 'all') {
-        filtered = filtered.filter(e => e.month === selectedMonth);
-      }
+    }
+    
+    // Фільтр за місяцем
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(e => e.month === selectedMonth);
     }
     
     setFilteredEntries(filtered);
@@ -101,15 +103,6 @@ const MonthlyServices = () => {
     };
     
     setDashboardStats(stats);
-  };
-
-  // Отримати доступні місяці для вибраного року
-  const getAvailableMonths = () => {
-    const monthsSet = new Set();
-    allEntries
-      .filter(e => e.year === selectedYear)
-      .forEach(e => monthsSet.add(e.month));
-    return Array.from(monthsSet).sort((a, b) => a - b);
   };
 
   const handleBulkAdd = async () => {
@@ -153,13 +146,32 @@ const MonthlyServices = () => {
     }
   };
 
+  const resetFilters = () => {
+    setSelectedDoctor('all');
+    setSelectedYear('all');
+    setSelectedMonth('all');
+  };
+
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
     'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
   ];
 
+  // Отримати доступні роки
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
-  if (availableYears.length === 0) availableYears.push(new Date().getFullYear());
+
+  // Отримати доступні місяці для вибраного року (або всіх років якщо 'all')
+  const getAvailableMonths = () => {
+    const monthsSet = new Set();
+    const entries = selectedYear === 'all' 
+      ? allEntries 
+      : allEntries.filter(e => e.year === selectedYear);
+    
+    entries.forEach(e => monthsSet.add(e.month));
+    return Array.from(monthsSet).sort((a, b) => a - b);
+  };
+
+  const hasActiveFilters = selectedDoctor !== 'all' || selectedYear !== 'all' || selectedMonth !== 'all';
 
   return (
     <div className="monthly-services-page" data-testid="monthly-services-page">
@@ -174,67 +186,72 @@ const MonthlyServices = () => {
         </button>
       </div>
 
-      {/* Tabs для різних видів аналітики */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="tabs-container">
-        <TabsList className="tabs-list">
-          <TabsTrigger value="general" data-testid="tab-general">📈 Загально</TabsTrigger>
-          <TabsTrigger value="by-doctor" data-testid="tab-by-doctor">👨‍⚕️ По лікарях</TabsTrigger>
-          <TabsTrigger value="by-month" data-testid="tab-by-month">📅 По місяцях</TabsTrigger>
-        </TabsList>
+      {/* Фільтри - всі одночасно */}
+      <div className="filters-panel">
+        <div className="filters-header">
+          <h3>Фільтри</h3>
+          {hasActiveFilters && (
+            <button className="btn-reset-filters" onClick={resetFilters} data-testid="reset-filters-btn">
+              ✕ Скинути все
+            </button>
+          )}
+        </div>
 
-        {/* Tab: Загально */}
-        <TabsContent value="general">
-          <div className="tab-info">Всі послуги за весь період</div>
-        </TabsContent>
-
-        {/* Tab: По лікарях */}
-        <TabsContent value="by-doctor">
-          <div className="chips-container">
-            <label className="chips-label">Лікар:</label>
-            <div className="chips-group">
-              <button 
-                className={`chip ${selectedDoctor === 'all' ? 'active' : ''}`}
-                onClick={() => setSelectedDoctor('all')}
-                data-testid="chip-all-doctors"
+        {/* Фільтр: Лікар */}
+        <div className="filter-section">
+          <label className="filter-label">👨‍⚕️ Лікар:</label>
+          <div className="chips-group">
+            <button 
+              className={`chip ${selectedDoctor === 'all' ? 'active' : ''}`}
+              onClick={() => setSelectedDoctor('all')}
+              data-testid="chip-doctor-all"
+            >
+              Всі лікарі
+            </button>
+            {doctors.map(doc => (
+              <button
+                key={doc.id}
+                className={`chip ${selectedDoctor === doc.id ? 'active' : ''}`}
+                onClick={() => setSelectedDoctor(doc.id)}
+                data-testid={`chip-doctor-${doc.id}`}
               >
-                Всі
+                {doc.name} ({doc.short_name})
               </button>
-              {doctors.map(doc => (
-                <button
-                  key={doc.id}
-                  className={`chip ${selectedDoctor === doc.id ? 'active' : ''}`}
-                  onClick={() => setSelectedDoctor(doc.id)}
-                  data-testid={`chip-doctor-${doc.id}`}
-                >
-                  {doc.short_name}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-        </TabsContent>
+        </div>
 
-        {/* Tab: По місяцях */}
-        <TabsContent value="by-month">
-          <div className="chips-container">
-            <label className="chips-label">Рік:</label>
-            <div className="chips-group">
-              {availableYears.map(year => (
-                <button
-                  key={year}
-                  className={`chip ${selectedYear === year ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedYear(year);
-                    setSelectedMonth('all');
-                  }}
-                  data-testid={`chip-year-${year}`}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
+        {/* Фільтр: Рік */}
+        <div className="filter-section">
+          <label className="filter-label">📅 Рік:</label>
+          <div className="chips-group">
+            <button 
+              className={`chip ${selectedYear === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedYear('all');
+                setSelectedMonth('all');
+              }}
+              data-testid="chip-year-all"
+            >
+              Весь період
+            </button>
+            {availableYears.map(year => (
+              <button
+                key={year}
+                className={`chip ${selectedYear === year ? 'active' : ''}`}
+                onClick={() => setSelectedYear(year)}
+                data-testid={`chip-year-${year}`}
+              >
+                {year}
+              </button>
+            ))}
           </div>
-          <div className="chips-container">
-            <label className="chips-label">Місяць:</label>
+        </div>
+
+        {/* Фільтр: Місяць (показується якщо обрано рік) */}
+        {selectedYear !== 'all' && (
+          <div className="filter-section">
+            <label className="filter-label">📆 Місяць:</label>
             <div className="chips-group chips-scrollable">
               <button 
                 className={`chip ${selectedMonth === 'all' ? 'active' : ''}`}
@@ -255,8 +272,8 @@ const MonthlyServices = () => {
               ))}
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
 
       {/* Dashboard Statistics */}
       {dashboardStats && (
@@ -298,8 +315,8 @@ const MonthlyServices = () => {
         <h3>Надані послуги ({filteredEntries.length})</h3>
         {filteredEntries.length === 0 ? (
           <div className="empty-state">
-            <p>Записів ще немає</p>
-            <p className="empty-hint">Натисніть "+ Додати послуги"</p>
+            <p>Записів за обраними фільтрами не знайдено</p>
+            <p className="empty-hint">Спробуйте змінити фільтри або додати нові послуги</p>
           </div>
         ) : (
           <div className="entries-list">
