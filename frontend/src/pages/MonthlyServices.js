@@ -307,8 +307,141 @@ const MonthlyServices = () => {
   };
 
   const exportToPDF = () => {
-    // Використаємо window.print з CSS для PDF
-    window.print();
+    if (!revenueDetails || !dashboardStats) return;
+
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    // Dark background
+    doc.setFillColor(15, 15, 18);
+    doc.rect(0, 0, 210, 297, 'F');
+    
+    let yPos = 20;
+    
+    // Заголовок
+    doc.setTextColor(255, 165, 0);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('💰 Статистика обороту', 105, yPos, { align: 'center' });
+    
+    yPos += 15;
+    
+    // Загальна інформація
+    doc.setFontSize(10);
+    doc.setTextColor(200, 200, 200);
+    doc.text(`Оборот: ${dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴`, 20, yPos);
+    doc.text(`Послуг: ${dashboardStats.total_quantity}`, 80, yPos);
+    doc.text(`Середній чек: ${revenueDetails.avgCheck.toFixed(0)} ₴`, 130, yPos);
+    
+    yPos += 10;
+    
+    // Топ-5 послуг
+    doc.setFontSize(12);
+    doc.setTextColor(255, 165, 0);
+    doc.text('🏆 Топ-5 послуг:', 20, yPos);
+    yPos += 8;
+    
+    doc.autoTable({
+      startY: yPos,
+      head: [['#', 'Код', 'Назва', 'К-ть', 'Оборот', '%']],
+      body: revenueDetails.top5Services.map((s, i) => [
+        i + 1,
+        s.code,
+        s.name,
+        s.quantity,
+        `${s.revenue.toLocaleString('uk-UA')} ₴`,
+        `${((s.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%`
+      ]),
+      theme: 'plain',
+      styles: { 
+        fillColor: [40, 40, 48], 
+        textColor: [224, 224, 224],
+        fontSize: 9,
+        cellPadding: 3
+      },
+      headStyles: { 
+        fillColor: [255, 140, 0], 
+        textColor: [15, 15, 18],
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: { fillColor: [30, 30, 35] },
+      margin: { left: 20, right: 20 }
+    });
+    
+    yPos = doc.lastAutoTable.finalY + 10;
+    
+    // По лікарях
+    if (revenueDetails.doctorsBreakdown.length > 1) {
+      doc.setFontSize(12);
+      doc.setTextColor(255, 165, 0);
+      doc.text('👥 По лікарях:', 20, yPos);
+      yPos += 8;
+      
+      doc.autoTable({
+        startY: yPos,
+        head: [['Лікар', 'Оборот', 'Послуг', '%']],
+        body: revenueDetails.doctorsBreakdown.map(d => [
+          d.short_name,
+          `${d.revenue.toLocaleString('uk-UA')} ₴`,
+          d.quantity,
+          `${((d.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%`
+        ]),
+        theme: 'plain',
+        styles: { 
+          fillColor: [40, 40, 48], 
+          textColor: [224, 224, 224],
+          fontSize: 9,
+          cellPadding: 3
+        },
+        headStyles: { 
+          fillColor: [255, 140, 0], 
+          textColor: [15, 15, 18],
+          fontStyle: 'bold'
+        },
+        margin: { left: 20, right: 20 }
+      });
+      
+      yPos = doc.lastAutoTable.finalY + 10;
+    }
+    
+    // По місяцях
+    if (revenueDetails.monthlyBreakdown.length > 0 && yPos < 250) {
+      doc.setFontSize(12);
+      doc.setTextColor(255, 165, 0);
+      doc.text('📈 Динаміка:', 20, yPos);
+      yPos += 8;
+      
+      doc.autoTable({
+        startY: yPos,
+        head: [['Місяць', 'Рік', 'Оборот']],
+        body: revenueDetails.monthlyBreakdown.map(m => [
+          monthNames[m.month - 1],
+          m.year,
+          `${m.revenue.toLocaleString('uk-UA')} ₴`
+        ]),
+        theme: 'plain',
+        styles: { 
+          fillColor: [40, 40, 48], 
+          textColor: [224, 224, 224],
+          fontSize: 9,
+          cellPadding: 3
+        },
+        headStyles: { 
+          fillColor: [255, 140, 0], 
+          textColor: [15, 15, 18],
+          fontStyle: 'bold'
+        },
+        margin: { left: 20, right: 20 }
+      });
+    }
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Створено: ${new Date().toLocaleString('uk-UA')}`, 105, 285, { align: 'center' });
+    doc.text('ME of Ukraine MedTrack', 105, 290, { align: 'center' });
+    
+    // Зберегти
+    doc.save(`Статистика_Оборот_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
