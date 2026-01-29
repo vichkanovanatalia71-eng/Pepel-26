@@ -274,7 +274,7 @@ const Services = () => {
               ))}
 
               {formData.expense_items.length === 0 && (
-                <p className="empty-hint">Натисніть "+ Додати матеріал" щоб додати витрати</p>
+                <p className="empty-hint">Натисніть &ldquo;+ Додати матеріал&rdquo; щоб додати витрати</p>
               )}
             </div>
 
