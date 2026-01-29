@@ -222,7 +222,10 @@ const MonthlyServices = () => {
                 <button
                   key={year}
                   className={`chip ${selectedYear === year ? 'active' : ''}`}
-                  onClick={() => setSelectedYear(year)}
+                  onClick={() => {
+                    setSelectedYear(year);
+                    setSelectedMonth('all');
+                  }}
                   data-testid={`chip-year-${year}`}
                 >
                   {year}
@@ -236,6 +239,7 @@ const MonthlyServices = () => {
               <button 
                 className={`chip ${selectedMonth === 'all' ? 'active' : ''}`}
                 onClick={() => setSelectedMonth('all')}
+                data-testid="chip-month-all"
               >
                 Весь рік
               </button>
