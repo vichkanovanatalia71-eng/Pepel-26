@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-01-29T15:58:29.591940",
+  "total_tests": 17,
+  "passed": 17,
+  "failed": 0,
+  "success_rate": 100.0,
+  "test_details": [
+    {
+      "test": "Root API",
+      "status": "PASSED",
+      "endpoint": "api/",
+      "status_code": 200
+    },
+    {
+      "test": "Create Doctor (ПЛМ)",
+      "status": "PASSED",
+      "endpoint": "api/doctors",
+      "status_code": 200
+    },
+    {
+      "test": "Create Doctor (ОСЛ)",
+      "status": "PASSED",
+      "endpoint": "api/doctors",
+      "status_code": 200
+    },
+    {
+      "test": "Get Doctors",
+      "status": "PASSED",
+      "endpoint": "api/doctors",
+      "status_code": 200
+    },
+    {
+      "test": "Create Service (Консультація лікаря)",
+      "status": "PASSED",
+      "endpoint": "api/services",
+      "status_code": 200
+    },
+    {
+      "test": "Create Service (УЗД обстеження)",
+      "status": "PASSED",
+      "endpoint": "api/services",
+      "status_code": 200
+    },
+    {
+      "test": "Create Service (ЕКГ)",
+      "status": "PASSED",
+      "endpoint": "api/services",
+      "status_code": 200
+    },
+    {
+      "test": "Get Services",
+      "status": "PASSED",
+      "endpoint": "api/services",
+      "status_code": 200
+    },
+    {
+      "test": "Create Income (Month 1/2026)",
+      "status": "PASSED",
+      "endpoint": "api/incomes",
+      "status_code": 200
+    },
+    {
+      "test": "Create Income (Month 1/2026)",
+      "status": "PASSED",
+      "endpoint": "api/incomes",
+      "status_code": 200
+    },
+    {
+      "test": "Get Incomes",
+      "status": "PASSED",
+      "endpoint": "api/incomes",
+      "status_code": 200
+    },
+    {
+      "test": "Create Expense (Комунальні послуги)",
+      "status": "PASSED",
+      "endpoint": "api/expenses",
+      "status_code": 200
+    },
+    {
+      "test": "Create Expense (Медикаменти та медтовари)",
+      "status": "PASSED",
+      "endpoint": "api/expenses",
+      "status_code": 200
+    },
+    {
+      "test": "Create Expense (Інтернет)",
+      "status": "PASSED",
+      "endpoint": "api/expenses",
+      "status_code": 200
+    },
+    {
+      "test": "Get Expenses",
+      "status": "PASSED",
+      "endpoint": "api/expenses",
+      "status_code": 200
+    },
+    {
+      "test": "Dashboard Stats (1/2026)",
+      "status": "PASSED",
+      "endpoint": "api/dashboard/stats?month=1&year=2026",
+      "status_code": 200
+    },
+    {
+      "test": "Get Documents",
+      "status": "PASSED",
+      "endpoint": "api/documents",
+      "status_code": 200
+    }
+  ]
+}
