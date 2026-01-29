@@ -297,13 +297,17 @@ async def get_service(service_id: str):
 async def update_service(service_id: str, service: PaidServiceCreate):
     # Розрахунок
     total_expenses = sum(item.total_cost for item in service.expense_items)
-    expenses_with_tax = total_expenses * 1.065
-    fop_income = service.price - service.doctor_share - total_expenses
+    ep_vz = service.price * 0.06  # ЄП 5% + ВЗ 1%
+    expenses_with_tax = total_expenses + ep_vz
+    income_after_tax = service.price - total_expenses - ep_vz
+    doctor_share = income_after_tax / 2
+    organization_income = income_after_tax / 2
     
     service_dict = service.model_dump()
     service_dict['total_expenses'] = total_expenses
     service_dict['expenses_with_tax'] = expenses_with_tax
-    service_dict['fop_income'] = fop_income
+    service_dict['fop_income'] = organization_income
+    service_dict['doctor_share'] = doctor_share
     
     await db.services.update_one({"id": service_id}, {"$set": service_dict})
     updated_service = await db.services.find_one({"id": service_id}, {"_id": 0})
