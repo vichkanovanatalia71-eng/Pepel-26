@@ -366,13 +366,18 @@ const MonthlyServices = () => {
       {/* Dashboard Statistics */}
       {dashboardStats && (
         <div className="summary-cards">
-          <div className="summary-card">
+          <div 
+            className="summary-card clickable" 
+            onClick={openRevenueDetails}
+            data-testid="revenue-card"
+          >
             <div className="summary-icon">💰</div>
             <div>
               <div className="summary-label">Оборот</div>
               <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
               <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
             </div>
+            <div className="card-click-hint">👁️</div>
           </div>
           <div className="summary-card">
             <div className="summary-icon">👨‍⚕️</div>
