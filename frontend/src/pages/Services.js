@@ -122,19 +122,17 @@ const Services = () => {
   const updateExpenseItem = (index, field, value) => {
     const items = [...formData.expense_items];
     
-    // Конвертуємо числові поля
+    // Оновлюємо поле
     if (field === 'quantity' || field === 'price_per_unit') {
-      items[index][field] = value === '' ? 0 : parseFloat(value) || 0;
+      items[index][field] = parseFloat(value) || 0;
     } else {
       items[index][field] = value;
     }
     
-    // Автоматичний розрахунок total_cost
-    if (field === 'quantity' || field === 'price_per_unit') {
-      const qty = parseFloat(items[index].quantity) || 0;
-      const price = parseFloat(items[index].price_per_unit) || 0;
-      items[index].total_cost = qty * price;
-    }
+    // Автоматичний розрахунок total_cost при будь-якій зміні quantity або price
+    const qty = parseFloat(items[index].quantity) || 0;
+    const price = parseFloat(items[index].price_per_unit) || 0;
+    items[index].total_cost = qty * price;
     
     setFormData({ ...formData, expense_items: items });
   };
