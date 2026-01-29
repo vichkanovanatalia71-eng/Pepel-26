@@ -171,6 +171,40 @@ const MonthlyServices = () => {
     XLSX.writeFile(wb, `Оборот_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
+  const calculateExpensesBreakdown = () => {
+    const materialsMap = {};
+    let totalEP = 0;
+    let totalVZ = 0;
+    
+    filteredEntries.forEach(entry => {
+      const service = services.find(s => s.id === entry.service_id);
+      
+      if (service?.expense_items) {
+        service.expense_items.forEach(item => {
+          if (!materialsMap[item.material_name]) {
+            materialsMap[item.material_name] = {
+              material_name: item.material_name,
+              unit: item.unit,
+              total_quantity: 0,
+              total_cost: 0
+            };
+          }
+          
+          materialsMap[item.material_name].total_quantity += item.quantity * entry.quantity;
+          materialsMap[item.material_name].total_cost += item.total_cost * entry.quantity;
+        });
+      }
+      
+      totalEP += entry.total_revenue * 0.05;
+      totalVZ += entry.total_revenue * 0.01;
+    });
+    
+    const materials = Object.values(materialsMap).sort((a, b) => b.total_cost - a.total_cost);
+    const totalMaterials = materials.reduce((sum, m) => sum + m.total_cost, 0);
+    
+    return { materials, totalMaterials, totalEP, totalVZ, totalExpenses: totalMaterials + totalEP + totalVZ };
+  };
+
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
 
   const getAvailableMonths = () => {
