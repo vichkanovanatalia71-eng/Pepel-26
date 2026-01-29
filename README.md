@@ -1,1 +1,3 @@
-# Here are your Instructions
+# 🏥 ME of Ukraine - MedTrack
+
+Система обліку доходів та витрат для медичного ФОП з AI аналізом документів.
