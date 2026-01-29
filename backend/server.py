@@ -245,7 +245,21 @@ async def get_doctors():
 # Paid Services
 @api_router.post("/services", response_model=PaidService)
 async def create_service(service: PaidServiceCreate):
-    service_obj = PaidService(**service.model_dump())
+    # Розрахунок загальних витрат
+    total_expenses = sum(item.total_cost for item in service.expense_items)
+    
+    # Розрахунок витрат з податками (ЄП 5% + ВЗ 1.5% = 6.5%)
+    expenses_with_tax = total_expenses * 1.065
+    
+    # Розрахунок доходу ФОП
+    fop_income = service.price - service.doctor_share - total_expenses
+    
+    service_obj = PaidService(
+        **service.model_dump(),
+        total_expenses=total_expenses,
+        expenses_with_tax=expenses_with_tax,
+        fop_income=fop_income
+    )
     service_dict = service_obj.model_dump()
     service_dict['created_at'] = service_dict['created_at'].isoformat()
     await db.services.insert_one(service_dict)
@@ -259,14 +273,39 @@ async def get_services():
             service['created_at'] = datetime.fromisoformat(service['created_at'])
     return services
 
+@api_router.get("/services/{service_id}", response_model=PaidService)
+async def get_service(service_id: str):
+    service = await db.services.find_one({"id": service_id}, {"_id": 0})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    if isinstance(service['created_at'], str):
+        service['created_at'] = datetime.fromisoformat(service['created_at'])
+    return service
+
 @api_router.put("/services/{service_id}", response_model=PaidService)
 async def update_service(service_id: str, service: PaidServiceCreate):
+    # Розрахунок
+    total_expenses = sum(item.total_cost for item in service.expense_items)
+    expenses_with_tax = total_expenses * 1.065
+    fop_income = service.price - service.doctor_share - total_expenses
+    
     service_dict = service.model_dump()
+    service_dict['total_expenses'] = total_expenses
+    service_dict['expenses_with_tax'] = expenses_with_tax
+    service_dict['fop_income'] = fop_income
+    
     await db.services.update_one({"id": service_id}, {"$set": service_dict})
     updated_service = await db.services.find_one({"id": service_id}, {"_id": 0})
     if isinstance(updated_service['created_at'], str):
         updated_service['created_at'] = datetime.fromisoformat(updated_service['created_at'])
     return updated_service
+
+@api_router.delete("/services/{service_id}")
+async def delete_service(service_id: str):
+    result = await db.services.delete_one({"id": service_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"success": True, "message": "Service deleted"}
 
 # Incomes
 @api_router.post("/incomes", response_model=Income)
