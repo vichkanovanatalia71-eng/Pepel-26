@@ -10,45 +10,64 @@
   margin-bottom: 20px;
 }
 
-/* Tabs */
-.tabs-container {
+/* Filters Panel */
+.filters-panel {
+  background: rgba(40, 40, 48, 0.6);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 140, 0, 0.15);
   margin-bottom: 24px;
 }
 
-.tabs-list {
-  background: rgba(40, 40, 48, 0.6);
-  backdrop-filter: blur(20px);
-  border-radius: 14px;
-  padding: 6px;
-  border: 1px solid rgba(255, 140, 0, 0.15);
-  display: inline-flex;
-  gap: 4px;
-}
-
-.tab-info {
-  padding: 12px 16px;
-  font-size: 13px;
-  color: #888888;
-  background: rgba(255, 140, 0, 0.05);
-  border-radius: 10px;
-  margin-top: 12px;
-  border: 1px solid rgba(255, 140, 0, 0.2);
-}
-
-/* Chips */
-.chips-container {
-  margin-top: 16px;
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
 }
 
-.chips-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
+.filters-header h3 {
   color: #FFA500;
+  font-size: 1rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-reset-filters {
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #EF4444;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reset-filters:hover {
+  background: rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #CCCCCC;
+  margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
 }
 
 .chips-group {
@@ -61,6 +80,7 @@
   overflow-x: auto;
   flex-wrap: nowrap;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
 }
 
 .chip {
@@ -80,17 +100,18 @@
   border-color: rgba(255, 140, 0, 0.4);
   background: rgba(255, 140, 0, 0.1);
   color: #FFA500;
+  transform: translateY(-2px);
 }
 
 .chip.active {
   background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
   border-color: #FF8C00;
   color: #0F0F12;
-  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.5);
   transform: translateY(-2px);
 }
 
-/* Summary Dashboard */
+/* Summary Cards */
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -409,10 +430,10 @@
 /* Mobile */
 @media (max-width: 767px) {
   .page-header {
-    margin-bottom: 14px;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+    margin-bottom: 14px;
   }
 
   .page-header h1 {
@@ -423,9 +444,18 @@
     width: 100%;
   }
 
-  .tabs-list {
-    width: 100%;
-    justify-content: space-between;
+  .filters-panel {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .filter-section {
+    margin-bottom: 14px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    margin-bottom: 8px;
   }
 
   .chips-group {
@@ -440,6 +470,7 @@
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    margin-bottom: 14px;
   }
 
   .summary-card {
@@ -462,6 +493,14 @@
 
   .summary-value {
     font-size: 16px;
+  }
+
+  .summary-count {
+    font-size: 10px;
+  }
+
+  .card {
+    padding: 14px;
   }
 
   .entry-card {
@@ -492,6 +531,10 @@
   }
 
   .fin-item strong {
+    font-size: 12px;
+  }
+
+  .service-name {
     font-size: 12px;
   }
 
