@@ -352,6 +352,15 @@ input:focus, select:focus, textarea:focus {
   margin-top: 8px;
 }
 
+/* Dialog Overlays - ensure on top */
+[data-radix-dialog-overlay] {
+  z-index: 50000 !important;
+}
+
+[data-radix-dialog-content] {
+  z-index: 50001 !important;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 767px) {
   body {
