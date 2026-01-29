@@ -77,7 +77,6 @@ const MonthlyServices = () => {
   const filterData = () => {
     let filtered = [...allEntries];
     
-    // Фільтр залежно від активного tab
     if (activeTab === 'by-doctor') {
       if (selectedDoctor !== 'all') {
         filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
@@ -102,6 +101,15 @@ const MonthlyServices = () => {
     };
     
     setDashboardStats(stats);
+  };
+
+  // Отримати доступні місяці для вибраного року
+  const getAvailableMonths = () => {
+    const monthsSet = new Set();
+    allEntries
+      .filter(e => e.year === selectedYear)
+      .forEach(e => monthsSet.add(e.month));
+    return Array.from(monthsSet).sort((a, b) => a - b);
   };
 
   const handleBulkAdd = async () => {
