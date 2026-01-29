@@ -14,11 +14,13 @@ const MonthlyServices = () => {
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [monthlyEntries, setMonthlyEntries] = useState([]);
-  const [allTimeSummary, setAllTimeSummary] = useState(null);
-  const [monthSummary, setMonthSummary] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [showFilter, setShowFilter] = useState(false);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  
+  // Фільтри (за замовчуванням - весь період + всі лікарі)
+  const [filterDoctor, setFilterDoctor] = useState('all'); // 'all' | doctor_id
+  const [filterPeriod, setFilterPeriod] = useState('all'); // 'all' | 'month'
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -30,12 +32,13 @@ const MonthlyServices = () => {
   useEffect(() => {
     fetchServices();
     fetchDoctors();
-    fetchAllEntries();
   }, []);
 
   useEffect(() => {
-    fetchAllEntries();
-  }, [selectedMonth, selectedYear, showFilter]);
+    if (doctors.length > 0) {
+      fetchFilteredData();
+    }
+  }, [filterDoctor, filterPeriod, filterMonth, filterYear, doctors]);
 
   const fetchServices = async () => {
     try {
@@ -58,50 +61,38 @@ const MonthlyServices = () => {
     }
   };
 
-  const fetchAllEntries = async () => {
+  const fetchFilteredData = async () => {
     try {
-      // Всі записи
-      const allResponse = await axios.get(`${API_URL}/api/monthly-services`);
-      const allEntries = allResponse.data.sort((a, b) => {
-        const dateA = new Date(a.created_at);
-        const dateB = new Date(b.created_at);
-        return dateB - dateA; // Від нових до старих
-      });
+      // Отримати всі записи
+      const response = await axios.get(`${API_URL}/api/monthly-services`);
+      let entries = response.data;
       
-      // Фільтрувати якщо потрібно
-      const filtered = showFilter 
-        ? allEntries.filter(e => e.month === selectedMonth && e.year === selectedYear)
-        : allEntries;
-      
-      setMonthlyEntries(filtered);
-      
-      // Dashboard за весь період
-      const totalRevenue = allEntries.reduce((sum, e) => sum + (e.total_revenue || 0), 0);
-      const totalDoctorIncome = allEntries.reduce((sum, e) => sum + (e.doctor_income || 0), 0);
-      const totalExpenses = allEntries.reduce((sum, e) => sum + (e.total_expenses || 0), 0);
-      const totalFopIncome = allEntries.reduce((sum, e) => sum + (e.fop_income || 0), 0);
-      
-      setAllTimeSummary({
-        total_revenue: totalRevenue,
-        total_doctor_income: totalDoctorIncome,
-        total_expenses: totalExpenses,
-        total_fop_income: totalFopIncome
-      });
-      
-      // Статистика по місяцю якщо фільтр активний
-      if (showFilter && filtered.length > 0) {
-        const monthRevenue = filtered.reduce((sum, e) => sum + (e.total_revenue || 0), 0);
-        const monthDoctorIncome = filtered.reduce((sum, e) => sum + (e.doctor_income || 0), 0);
-        const monthExpenses = filtered.reduce((sum, e) => sum + (e.total_expenses || 0), 0);
-        const monthFopIncome = filtered.reduce((sum, e) => sum + (e.fop_income || 0), 0);
-        
-        setMonthSummary({
-          total_revenue: monthRevenue,
-          total_doctor_income: monthDoctorIncome,
-          total_expenses: monthExpenses,
-          total_fop_income: monthFopIncome
-        });
+      // Фільтрувати за лікарем
+      if (filterDoctor !== 'all') {
+        entries = entries.filter(e => e.doctor_id === filterDoctor);
       }
+      
+      // Фільтрувати за періодом
+      if (filterPeriod === 'month') {
+        entries = entries.filter(e => e.month === filterMonth && e.year === filterYear);
+      }
+      
+      // Сортувати від нових до старих
+      entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      
+      setMonthlyEntries(entries);
+      
+      // Розрахунок dashboard
+      const stats = {
+        total_revenue: entries.reduce((sum, e) => sum + (e.total_revenue || 0), 0),
+        total_doctor_income: entries.reduce((sum, e) => sum + (e.doctor_income || 0), 0),
+        total_expenses: entries.reduce((sum, e) => sum + (e.total_expenses || 0), 0),
+        total_fop_income: entries.reduce((sum, e) => sum + (e.fop_income || 0), 0),
+        total_quantity: entries.reduce((sum, e) => sum + (e.quantity || 0), 0),
+        total_services: entries.length
+      };
+      
+      setDashboardStats(stats);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -119,13 +110,18 @@ const MonthlyServices = () => {
           quantity: parseInt(qty)
         }));
       
+      if (entries.length === 0) {
+        alert('Вкажіть кількість хоча б для однієї послуги');
+        return;
+      }
+      
       for (const entry of entries) {
         await axios.post(`${API_URL}/api/monthly-services`, entry);
       }
       
       setQuantities({});
       setShowAddModal(false);
-      fetchAllEntries();
+      fetchFilteredData();
     } catch (error) {
       console.error('Error:', error);
       alert('Помилка збереження');
@@ -136,7 +132,7 @@ const MonthlyServices = () => {
     if (window.confirm('Видалити цей запис?')) {
       try {
         await axios.delete(`${API_URL}/api/monthly-services/${entryId}`);
-        fetchAllEntries();
+        fetchFilteredData();
       } catch (error) {
         console.error('Error:', error);
       }
@@ -148,7 +144,24 @@ const MonthlyServices = () => {
     'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
   ];
 
-  const summary = showFilter ? monthSummary : allTimeSummary;
+  const getFilterLabel = () => {
+    let label = '';
+    
+    if (filterDoctor === 'all') {
+      label = 'Всі лікарі';
+    } else {
+      const doc = doctors.find(d => d.id === filterDoctor);
+      label = doc?.short_name || 'Лікар';
+    }
+    
+    if (filterPeriod === 'all') {
+      label += ' • Весь період';
+    } else {
+      label += ` • ${monthNames[filterMonth - 1]} ${filterYear}`;
+    }
+    
+    return label;
+  };
 
   return (
     <div className="monthly-services-page" data-testid="monthly-services-page">
@@ -163,73 +176,105 @@ const MonthlyServices = () => {
         </button>
       </div>
 
-      {/* Dashboard за весь період */}
-      {summary && (
+      {/* Фільтри */}
+      <div className="filters-section">
+        <div className="filter-row">
+          <div className="filter-group-inline">
+            <label>Лікар:</label>
+            <select 
+              value={filterDoctor} 
+              onChange={(e) => setFilterDoctor(e.target.value)}
+              data-testid="filter-doctor"
+              className="filter-select"
+            >
+              <option value="all">Всі лікарі</option>
+              {doctors.map(d => (
+                <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="filter-group-inline">
+            <label>Період:</label>
+            <select 
+              value={filterPeriod} 
+              onChange={(e) => setFilterPeriod(e.target.value)}
+              data-testid="filter-period"
+              className="filter-select"
+            >
+              <option value="all">Весь період</option>
+              <option value="month">По місяцю</option>
+            </select>
+          </div>
+          
+          {filterPeriod === 'month' && (
+            <>
+              <select 
+                value={filterMonth} 
+                onChange={(e) => setFilterMonth(parseInt(e.target.value))}
+                className="filter-select-small"
+              >
+                {monthNames.map((m, i) => (
+                  <option key={i} value={i + 1}>{m}</option>
+                ))}
+              </select>
+              <input 
+                type="number" 
+                value={filterYear} 
+                onChange={(e) => setFilterYear(parseInt(e.target.value))}
+                className="filter-input-year"
+              />
+            </>
+          )}
+        </div>
+        
+        <div className="filter-label-active">
+          Відображення: <strong>{getFilterLabel()}</strong>
+        </div>
+      </div>
+
+      {/* Dashboard Statistics */}
+      {dashboardStats && (
         <div className="summary-cards">
           <div className="summary-card">
             <div className="summary-icon">💰</div>
             <div>
-              <div className="summary-label">Оборот {showFilter ? `(${monthNames[selectedMonth-1]})` : '(Весь період)'}</div>
-              <div className="summary-value">{summary.total_revenue.toLocaleString('uk-UA')} ₴</div>
+              <div className="summary-label">Оборот</div>
+              <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
+              <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
             </div>
           </div>
           <div className="summary-card">
             <div className="summary-icon">👨‍⚕️</div>
             <div>
               <div className="summary-label">Дохід лікарів</div>
-              <div className="summary-value">{summary.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
+              <div className="summary-value">{dashboardStats.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
             </div>
           </div>
           <div className="summary-card">
             <div className="summary-icon">📉</div>
             <div>
               <div className="summary-label">Витрати</div>
-              <div className="summary-value">{summary.total_expenses.toLocaleString('uk-UA')} ₴</div>
+              <div className="summary-value">{dashboardStats.total_expenses.toLocaleString('uk-UA')} ₴</div>
             </div>
           </div>
           <div className="summary-card highlight">
             <div className="summary-icon">💵</div>
             <div>
               <div className="summary-label">Дохід організації</div>
-              <div className="summary-value">{summary.total_fop_income.toLocaleString('uk-UA')} ₴</div>
+              <div className="summary-value">{dashboardStats.total_fop_income.toLocaleString('uk-UA')} ₴</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Фільтр по місяцях */}
-      <div className="filter-toggle">
-        <button 
-          className={`filter-btn ${showFilter ? 'active' : ''}`}
-          onClick={() => setShowFilter(!showFilter)}
-          data-testid="toggle-filter-btn"
-        >
-          {showFilter ? '📅 Показати весь період' : '📅 Фільтр по місяцю'}
-        </button>
-        
-        {showFilter && (
-          <div className="month-filter">
-            <select value={selectedMonth} onChange={(e) => setSelectedMonth(parseInt(e.target.value))}>
-              {monthNames.map((m, i) => (
-                <option key={i} value={i + 1}>{m}</option>
-              ))}
-            </select>
-            <input 
-              type="number" 
-              value={selectedYear} 
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              style={{ width: '100px' }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Список послуг від нових до старих */}
+      {/* Список наданих послуг */}
       <div className="card">
         <h3>Надані послуги ({monthlyEntries.length})</h3>
         {monthlyEntries.length === 0 ? (
           <div className="empty-state">
             <p>Записів ще немає</p>
+            <p className="empty-hint">Натисніть "+ Додати послуги" щоб додати</p>
           </div>
         ) : (
           <div className="entries-list">
@@ -247,6 +292,7 @@ const MonthlyServices = () => {
                       className="btn-delete-entry" 
                       onClick={() => handleDeleteEntry(entry.id)}
                       title="Видалити"
+                      data-testid={`delete-entry-${entry.id}`}
                     >
                       🗑️
                     </button>
@@ -331,20 +377,22 @@ const MonthlyServices = () => {
               </div>
             </div>
 
-            {/* Список всіх послуг */}
+            {/* Список всіх послуг для введення кількостей */}
             <div className="services-grid-modal">
-              <h4 style={{ gridColumn: '1 / -1', marginBottom: '12px', color: '#FFA500' }}>
+              <h4 style={{ marginBottom: '12px', color: '#FFA500', fontSize: '14px' }}>
                 Оберіть послуги та вкажіть кількість:
               </h4>
               
-              {services.map(service => (
-                <div key={service.id} className="service-input-row" data-testid={`service-${service.id}`}>
-                  <div className="service-info">
-                    <span className="service-code-badge">{service.code}</span>
-                    <span className="service-name-small">{service.name}</span>
-                  </div>
-                  <div className="service-price-qty">
-                    <span className="price-label">{service.price} ₴</span>
+              <div className="services-scroll-container">
+                {services.map(service => (
+                  <div key={service.id} className="service-input-row" data-testid={`service-row-${service.id}`}>
+                    <div className="service-info">
+                      <span className="service-code-badge">{service.code}</span>
+                      <div className="service-details-compact">
+                        <span className="service-name-small">{service.name}</span>
+                        <span className="price-label">{service.price} ₴</span>
+                      </div>
+                    </div>
                     <input 
                       type="number"
                       min="0"
@@ -353,13 +401,13 @@ const MonthlyServices = () => {
                         ...quantities,
                         [service.id]: parseInt(e.target.value) || 0
                       })}
-                      placeholder="К-ть"
+                      placeholder="0"
                       className="qty-input"
                       data-testid={`qty-${service.id}`}
                     />
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             <div className="modal-actions">
@@ -369,7 +417,7 @@ const MonthlyServices = () => {
                 onClick={handleBulkAdd}
                 data-testid="save-bulk-btn"
               >
-                Зберегти
+                Зберегти обрані послуги
               </button>
               <button 
                 type="button"
