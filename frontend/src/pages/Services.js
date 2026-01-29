@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
 import './Services.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Services = () => {
   const [services, setServices] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
   const [formData, setFormData] = useState({ 
     code: '',
     name: '', 
     price: '', 
-    doctor_share: '', 
     expense_items: []
   });
   const [expandedService, setExpandedService] = useState(null);
@@ -37,7 +42,6 @@ const Services = () => {
         code: formData.code || null,
         name: formData.name,
         price: parseFloat(formData.price),
-        doctor_share: parseFloat(formData.doctor_share || 0),
         expense_items: formData.expense_items
       };
 
@@ -51,6 +55,7 @@ const Services = () => {
       fetchServices();
     } catch (error) {
       console.error('Error saving service:', error);
+      alert('Помилка збереження послуги');
     }
   };
 
@@ -61,13 +66,14 @@ const Services = () => {
         fetchServices();
       } catch (error) {
         console.error('Error deleting service:', error);
+        alert('Помилка видалення');
       }
     }
   };
 
   const resetForm = () => {
-    setFormData({ code: '', name: '', price: '', doctor_share: '', expense_items: [] });
-    setShowForm(false);
+    setFormData({ code: '', name: '', price: '', expense_items: [] });
+    setShowModal(false);
     setEditingService(null);
   };
 
@@ -77,10 +83,9 @@ const Services = () => {
       code: service.code || '',
       name: service.name,
       price: service.price,
-      doctor_share: service.doctor_share,
       expense_items: service.expense_items || []
     });
-    setShowForm(true);
+    setShowModal(true);
   };
 
   const addExpenseItem = () => {
@@ -113,22 +118,39 @@ const Services = () => {
   };
 
   const totalExpenses = formData.expense_items.reduce((sum, item) => sum + (item.total_cost || 0), 0);
-  const expensesWithTax = totalExpenses * 1.065; // ЄП 5% + ВЗ 1.5%
-  const fopIncome = parseFloat(formData.price || 0) - parseFloat(formData.doctor_share || 0) - totalExpenses;
+  const price = parseFloat(formData.price || 0);
+  const ep = price * 0.05;
+  const vz = price * 0.01;
+  const epVz = ep + vz;
+  const expensesWithTax = totalExpenses + epVz;
+  const incomeAfterTax = price - totalExpenses - epVz;
+  const doctorShare = incomeAfterTax / 2;
+  const organizationIncome = incomeAfterTax / 2;
 
   return (
     <div className="services-page" data-testid="services-page">
       <div className="page-header">
         <h1>🏥 Платні послуги</h1>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)} data-testid="add-service-btn">
+        <button 
+          className="btn btn-primary" 
+          onClick={() => {
+            setEditingService(null);
+            setFormData({ code: '', name: '', price: '', expense_items: [] });
+            setShowModal(true);
+          }} 
+          data-testid="add-service-btn"
+        >
           + Додати послугу
         </button>
       </div>
 
-      {showForm && (
-        <div className="card form-card">
-          <h3>{editingService ? 'Редагувати послугу' : 'Нова послуга'}</h3>
-          <form onSubmit={handleSubmit}>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingService ? 'Редагувати послугу' : 'Нова послуга'}</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="modal-form">
             <div className="form-row">
               <div className="form-group">
                 <label>Код послуги</label>
@@ -155,7 +177,7 @@ const Services = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Ціна (грн)</label>
+                <label>Ціна для клієнта (грн)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -164,17 +186,6 @@ const Services = () => {
                   placeholder="500"
                   required
                   data-testid="service-price-input"
-                />
-              </div>
-              <div className="form-group">
-                <label>Кошти лікаря (грн)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.doctor_share}
-                  onChange={(e) => setFormData({ ...formData, doctor_share: e.target.value })}
-                  placeholder="300"
-                  data-testid="service-share-input"
                 />
               </div>
             </div>
@@ -246,13 +257,27 @@ const Services = () => {
                 <strong>{totalExpenses.toFixed(2)} ₴</strong>
               </div>
               <div className="calc-row">
-                <span>Витрати + ЄП(5%) + ВЗ(1.5%):</span>
+                <span>ЄП (5%):</span>
+                <strong>{ep.toFixed(2)} ₴</strong>
+              </div>
+              <div className="calc-row">
+                <span>ВЗ (1%):</span>
+                <strong>{vz.toFixed(2)} ₴</strong>
+              </div>
+              <div className="calc-row">
+                <span>Витрати + ЄП + ВЗ:</span>
                 <strong>{expensesWithTax.toFixed(2)} ₴</strong>
               </div>
               <div className="calc-row highlight">
-                <span>Дохід ФОП:</span>
-                <strong className={fopIncome >= 0 ? 'positive' : 'negative'}>
-                  {fopIncome.toFixed(2)} ₴
+                <span>Кошти лікаря (AUTO):</span>
+                <strong className={doctorShare >= 0 ? 'positive' : 'negative'}>
+                  {doctorShare.toFixed(2)} ₴
+                </strong>
+              </div>
+              <div className="calc-row highlight">
+                <span>Дохід організації (AUTO):</span>
+                <strong className={organizationIncome >= 0 ? 'positive' : 'negative'}>
+                  {organizationIncome.toFixed(2)} ₴
                 </strong>
               </div>
             </div>
@@ -266,8 +291,8 @@ const Services = () => {
               </button>
             </div>
           </form>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div className="card">
         <h3>Всі послуги ({services.length})</h3>
@@ -289,13 +314,24 @@ const Services = () => {
                       className="btn-icon" 
                       onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
                       title="Деталі"
+                      data-testid={`expand-service-${service.id}`}
                     >
                       {expandedService === service.id ? '▲' : '▼'}
                     </button>
-                    <button className="btn-icon" onClick={() => handleEdit(service)} title="Редагувати">
+                    <button 
+                      className="btn-icon" 
+                      onClick={() => handleEdit(service)} 
+                      title="Редагувати"
+                      data-testid={`edit-service-${service.id}`}
+                    >
                       ✏️
                     </button>
-                    <button className="btn-icon" onClick={() => handleDeleteService(service.id)} title="Видалити">
+                    <button 
+                      className="btn-icon" 
+                      onClick={() => handleDeleteService(service.id)} 
+                      title="Видалити"
+                      data-testid={`delete-service-${service.id}`}
+                    >
                       🗑️
                     </button>
                   </div>
@@ -307,7 +343,7 @@ const Services = () => {
                     <strong>{service.price.toLocaleString('uk-UA')} ₴</strong>
                   </div>
                   <div className="summary-item">
-                    <span>Лікарю:</span>
+                    <span>Лікарю (AUTO):</span>
                     <span>{service.doctor_share.toLocaleString('uk-UA')} ₴</span>
                   </div>
                   <div className="summary-item">
@@ -352,8 +388,16 @@ const Services = () => {
                           <td><strong>{service.total_expenses?.toFixed(2) || 0} ₴</strong></td>
                         </tr>
                         <tr>
-                          <td colSpan="3">З податками (ЄП+ВЗ):</td>
-                          <td>{service.expenses_with_tax?.toFixed(2) || 0} ₴</td>
+                          <td colSpan="3">ЄП (5%):</td>
+                          <td>{(service.price * 0.05).toFixed(2)} ₴</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="3">ВЗ (1%):</td>
+                          <td>{(service.price * 0.01).toFixed(2)} ₴</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="3">З податками:</td>
+                          <td><strong>{service.expenses_with_tax?.toFixed(2) || 0} ₴</strong></td>
                         </tr>
                       </tfoot>
                     </table>
