@@ -228,6 +228,11 @@ async def root():
 # Doctors
 @api_router.post("/doctors", response_model=Doctor)
 async def create_doctor(doctor: DoctorCreate):
+    # Check if doctor with same short_name already exists
+    existing = await db.doctors.find_one({"short_name": doctor.short_name})
+    if existing:
+        raise HTTPException(status_code=400, detail=f"Doctor with short_name '{doctor.short_name}' already exists")
+    
     doc_obj = Doctor(**doctor.model_dump())
     doc_dict = doc_obj.model_dump()
     doc_dict['created_at'] = doc_dict['created_at'].isoformat()
