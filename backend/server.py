@@ -777,6 +777,119 @@ async def get_dashboard_stats(month: int, year: int):
         "year": year
     }
 
+# PDF Export endpoint
+@api_router.post("/export/revenue-pdf")
+async def export_revenue_pdf(data: Dict[str, Any]):
+    """Генерація PDF звіту з українським текстом"""
+    try:
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4)
+        elements = []
+        
+        # Styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            textColor=colors.HexColor('#FF8C00'),
+            alignment=TA_CENTER,
+            spaceAfter=12
+        )
+        
+        # Заголовок
+        elements.append(Paragraph('Статистика обороту', title_style))
+        elements.append(Spacer(1, 6*mm))
+        
+        stats = data.get('stats', {})
+        services = data.get('services', [])
+        doctors = data.get('doctors', [])
+        monthly = data.get('monthly', [])
+        
+        # Загальна інформація
+        summary_text = f"""
+        <para alignment='left'>
+        <b>Оборот:</b> {stats.get('total_revenue', 0):,.0f} ₴ | 
+        <b>Послуг:</b> {stats.get('total_quantity', 0)} | 
+        <b>Середній чек:</b> {stats.get('avg_check', 0):.0f} ₴
+        </para>
+        """
+        elements.append(Paragraph(summary_text, styles['Normal']))
+        elements.append(Spacer(1, 6*mm))
+        
+        # Топ-5 послуг
+        if services:
+            elements.append(Paragraph('<b>🏆 Топ-5 послуг:</b>', styles['Heading2']))
+            elements.append(Spacer(1, 3*mm))
+            
+            table_data = [['#', 'Код', 'Назва', 'К-ть', 'Оборот', '%']]
+            for i, service in enumerate(services[:5], 1):
+                percent = (service['revenue'] / stats['total_revenue'] * 100) if stats.get('total_revenue', 0) > 0 else 0
+                table_data.append([
+                    str(i),
+                    service['code'],
+                    service['name'][:30],
+                    str(service['quantity']),
+                    f"{service['revenue']:,.0f} ₴",
+                    f"{percent:.1f}%"
+                ])
+            
+            t = Table(table_data, colWidths=[10*mm, 15*mm, 60*mm, 20*mm, 30*mm, 20*mm])
+            t.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FF8C00')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTSIZE', (0, 0), (-1, -1), 8),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+            ]))
+            elements.append(t)
+            elements.append(Spacer(1, 6*mm))
+        
+        # По лікарях
+        if doctors:
+            elements.append(Paragraph('<b>👥 По лікарях:</b>', styles['Heading2']))
+            elements.append(Spacer(1, 3*mm))
+            
+            table_data = [['Лікар', 'Оборот', 'Послуг', '%']]
+            for doctor in doctors:
+                percent = (doctor['revenue'] / stats['total_revenue'] * 100) if stats.get('total_revenue', 0) > 0 else 0
+                table_data.append([
+                    doctor['short_name'],
+                    f"{doctor['revenue']:,.0f} ₴",
+                    str(doctor['quantity']),
+                    f"{percent:.1f}%"
+                ])
+            
+            t = Table(table_data, colWidths=[40*mm, 40*mm, 30*mm, 30*mm])
+            t.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FF8C00')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTSIZE', (0, 0), (-1, -1), 8),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+            ]))
+            elements.append(t)
+            elements.append(Spacer(1, 6*mm))
+        
+        # Footer
+        footer_text = f"<para alignment='center'>Створено: {datetime.now().strftime('%d.%m.%Y %H:%M')}<br/>ME of Ukraine MedTrack</para>"
+        elements.append(Spacer(1, 10*mm))
+        elements.append(Paragraph(footer_text, styles['Normal']))
+        
+        doc.build(elements)
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=Statystyka_Oborot_{datetime.now().strftime('%Y-%m-%d')}.pdf"}
+        )
+        
+    except Exception as e:
+        logging.error(f"PDF generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 app.include_router(api_router)
 
 app.add_middleware(
