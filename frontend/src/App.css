@@ -133,7 +133,8 @@ h2 {
 }
 
 @media (max-width: 767px) {
-  .fab {\n    bottom: 80px;
+  .fab {
+    bottom: 80px;
   }
 }
 
