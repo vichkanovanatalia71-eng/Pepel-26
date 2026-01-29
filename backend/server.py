@@ -804,7 +804,6 @@ async def export_revenue_pdf(data: Dict[str, Any]):
         stats = data.get('stats', {})
         services = data.get('services', [])
         doctors = data.get('doctors', [])
-        monthly = data.get('monthly', [])
         
         # Загальна інформація
         summary_text = f"""
