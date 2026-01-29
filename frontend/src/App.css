@@ -122,9 +122,18 @@ h2 {
   box-shadow: 0 6px 16px rgba(229, 57, 53, 0.5);
 }
 
-@media (min-width: 768px) {
-  .fab {
-    bottom: 24px;
+/* Emergent Badge - не повинен блокувати навігацію */
+#emergent-badge {
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+#emergent-badge * {
+  pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+  .fab {\n    bottom: 80px;
   }
 }
 
