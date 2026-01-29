@@ -267,6 +267,28 @@ const MonthlyServices = () => {
     setSelectedMonth('all');
   };
 
+  const exportToExcel = () => {
+    if (!revenueDetails) return;
+    
+    // Створення CSV (простий експорт)
+    let csv = 'Код,Назва послуги,Ціна,Кількість,Оборот,%\n';
+    revenueDetails.servicesBreakdown.forEach(service => {
+      const percent = ((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1);
+      csv += `${service.code},"${service.name}",${service.price},${service.quantity},${service.revenue},${percent}%\n`;
+    });
+    
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Оборот_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
+  const exportToPDF = () => {
+    alert('PDF експорт в розробці. Використовуйте Excel експорт.');
+  };
+
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
     'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
