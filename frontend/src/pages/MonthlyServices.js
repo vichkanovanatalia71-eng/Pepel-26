@@ -588,64 +588,134 @@ const MonthlyServices = () => {
           <div className="revenue-details">
             <div className="export-buttons">
               <button className="btn btn-secondary btn-sm" onClick={exportToExcel}>
-                📊 Excel
+                📊 Експорт Excel
               </button>
             </div>
 
-            {dashboardStats && (
-              <>
-                <div className="details-summary-row">
-                  <div className="detail-card-mini">
-                    <div className="mini-label">Оборот</div>
-                    <div className="mini-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
-                  </div>
-                  <div className="detail-card-mini">
-                    <div className="mini-label">Послуг</div>
-                    <div className="mini-value">{dashboardStats.total_quantity}</div>
-                  </div>
-                  <div className="detail-card-mini highlight-mini">
-                    <div className="mini-label">Середній чек</div>
-                    <div className="mini-value">
-                      {dashboardStats.total_quantity > 0 
-                        ? (dashboardStats.total_revenue / dashboardStats.total_quantity).toFixed(0) 
-                        : 0} ₴
+            {(() => {
+              const breakdown = getRevenueBreakdown();
+              return (
+                <>
+                  <div className="details-summary-row">
+                    <div className="detail-card-mini">
+                      <div className="mini-label">Оборот</div>
+                      <div className="mini-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
+                    </div>
+                    <div className="detail-card-mini">
+                      <div className="mini-label">Послуг</div>
+                      <div className="mini-value">{dashboardStats.total_quantity}</div>
+                    </div>
+                    <div className="detail-card-mini highlight-mini">
+                      <div className="mini-label">Середній чек</div>
+                      <div className="mini-value">{breakdown.avgCheck.toFixed(0)} ₴</div>
                     </div>
                   </div>
-                </div>
 
-                <div className="details-section">
-                  <h4>📋 Breakdown по послугах</h4>
-                  <div className="services-breakdown-table">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Код</th>
-                          <th>Послуга</th>
-                          <th>К-ть</th>
-                          <th>Оборот</th>
-                          <th>%</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredEntries.map(entry => {
-                          const service = services.find(s => s.id === entry.service_id);
-                          const percent = (entry.total_revenue / dashboardStats.total_revenue * 100).toFixed(1);
-                          return (
-                            <tr key={entry.id}>
-                              <td><span className="code-badge-table">{service?.code}</span></td>
-                              <td>{service?.name || 'N/A'}</td>
-                              <td>{entry.quantity}</td>
-                              <td className="revenue-cell">{entry.total_revenue.toLocaleString('uk-UA')} ₴</td>
-                              <td>{percent}%</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                  {/* Топ-5 за оборотом */}
+                  <div className="details-section">
+                    <h4>🏆 Топ-5 послуг за оборотом</h4>
+                    <div className="top-services-list">
+                      {breakdown.top5.map((service, index) => (
+                        <div key={service.code} className="top-service-item">
+                          <div className="top-rank">#{index + 1}</div>
+                          <div className="top-service-info">
+                            <div className="top-service-name">
+                              <span className="service-code-badge-small">{service.code}</span>
+                              {service.name}
+                            </div>
+                            <div className="top-service-stats">
+                              {service.quantity} шт × {service.price}₴ = <strong>{service.revenue.toLocaleString('uk-UA')} ₴</strong>
+                            </div>
+                          </div>
+                          <div className="top-service-percent">
+                            {((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+
+                  {/* Популярність за кількістю */}
+                  <div className="details-section">
+                    <h4>📊 Найпопулярніші (за кількістю)</h4>
+                    <div className="popularity-grid">
+                      {breakdown.topByQuantity.map((service, index) => (
+                        <div key={service.code} className="popularity-item">
+                          <div className="pop-rank">#{index + 1}</div>
+                          <div className="pop-info">
+                            <div className="pop-name">
+                              <span className="service-code-badge-small">{service.code}</span>
+                              {service.name}
+                            </div>
+                            <div className="pop-count"><strong>{service.quantity}</strong> шт</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Розподіл по лікарях */}
+                  {breakdown.doctors.length > 1 && (
+                    <div className="details-section">
+                      <h4>👥 Розподіл по лікарях</h4>
+                      <div className="doctors-breakdown">
+                        {breakdown.doctors.map(doctor => (
+                          <div key={doctor.short_name} className="doctor-revenue-card">
+                            <div className="doctor-header">
+                              <div className="doctor-name-badge">{doctor.short_name}</div>
+                              <div className="doctor-full-name">{doctor.name}</div>
+                            </div>
+                            <div className="doctor-stats-row">
+                              <div className="doctor-stat">
+                                <span>Оборот:</span>
+                                <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
+                              </div>
+                              <div className="doctor-stat">
+                                <span>Послуг:</span>
+                                <strong>{doctor.quantity} шт</strong>
+                              </div>
+                              <div className="doctor-stat highlight">
+                                <span>%:</span>
+                                <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
+                              </div>
+                            </div>
+                            <div className="progress-bar-container">
+                              <div 
+                                className="progress-bar-fill" 
+                                style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Динаміка по місяцях */}
+                  {breakdown.monthly.length > 0 && (
+                    <div className="details-section">
+                      <h4>📈 Динаміка по місяцях</h4>
+                      <div className="monthly-chart">
+                        {breakdown.monthly.map(item => (
+                          <div key={`${item.year}-${item.month}`} className="month-bar-item">
+                            <div className="month-label">{monthNames[item.month - 1]} {item.year}</div>
+                            <div className="month-bar-container">
+                              <div 
+                                className="month-bar-fill" 
+                                style={{ 
+                                  width: `${(item.revenue / Math.max(...breakdown.monthly.map(m => m.revenue))) * 100}%` 
+                                }}
+                              />
+                              <span className="month-bar-value">{item.revenue.toLocaleString('uk-UA')} ₴</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>
