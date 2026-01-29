@@ -448,6 +448,11 @@
 .revenue-modal {
   background: rgba(15, 15, 18, 0.98);
   border: 1px solid rgba(255, 140, 0, 0.2);
+  z-index: 99999 !important;
+}
+
+.revenue-modal + [data-radix-dialog-overlay] {
+  z-index: 99998 !important;
 }
 
 .revenue-details {
