@@ -148,7 +148,7 @@ const MonthlyServices = () => {
     }
   };
 
-  const openRevenueDetails = () => {
+  const openRevenueDetails = async () => {
     // Розрахунок детальної статистики по обороту
     const serviceBreakdown = {};
     const doctorBreakdown = {};
@@ -195,9 +195,10 @@ const MonthlyServices = () => {
       monthlyBreakdown[monthKey].revenue += entry.total_revenue;
     });
     
-    // Сортування та топ-5
+    // Сортування
     const servicesArray = Object.values(serviceBreakdown).sort((a, b) => b.revenue - a.revenue);
     const top5Services = servicesArray.slice(0, 5);
+    const topByQuantity = [...servicesArray].sort((a, b) => b.quantity - a.quantity).slice(0, 5);
     const doctorsArray = Object.values(doctorBreakdown);
     const monthlyArray = Object.values(monthlyBreakdown).sort((a, b) => {
       if (a.year !== b.year) return a.year - b.year;
@@ -207,7 +208,7 @@ const MonthlyServices = () => {
     // Середній чек
     const avgCheck = dashboardStats.total_revenue / dashboardStats.total_quantity;
     
-    // Порівняння з минулим періодом (якщо є дані)
+    // Порівняння з минулим періодом
     let comparison = null;
     if (monthlyArray.length >= 2) {
       const current = monthlyArray[monthlyArray.length - 1].revenue;
@@ -221,14 +222,41 @@ const MonthlyServices = () => {
       };
     }
     
-    setRevenueDetails({
-      servicesBreakdown: servicesArray,
-      top5Services,
-      doctorsBreakdown: doctorsArray,
-      monthlyBreakdown: monthlyArray,
-      avgCheck,
-      comparison
-    });
+    // Отримати AI інсайти та прогноз
+    try {
+      const aiResponse = await axios.post(`${API_URL}/api/analytics/revenue-insights`, {
+        services: servicesArray,
+        doctors: doctorsArray,
+        monthly: monthlyArray,
+        stats: dashboardStats
+      });
+      
+      setRevenueDetails({
+        servicesBreakdown: servicesArray,
+        top5Services,
+        topByQuantity,
+        doctorsBreakdown: doctorsArray,
+        monthlyBreakdown: monthlyArray,
+        avgCheck,
+        comparison,
+        aiInsights: aiResponse.data.insights,
+        forecast: aiResponse.data.forecast
+      });
+    } catch (error) {
+      console.error('AI analysis error:', error);
+      // Без AI (fallback)
+      setRevenueDetails({
+        servicesBreakdown: servicesArray,
+        top5Services,
+        topByQuantity,
+        doctorsBreakdown: doctorsArray,
+        monthlyBreakdown: monthlyArray,
+        avgCheck,
+        comparison,
+        aiInsights: null,
+        forecast: null
+      });
+    }
     
     setShowRevenueModal(true);
   };
