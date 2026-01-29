@@ -1175,6 +1175,143 @@ const MonthlyServices = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Modal ВИТРАТИ */}
+      <Dialog open={showExpensesModal} onOpenChange={setShowExpensesModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
+          <DialogHeader>
+            <DialogTitle>📉 Детальна статистика витрат</DialogTitle>
+          </DialogHeader>
+          
+          {expensesDetails && (
+            <div className="revenue-details">
+              {/* Загальна статистика */}
+              <div className="details-summary-row">
+                <div className="detail-card-mini">
+                  <div className="mini-label">Витрати на матеріали</div>
+                  <div className="mini-value">{expensesDetails.totalMaterialsExpense.toLocaleString('uk-UA')} ₴</div>
+                </div>
+                <div className="detail-card-mini">
+                  <div className="mini-label">ЄП (5%)</div>
+                  <div className="mini-value">{expensesDetails.totalEP.toLocaleString('uk-UA')} ₴</div>
+                </div>
+                <div className="detail-card-mini">
+                  <div className="mini-label">ВЗ (1%)</div>
+                  <div className="mini-value">{expensesDetails.totalVZ.toLocaleString('uk-UA')} ₴</div>
+                </div>
+                <div className="detail-card-mini highlight-mini">
+                  <div className="mini-label">Загальні витрати</div>
+                  <div className="mini-value">{expensesDetails.totalExpenses.toLocaleString('uk-UA')} ₴</div>
+                </div>
+              </div>
+
+              {/* Топ-10 матеріалів */}
+              <div className="details-section">
+                <h4>💸 Топ-10 витрат на матеріали</h4>
+                <div className="materials-table-wrapper">
+                  <table className="materials-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Назва матеріалу</th>
+                        <th>Одиниця</th>
+                        <th>Загальна к-ть</th>
+                        <th>Загальна сума</th>
+                        <th>Використано в послугах</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expensesDetails.topMaterials.map((material, index) => (
+                        <tr key={material.material_name}>
+                          <td>{index + 1}</td>
+                          <td><strong>{material.material_name}</strong></td>
+                          <td>{material.unit}</td>
+                          <td>{material.total_quantity.toFixed(1)}</td>
+                          <td className="revenue-cell">{material.total_cost.toLocaleString('uk-UA')} ₴</td>
+                          <td>
+                            <div className="services-codes">
+                              {material.services_used.map(code => (
+                                <span key={code} className="service-code-badge-tiny">{code}</span>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="4"><strong>ВСЬОГО матеріалів:</strong></td>
+                        <td className="revenue-cell"><strong>{expensesDetails.totalMaterialsExpense.toLocaleString('uk-UA')} ₴</strong></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              {/* Податки */}
+              <div className="details-section">
+                <h4>🧾 Податки</h4>
+                <div className="taxes-breakdown">
+                  <div className="tax-item">
+                    <div className="tax-label">Єдиний податок (ЄП) - 5%</div>
+                    <div className="tax-value">{expensesDetails.totalEP.toLocaleString('uk-UA')} ₴</div>
+                    <div className="tax-note">Розраховано від загального обороту</div>
+                  </div>
+                  <div className="tax-item">
+                    <div className="tax-label">Військовий збір (ВЗ) - 1%</div>
+                    <div className="tax-value">{expensesDetails.totalVZ.toLocaleString('uk-UA')} ₴</div>
+                    <div className="tax-note">Розраховано від загального обороту</div>
+                  </div>
+                  <div className="tax-item total-tax">
+                    <div className="tax-label">Разом податки</div>
+                    <div className="tax-value">{(expensesDetails.totalEP + expensesDetails.totalVZ).toLocaleString('uk-UA')} ₴</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Всі матеріали */}
+              <div className="details-section">
+                <h4>📋 Всі матеріали ({expensesDetails.materials.length})</h4>
+                <div className="materials-table-wrapper">
+                  <table className="materials-table">
+                    <thead>
+                      <tr>
+                        <th>Назва</th>
+                        <th>Од.</th>
+                        <th>К-ть</th>
+                        <th>Сума</th>
+                        <th>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expensesDetails.materials.map((material) => (
+                        <tr key={material.material_name}>
+                          <td>{material.material_name}</td>
+                          <td>{material.unit}</td>
+                          <td>{material.total_quantity.toFixed(1)}</td>
+                          <td className="revenue-cell">{material.total_cost.toLocaleString('uk-UA')} ₴</td>
+                          <td>
+                            <div className="percent-bar-small">
+                              <div 
+                                className="percent-fill" 
+                                style={{ width: `${(material.total_cost / expensesDetails.totalMaterialsExpense) * 100}%` }}
+                              />
+                              <span className="percent-text-small">
+                                {((material.total_cost / expensesDetails.totalMaterialsExpense) * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
