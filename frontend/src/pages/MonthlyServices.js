@@ -77,8 +77,6 @@ const MonthlyServices = () => {
   const filterData = () => {
     let filtered = [...allEntries];
     
-    console.log('🔍 Filtering:', { activeTab, selectedDoctor, selectedYear, selectedMonth, totalEntries: allEntries.length });
-    
     if (activeTab === 'by-doctor') {
       if (selectedDoctor !== 'all') {
         filtered = filtered.filter(e => e.doctor_id === selectedDoctor);
@@ -89,8 +87,6 @@ const MonthlyServices = () => {
         filtered = filtered.filter(e => e.month === selectedMonth);
       }
     }
-    
-    console.log('✅ Filtered entries:', filtered.length);
     
     setFilteredEntries(filtered);
     
@@ -103,8 +99,6 @@ const MonthlyServices = () => {
       total_quantity: filtered.reduce((sum, e) => sum + (e.quantity || 0), 0),
       total_services: filtered.length
     };
-    
-    console.log('📊 Dashboard stats:', stats);
     
     setDashboardStats(stats);
   };
