@@ -204,13 +204,17 @@ const MonthlyServices = () => {
       return a.month - b.month;
     });
     
+    const avgCheck = (dashboardStats?.total_quantity || 0) > 0 
+      ? (dashboardStats?.total_revenue || 0) / dashboardStats.total_quantity 
+      : 0;
+    
     return {
       top5: servicesArray.slice(0, 5),
       topByQuantity: byQuantity.slice(0, 5),
       allServices: servicesArray,
       doctors: doctorsArray,
       monthly: monthlyArray,
-      avgCheck: dashboardStats.total_quantity > 0 ? dashboardStats.total_revenue / dashboardStats.total_quantity : 0
+      avgCheck
     };
   };
 
