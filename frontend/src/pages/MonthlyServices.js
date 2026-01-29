@@ -797,39 +797,56 @@ const MonthlyServices = () => {
 
               {/* Розподіл по лікарях */}
               {revenueDetails.doctorsBreakdown.length > 1 && (
-                <div className="details-section">
-                  <h4>👥 Розподіл обороту по лікарях</h4>
-                  <div className="doctors-breakdown">
-                    {revenueDetails.doctorsBreakdown.map(doctor => (
-                      <div key={doctor.short_name} className="doctor-revenue-card">
-                        <div className="doctor-header">
-                          <div className="doctor-name-badge">{doctor.short_name}</div>
-                          <div className="doctor-full-name">{doctor.name}</div>
-                        </div>
-                        <div className="doctor-stats-row">
-                          <div className="doctor-stat">
-                            <span>Оборот:</span>
-                            <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
+                <>
+                  <div className="details-section">
+                    <h4>👥 Розподіл обороту по лікарях</h4>
+                    <div className="doctors-breakdown">
+                      {revenueDetails.doctorsBreakdown.map(doctor => (
+                        <div key={doctor.short_name} className="doctor-revenue-card">
+                          <div className="doctor-header">
+                            <div className="doctor-name-badge">{doctor.short_name}</div>
+                            <div className="doctor-full-name">{doctor.name}</div>
                           </div>
-                          <div className="doctor-stat">
-                            <span>Послуг:</span>
-                            <strong>{doctor.quantity} шт</strong>
+                          <div className="doctor-stats-row">
+                            <div className="doctor-stat">
+                              <span>Оборот:</span>
+                              <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
+                            </div>
+                            <div className="doctor-stat">
+                              <span>Послуг:</span>
+                              <strong>{doctor.quantity} шт</strong>
+                            </div>
+                            <div className="doctor-stat highlight">
+                              <span>% від загального:</span>
+                              <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
+                            </div>
                           </div>
-                          <div className="doctor-stat highlight">
-                            <span>% від загального:</span>
-                            <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
+                          <div className="progress-bar-container">
+                            <div 
+                              className="progress-bar-fill" 
+                              style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
+                            />
                           </div>
                         </div>
-                        <div className="progress-bar-container">
-                          <div 
-                            className="progress-bar-fill" 
-                            style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+
+                  {/* Comparison Chart ПЛМ vs ОСЛ */}
+                  {revenueDetails.monthlyBreakdown.length > 1 && (
+                    <div className="details-section">
+                      <h4>📊 Порівняння лікарів по місяцях</h4>
+                      <div className="comparison-note">
+                        Оборот кожного лікаря в динаміці
+                      </div>
+                      {/* Тут буде Recharts comparison chart в наступній ітерації */}
+                      <div className="comparison-placeholder">
+                        <p>📈 Comparison chart ПЛМ vs ОСЛ (в розробці)</p>
+                        <p className="note">Буде додано grouped bar chart або multi-line chart</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Динаміка по місяцях */}
