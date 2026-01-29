@@ -17,6 +17,10 @@ const Sidebar = () => {
           <i className="icon">📊</i>
           <span>Dashboard</span>
         </NavLink>
+        <NavLink to="/monthly-services" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-monthly-services">
+          <i className="icon">📋</i>
+          <span>Облік послуг</span>
+        </NavLink>
         <NavLink to="/incomes" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-incomes">
           <i className="icon">💰</i>
           <span>Доходи</span>
