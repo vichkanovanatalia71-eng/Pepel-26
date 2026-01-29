@@ -251,19 +251,92 @@
 @media (max-width: 767px) {
   .summary-cards {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .summary-card {
+    padding: 20px;
+    border-radius: 20px;
+    min-height: 100px;
+  }
+
+  .summary-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 36px;
+  }
+
+  .summary-value {
+    font-size: 28px;
   }
 
   .card-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
+  }
+
+  .card-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .filter-group select,
+  .filter-group input {
+    min-height: 50px;
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+
+  .add-entry-form {
+    grid-template-columns: 1fr;
     gap: 12px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .add-entry-form select,
+  .add-entry-form input {
+    min-height: 50px;
+    font-size: 15px;
+  }
+
+  .add-entry-form .btn {
+    min-height: 50px;
   }
 
   .entries-table-wrapper {
     overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
   }
 
   .entries-table {
-    min-width: 800px;
+    min-width: 700px;
+    font-size: 13px;
+  }
+
+  .entries-table th {
+    padding: 14px 10px;
+    font-size: 11px;
+    position: sticky;
+    top: 0;
+    background: rgba(255, 140, 0, 0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .entries-table td {
+    padding: 14px 10px;
+  }
+
+  .entries-table .quantity-input {
+    width: 70px;
+    min-height: 40px;
+    font-size: 14px;
   }
 }
