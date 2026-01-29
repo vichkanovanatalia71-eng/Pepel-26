@@ -72,14 +72,23 @@ const Services = () => {
   };
 
   const handleDeleteService = async (serviceId) => {
-    if (window.confirm('Видалити цю послугу?')) {
-      try {
-        await axios.delete(`${API_URL}/api/services/${serviceId}`);
-        fetchServices();
-      } catch (error) {
-        console.error('Error deleting service:', error);
-        alert('Помилка видалення');
-      }
+    setServiceToDelete(serviceId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!serviceToDelete) return;
+    
+    try {
+      await axios.delete(`${API_URL}/api/services/${serviceToDelete}`);
+      fetchServices();
+      setDeleteDialogOpen(false);
+      setServiceToDelete(null);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      alert('Помилка видалення');
+      setDeleteDialogOpen(false);
+      setServiceToDelete(null);
     }
   };
 
