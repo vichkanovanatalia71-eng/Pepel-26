@@ -549,12 +549,55 @@ const MonthlyServices = () => {
 
       {/* Modal ДОХІД ЛІКАРІВ */}
       <Dialog open={showDoctorIncomeModal} onOpenChange={setShowDoctorIncomeModal}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
           <DialogHeader>
-            <DialogTitle>👨‍⚕️ Дохід лікарів</DialogTitle>
+            <DialogTitle>
+              👨‍⚕️ {selectedDoctor !== 'all' && doctors.find(d => d.id === selectedDoctor)
+                ? `Дохід ${doctors.find(d => d.id === selectedDoctor)?.name}`
+                : 'Дохід лікарів'
+              }
+            </DialogTitle>
           </DialogHeader>
           <div className="revenue-details">
-            <p>Детальна статистика в розробці...</p>
+            {dashboardStats && (
+              <div className="details-section">
+                <div className="doctor-income-table-wrapper">
+                  <table className="doctor-income-table">
+                    <thead>
+                      <tr>
+                        <th>Місяць</th>
+                        <th>К-ть</th>
+                        <th>Оборот</th>
+                        <th>Витрати</th>
+                        <th>ЄП (5%)</th>
+                        <th>ВЗ (1%)</th>
+                        <th>До розподілу</th>
+                        <th>Дохід лікаря</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEntries.map(entry => {
+                        const ep = entry.total_revenue * 0.05;
+                        const vz = entry.total_revenue * 0.01;
+                        const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
+                        return (
+                          <tr key={entry.id}>
+                            <td><strong>{monthNames[entry.month - 1]} {entry.year}</strong></td>
+                            <td>{entry.quantity}</td>
+                            <td className="revenue-cell">{entry.total_revenue.toLocaleString('uk-UA')} ₴</td>
+                            <td>{entry.total_expenses.toLocaleString('uk-UA')} ₴</td>
+                            <td>{ep.toLocaleString('uk-UA')} ₴</td>
+                            <td>{vz.toLocaleString('uk-UA')} ₴</td>
+                            <td className="highlight-cell">{toDistribute.toLocaleString('uk-UA')} ₴</td>
+                            <td className="income-cell"><strong>{entry.doctor_income.toLocaleString('uk-UA')} ₴</strong></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
