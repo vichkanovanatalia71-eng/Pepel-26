@@ -73,8 +73,8 @@ class PaidServiceCreate(BaseModel):
     code: Optional[str] = None
     name: str
     price: float
-    doctor_share: float = 0.0
     expense_items: List[ServiceExpenseItem] = Field(default_factory=list)
+    # doctor_share видалено - розраховується автоматично
 
 class Income(BaseModel):
     model_config = ConfigDict(extra="ignore")
