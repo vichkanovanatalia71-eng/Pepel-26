@@ -236,25 +236,77 @@ const MonthlyServices = () => {
   };
 
   const exportToExcel = () => {
-    if (!revenueDetails) return;
+    if (!revenueDetails || !dashboardStats) return;
     
-    let csv = 'Код,Назва послуги,Ціна,Кількість,Оборот,%\\n';
+    // Створення Excel файлу
+    const wb = XLSX.utils.book_new();
+    
+    // Sheet 1: Breakdown по послугах
+    const servicesData = [
+      ['Код', 'Назва послуги', 'Ціна', 'Кількість', 'Оборот', '% від загального']
+    ];
+    
     revenueDetails.servicesBreakdown.forEach(service => {
-      const percent = dashboardStats?.total_revenue > 0
-        ? ((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)
-        : 0;
-      csv += `${service.code},"${service.name}",${service.price},${service.quantity},${service.revenue},${percent}%\\n`;
+      const percent = ((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1);
+      servicesData.push([
+        service.code,
+        service.name,
+        service.price,
+        service.quantity,
+        service.revenue,
+        `${percent}%`
+      ]);
     });
     
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Оборот_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
+    const ws1 = XLSX.utils.aoa_to_sheet(servicesData);
+    XLSX.utils.book_append_sheet(wb, ws1, 'По послугах');
+    
+    // Sheet 2: По лікарях (якщо є)
+    if (revenueDetails.doctorsBreakdown.length > 0) {
+      const doctorsData = [
+        ['Лікар', 'Оборот', 'Кількість послуг', '% від загального']
+      ];
+      
+      revenueDetails.doctorsBreakdown.forEach(doctor => {
+        const percent = ((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1);
+        doctorsData.push([
+          doctor.name,
+          doctor.revenue,
+          doctor.quantity,
+          `${percent}%`
+        ]);
+      });
+      
+      const ws2 = XLSX.utils.aoa_to_sheet(doctorsData);
+      XLSX.utils.book_append_sheet(wb, ws2, 'По лікарях');
+    }
+    
+    // Sheet 3: По місяцях
+    if (revenueDetails.monthlyBreakdown.length > 0) {
+      const monthlyData = [
+        ['Місяць', 'Рік', 'Оборот']
+      ];
+      
+      revenueDetails.monthlyBreakdown.forEach(item => {
+        monthlyData.push([
+          monthNames[item.month - 1],
+          item.year,
+          item.revenue
+        ]);
+      });
+      
+      const ws3 = XLSX.utils.aoa_to_sheet(monthlyData);
+      XLSX.utils.book_append_sheet(wb, ws3, 'По місяцях');
+    }
+    
+    // Завантажити файл
+    const fileName = `Статистика_Оборот_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   };
 
   const exportToPDF = () => {
-    alert('PDF експорт в розробці. Використовуйте Excel.');
+    // Використаємо window.print з CSS для PDF
+    window.print();
   };
 
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
