@@ -142,6 +142,77 @@ const MonthlyServices = () => {
   };
 
   const openRevenueModal = () => setShowRevenueModal(true);
+  
+  const openDoctorIncomeModal = () => setShowDoctorIncomeModal(true);
+  
+  const openExpensesModal = () => setShowExpensesModal(true);
+
+  const getRevenueBreakdown = () => {
+    const serviceStats = {};
+    const doctorStats = {};
+    const monthlyStats = {};
+    
+    filteredEntries.forEach(entry => {
+      const service = services.find(s => s.id === entry.service_id);
+      const doctor = doctors.find(d => d.id === entry.doctor_id);
+      
+      // По послугах
+      const serviceKey = entry.service_id;
+      if (!serviceStats[serviceKey]) {
+        serviceStats[serviceKey] = {
+          code: service?.code || '',
+          name: service?.name || '',
+          price: service?.price || 0,
+          quantity: 0,
+          revenue: 0
+        };
+      }
+      serviceStats[serviceKey].quantity += entry.quantity;
+      serviceStats[serviceKey].revenue += entry.total_revenue;
+      
+      // По лікарях
+      if (doctor) {
+        if (!doctorStats[entry.doctor_id]) {
+          doctorStats[entry.doctor_id] = {
+            name: doctor.name,
+            short_name: doctor.short_name,
+            revenue: 0,
+            quantity: 0
+          };
+        }
+        doctorStats[entry.doctor_id].revenue += entry.total_revenue;
+        doctorStats[entry.doctor_id].quantity += entry.quantity;
+      }
+      
+      // По місяцях
+      const monthKey = `${entry.year}-${String(entry.month).padStart(2, '0')}`;
+      if (!monthlyStats[monthKey]) {
+        monthlyStats[monthKey] = {
+          month: entry.month,
+          year: entry.year,
+          revenue: 0
+        };
+      }
+      monthlyStats[monthKey].revenue += entry.total_revenue;
+    });
+    
+    const servicesArray = Object.values(serviceStats).sort((a, b) => b.revenue - a.revenue);
+    const byQuantity = [...servicesArray].sort((a, b) => b.quantity - a.quantity);
+    const doctorsArray = Object.values(doctorStats);
+    const monthlyArray = Object.values(monthlyStats).sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.month - b.month;
+    });
+    
+    return {
+      top5: servicesArray.slice(0, 5),
+      topByQuantity: byQuantity.slice(0, 5),
+      allServices: servicesArray,
+      doctors: doctorsArray,
+      monthly: monthlyArray,
+      avgCheck: dashboardStats.total_quantity > 0 ? dashboardStats.total_revenue / dashboardStats.total_quantity : 0
+    };
+  };
 
   const exportToExcel = () => {
     // Створення Excel файлу з breakdown
