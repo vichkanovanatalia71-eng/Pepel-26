@@ -141,6 +141,10 @@ const MonthlyServices = () => {
     setSelectedMonth('all');
   };
 
+  const openRevenueModal = () => setShowRevenueModal(true);
+  const openDoctorIncomeModal = () => setShowDoctorIncomeModal(true);
+  const openExpensesModal = () => setShowExpensesModal(true);
+
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
 
   const getAvailableMonths = () => {
