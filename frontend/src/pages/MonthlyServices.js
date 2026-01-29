@@ -206,7 +206,7 @@ const MonthlyServices = () => {
               onClick={() => setSelectedDoctor('all')}
               data-testid="chip-doctor-all"
             >
-              Всі лікарі
+              Всі
             </button>
             {doctors.map(doc => (
               <button
@@ -215,7 +215,7 @@ const MonthlyServices = () => {
                 onClick={() => setSelectedDoctor(doc.id)}
                 data-testid={`chip-doctor-${doc.id}`}
               >
-                {doc.name} ({doc.short_name})
+                {doc.short_name}
               </button>
             ))}
           </div>
