@@ -508,6 +508,14 @@
     font-size: 11px;
   }
 
+  .chip .chip-full-name {
+    display: none;
+  }
+
+  .chip .chip-short-name {
+    display: inline;
+  }
+
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
