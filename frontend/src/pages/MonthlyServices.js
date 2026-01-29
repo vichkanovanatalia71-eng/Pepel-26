@@ -41,7 +41,7 @@ const MonthlyServices = () => {
     if (allEntries.length > 0) {
       filterData();
     }
-  }, [selectedDoctor, selectedYear, selectedMonth, allEntries]);
+  }, [allEntries, filterData]);
 
   const fetchServices = async () => {
     try {
