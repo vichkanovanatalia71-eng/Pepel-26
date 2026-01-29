@@ -31,6 +31,8 @@ const Services = () => {
     expense_items: []
   });
   const [expandedService, setExpandedService] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
 
   useEffect(() => {
     fetchServices();
