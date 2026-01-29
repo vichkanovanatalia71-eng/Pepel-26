@@ -364,25 +364,110 @@ async def get_expenses(month: Optional[int] = None, year: Optional[int] = None):
 # Monthly Service Entries
 @api_router.post("/monthly-services", response_model=MonthlyServiceEntry)
 async def create_monthly_service(entry: MonthlyServiceEntryCreate):
-    entry_obj = MonthlyServiceEntry(**entry.model_dump())
+    # Отримати послугу для розрахунків
+    service = await db.services.find_one({"id": entry.service_id}, {"_id": 0})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Розрахунки
+    total_revenue = entry.quantity * service['price']
+    doctor_income = entry.quantity * service['doctor_share']
+    total_expenses = entry.quantity * service['total_expenses']
+    fop_income = entry.quantity * service['fop_income']
+    
+    entry_obj = MonthlyServiceEntry(
+        **entry.model_dump(),
+        total_revenue=total_revenue,
+        doctor_income=doctor_income,
+        total_expenses=total_expenses,
+        fop_income=fop_income
+    )
     entry_dict = entry_obj.model_dump()
     entry_dict['created_at'] = entry_dict['created_at'].isoformat()
     await db.monthly_services.insert_one(entry_dict)
     return entry_obj
 
 @api_router.get("/monthly-services", response_model=List[MonthlyServiceEntry])
-async def get_monthly_services(month: Optional[int] = None, year: Optional[int] = None):
+async def get_monthly_services(month: Optional[int] = None, year: Optional[int] = None, doctor_id: Optional[str] = None):
     query = {}
     if month:
         query['month'] = month
     if year:
         query['year'] = year
+    if doctor_id:
+        query['doctor_id'] = doctor_id
     
     entries = await db.monthly_services.find(query, {"_id": 0}).to_list(1000)
     for entry in entries:
         if isinstance(entry['created_at'], str):
             entry['created_at'] = datetime.fromisoformat(entry['created_at'])
     return entries
+
+@api_router.get("/monthly-services/summary")
+async def get_monthly_services_summary(month: int, year: int, doctor_id: Optional[str] = None):
+    """Підсумки по послугах за місяць"""
+    query = {"month": month, "year": year}
+    if doctor_id:
+        query['doctor_id'] = doctor_id
+    
+    entries = await db.monthly_services.find(query, {"_id": 0}).to_list(1000)
+    
+    # Агрегація
+    total_revenue = sum(e.get('total_revenue', 0) for e in entries)
+    total_doctor_income = sum(e.get('doctor_income', 0) for e in entries)
+    total_expenses = sum(e.get('total_expenses', 0) for e in entries)
+    total_fop_income = sum(e.get('fop_income', 0) for e in entries)
+    total_quantity = sum(e.get('quantity', 0) for e in entries)
+    
+    return {
+        "month": month,
+        "year": year,
+        "doctor_id": doctor_id,
+        "total_services": len(entries),
+        "total_quantity": total_quantity,
+        "total_revenue": total_revenue,
+        "total_doctor_income": total_doctor_income,
+        "total_expenses": total_expenses,
+        "total_fop_income": total_fop_income
+    }
+
+@api_router.put("/monthly-services/{entry_id}", response_model=MonthlyServiceEntry)
+async def update_monthly_service(entry_id: str, quantity: int):
+    """Оновити кількість послуг"""
+    entry = await db.monthly_services.find_one({"id": entry_id}, {"_id": 0})
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
+    
+    service = await db.services.find_one({"id": entry['service_id']}, {"_id": 0})
+    
+    # Перерахунок
+    total_revenue = quantity * service['price']
+    doctor_income = quantity * service['doctor_share']
+    total_expenses = quantity * service['total_expenses']
+    fop_income = quantity * service['fop_income']
+    
+    await db.monthly_services.update_one(
+        {"id": entry_id}, 
+        {"$set": {
+            "quantity": quantity,
+            "total_revenue": total_revenue,
+            "doctor_income": doctor_income,
+            "total_expenses": total_expenses,
+            "fop_income": fop_income
+        }}
+    )
+    
+    updated_entry = await db.monthly_services.find_one({"id": entry_id}, {"_id": 0})
+    if isinstance(updated_entry['created_at'], str):
+        updated_entry['created_at'] = datetime.fromisoformat(updated_entry['created_at'])
+    return updated_entry
+
+@api_router.delete("/monthly-services/{entry_id}")
+async def delete_monthly_service(entry_id: str):
+    result = await db.monthly_services.delete_one({"id": entry_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Entry not found")
+    return {"success": True, "message": "Entry deleted"}
 
 # Document Upload with AI Analysis
 @api_router.post("/documents/upload")
