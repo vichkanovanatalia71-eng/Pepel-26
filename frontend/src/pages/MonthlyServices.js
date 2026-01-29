@@ -621,6 +621,16 @@ const MonthlyServices = () => {
           
           {revenueDetails && (
             <div className="revenue-details">
+              {/* Кнопки експорту */}
+              <div className="export-buttons">
+                <button className="btn btn-secondary btn-sm" onClick={exportToExcel}>
+                  📊 Експорт Excel
+                </button>
+                <button className="btn btn-secondary btn-sm" onClick={exportToPDF}>
+                  📄 Експорт PDF
+                </button>
+              </div>
+
               {/* Загальна інформація */}
               <div className="details-summary-row">
                 <div className="detail-card-mini">
@@ -645,7 +655,82 @@ const MonthlyServices = () => {
                 )}
               </div>
 
-              {/* Топ-5 послуг */}
+              {/* AI Прогноз */}
+              {revenueDetails.forecast && (
+                <div className="details-section ai-section">
+                  <h4>🔮 AI Прогноз на наступний місяць</h4>
+                  <div className="forecast-card">
+                    <div className="forecast-range">
+                      <div className="forecast-item">
+                        <span>Мінімум:</span>
+                        <strong>{revenueDetails.forecast.next_month_min?.toLocaleString('uk-UA')} ₴</strong>
+                      </div>
+                      <div className="forecast-item expected">
+                        <span>Очікується:</span>
+                        <strong>{revenueDetails.forecast.expected?.toLocaleString('uk-UA')} ₴</strong>
+                      </div>
+                      <div className="forecast-item">
+                        <span>Максимум:</span>
+                        <strong>{revenueDetails.forecast.next_month_max?.toLocaleString('uk-UA')} ₴</strong>
+                      </div>
+                    </div>
+                    <div className="forecast-confidence">
+                      Впевненість прогнозу: <strong>{revenueDetails.forecast.confidence}</strong>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* AI Інсайти */}
+              {revenueDetails.aiInsights && revenueDetails.aiInsights.length > 0 && (
+                <div className="details-section ai-section">
+                  <h4>💡 Ключові інсайти</h4>
+                  <div className="insights-list">
+                    {revenueDetails.aiInsights.map((insight, index) => (
+                      <div key={index} className="insight-item">
+                        <div className="insight-icon">✓</div>
+                        <div className="insight-text">{insight}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Рекомендації */}
+              {revenueDetails.aiInsights && (
+                <div className="details-section ai-section recommendations-section">
+                  <h4>🎯 Рекомендації для збільшення обороту</h4>
+                  <div className="recommendations-list">
+                    {(revenueDetails.aiInsights || []).map((rec, index) => (
+                      <div key={index} className="recommendation-item">
+                        <div className="rec-number">{index + 1}</div>
+                        <div className="rec-text">{rec}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Топ за популярністю (кількість) */}
+              <div className="details-section">
+                <h4>📊 Найпопулярніші послуги (за кількістю)</h4>
+                <div className="popularity-grid">
+                  {revenueDetails.topByQuantity.map((service, index) => (
+                    <div key={service.code} className="popularity-item">
+                      <div className="pop-rank">#{index + 1}</div>
+                      <div className="pop-info">
+                        <div className="pop-name">
+                          <span className="service-code-badge-small">{service.code}</span>
+                          {service.name}
+                        </div>
+                        <div className="pop-count"><strong>{service.quantity}</strong> шт</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Топ-5 послуг за оборотом */}
               <div className="details-section">
                 <h4>🏆 Топ-5 найприбутковіших послуг</h4>
                 <div className="top-services-list">
