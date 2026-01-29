@@ -145,6 +145,32 @@ const MonthlyServices = () => {
   const openDoctorIncomeModal = () => setShowDoctorIncomeModal(true);
   const openExpensesModal = () => setShowExpensesModal(true);
 
+  const exportToExcel = () => {
+    // Створення Excel файлу з breakdown
+    const wb = XLSX.utils.book_new();
+    
+    const servicesData = [['Код', 'Назва', 'Ціна', 'Кількість', 'Оборот', '%']];
+    
+    filteredEntries.forEach(entry => {
+      const service = services.find(s => s.id === entry.service_id);
+      const percent = dashboardStats?.total_revenue > 0
+        ? ((entry.total_revenue / dashboardStats.total_revenue) * 100).toFixed(1)
+        : 0;
+      servicesData.push([
+        service?.code || '',
+        service?.name || '',
+        service?.price || 0,
+        entry.quantity,
+        entry.total_revenue,
+        `${percent}%`
+      ]);
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(servicesData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Статистика');
+    XLSX.writeFile(wb, `Оборот_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
 
   const getAvailableMonths = () => {
