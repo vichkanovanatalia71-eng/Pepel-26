@@ -303,7 +303,7 @@ const Services = () => {
 
                 <div className="service-summary">
                   <div className="summary-item">
-                    <span>Ціна:</span>
+                    <span>Ціна (Оборот):</span>
                     <strong>{service.price.toLocaleString('uk-UA')} ₴</strong>
                   </div>
                   <div className="summary-item">
@@ -314,8 +314,12 @@ const Services = () => {
                     <span>Витрати:</span>
                     <span>{service.total_expenses?.toLocaleString('uk-UA') || 0} ₴</span>
                   </div>
+                  <div className="summary-item">
+                    <span>Витрати+ЄП+ВЗ:</span>
+                    <span>{service.expenses_with_tax?.toLocaleString('uk-UA') || 0} ₴</span>
+                  </div>
                   <div className="summary-item highlight">
-                    <span>Дохід ФОП:</span>
+                    <span>Дохід організації:</span>
                     <strong className="positive">{service.fop_income?.toLocaleString('uk-UA') || 0} ₴</strong>
                   </div>
                 </div>
