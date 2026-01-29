@@ -239,10 +239,10 @@ const MonthlyServices = () => {
                   <th>Послуга</th>
                   <th>Ціна</th>
                   <th>Кількість</th>
-                  <th>Дохід</th>
+                  <th>Оборот</th>
                   <th>Лікарю</th>
                   <th>Витрати</th>
-                  <th>ФОП</th>
+                  <th>Дохід орг.</th>
                   <th>Дії</th>
                 </tr>
               </thead>
