@@ -330,6 +330,169 @@ const MonthlyServices = () => {
     }
   };
 
+  const openExpensesDetails = () => {
+    try {
+      // Агрегація витрат на матеріали
+      const materialsAggregate = {};
+      let totalMaterialsExpense = 0;
+      let totalEP = 0;
+      let totalVZ = 0;
+      
+      filteredEntries.forEach(entry => {
+        const service = services.find(s => s.id === entry.service_id);
+        
+        if (service?.expense_items) {
+          service.expense_items.forEach(item => {
+            const materialKey = item.material_name;
+            
+            if (!materialsAggregate[materialKey]) {
+              materialsAggregate[materialKey] = {
+                material_name: item.material_name,
+                unit: item.unit,
+                total_quantity: 0,
+                total_cost: 0,
+                services_used: new Set()
+              };
+            }
+            
+            // Додати кількість та вартість з урахуванням к-ті наданих послуг
+            const qtyUsed = item.quantity * entry.quantity;
+            const costUsed = item.total_cost * entry.quantity;
+            
+            materialsAggregate[materialKey].total_quantity += qtyUsed;
+            materialsAggregate[materialKey].total_cost += costUsed;
+            materialsAggregate[materialKey].services_used.add(service.code);
+            
+            totalMaterialsExpense += costUsed;
+          });
+        }
+        
+        // Розрахунок податків
+        const ep = entry.total_revenue * 0.05;
+        const vz = entry.total_revenue * 0.01;
+        totalEP += ep;
+        totalVZ += vz;
+      });
+      
+      // Конвертувати Set в array для відображення
+      const materialsArray = Object.values(materialsAggregate).map(m => ({
+        ...m,
+        services_used: Array.from(m.services_used)
+      })).sort((a, b) => b.total_cost - a.total_cost);
+      
+      const totalExpenses = totalMaterialsExpense + totalEP + totalVZ;
+      
+      setExpensesDetails({
+        materials: materialsArray,
+        totalMaterialsExpense,
+        totalEP,
+        totalVZ,
+        totalExpenses,
+        topMaterials: materialsArray.slice(0, 10)
+      });
+      
+      setShowExpensesModal(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Помилка відкриття статистики');
+    }
+  };
+    try {
+      // Групування по місяцях з детальними розрахунками
+      const monthlyData = {};
+      const doctorMonthlyData = {};
+      
+      filteredEntries.forEach(entry => {
+        const monthKey = `${entry.year}-${entry.month}`;
+        const service = services.find(s => s.id === entry.service_id);
+        const doctor = doctors.find(d => d.id === entry.doctor_id);
+        
+        // Загальні дані по місяцях
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            quantity: 0,
+            revenue: 0,
+            expenses: 0,
+            ep: 0,
+            vz: 0,
+            toDistribute: 0,
+            doctorIncome: 0
+          };
+        }
+        
+        monthlyData[monthKey].quantity += entry.quantity;
+        monthlyData[monthKey].revenue += entry.total_revenue;
+        monthlyData[monthKey].expenses += entry.total_expenses;
+        monthlyData[monthKey].doctorIncome += entry.doctor_income;
+        
+        // ЄП та ВЗ розраховуються від обороту
+        const ep = entry.total_revenue * 0.05;
+        const vz = entry.total_revenue * 0.01;
+        monthlyData[monthKey].ep += ep;
+        monthlyData[monthKey].vz += vz;
+        monthlyData[monthKey].toDistribute += (entry.total_revenue - entry.total_expenses - ep - vz);
+        
+        // По лікарях та місяцях
+        const docKey = entry.doctor_id;
+        if (!doctorMonthlyData[docKey]) {
+          doctorMonthlyData[docKey] = {
+            doctor_id: docKey,
+            doctor_name: doctor?.name || 'N/A',
+            short_name: doctor?.short_name || 'N/A',
+            months: {}
+          };
+        }
+        
+        if (!doctorMonthlyData[docKey].months[monthKey]) {
+          doctorMonthlyData[docKey].months[monthKey] = {
+            month: entry.month,
+            year: entry.year,
+            quantity: 0,
+            revenue: 0,
+            expenses: 0,
+            ep: 0,
+            vz: 0,
+            toDistribute: 0,
+            doctorIncome: 0
+          };
+        }
+        
+        doctorMonthlyData[docKey].months[monthKey].quantity += entry.quantity;
+        doctorMonthlyData[docKey].months[monthKey].revenue += entry.total_revenue;
+        doctorMonthlyData[docKey].months[monthKey].expenses += entry.total_expenses;
+        doctorMonthlyData[docKey].months[monthKey].ep += ep;
+        doctorMonthlyData[docKey].months[monthKey].vz += vz;
+        doctorMonthlyData[docKey].months[monthKey].toDistribute += (entry.total_revenue - entry.total_expenses - ep - vz);
+        doctorMonthlyData[docKey].months[monthKey].doctorIncome += entry.doctor_income;
+      });
+      
+      const monthlyArray = Object.values(monthlyData).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+      
+      const doctorsArray = Object.values(doctorMonthlyData).map(doc => ({
+        ...doc,
+        monthsArray: Object.values(doc.months).sort((a, b) => {
+          if (a.year !== b.year) return a.year - b.year;
+          return a.month - b.month;
+        })
+      }));
+      
+      setDoctorIncomeDetails({
+        monthlyData: monthlyArray,
+        doctorsData: doctorsArray
+      });
+      
+      setShowDoctorIncomeModal(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Помилка відкриття статистики');
+    }
+  };
+
   const resetFilters = () => {
     setSelectedDoctor('all');
     setSelectedYear('all');
