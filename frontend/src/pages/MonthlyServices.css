@@ -249,94 +249,126 @@
 }
 
 @media (max-width: 767px) {
-  .summary-cards {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .summary-card {
-    padding: 20px;
-    border-radius: 20px;
-    min-height: 100px;
-  }
-
-  .summary-icon {
-    width: 70px;
-    height: 70px;
-    font-size: 36px;
-  }
-
-  .summary-value {
-    font-size: 28px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .card-header h3 {
-    font-size: 1.1rem;
+  .monthly-services-page h1 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
   }
 
   .filters-bar {
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px;
-    border-radius: 20px;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .filter-group label {
+    font-size: 9px;
+    margin-bottom: 4px;
   }
 
   .filter-group select,
   .filter-group input {
-    min-height: 50px;
-    font-size: 15px;
-    padding: 14px 16px;
+    min-height: 42px;
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .summary-card {
+    padding: 12px;
+    border-radius: 12px;
+    flex-direction: column;
+    text-align: center;
+    min-height: auto;
+  }
+
+  .summary-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+    margin: 0 auto 8px;
+  }
+
+  .summary-label {
+    font-size: 9px;
+    margin-bottom: 4px;
+  }
+
+  .summary-value {
+    font-size: 16px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .card-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .card-header .btn {
+    width: 100%;
+    padding: 12px;
   }
 
   .add-entry-form {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 20px;
-    border-radius: 16px;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
   }
 
   .add-entry-form select,
   .add-entry-form input {
-    min-height: 50px;
-    font-size: 15px;
+    min-height: 44px;
+    font-size: 14px;
   }
 
   .add-entry-form .btn {
-    min-height: 50px;
+    min-height: 44px;
   }
 
   .entries-table-wrapper {
     overflow-x: scroll;
     -webkit-overflow-scrolling: touch;
+    margin: 0 -14px;
+    padding: 0 14px;
   }
 
   .entries-table {
-    min-width: 700px;
-    font-size: 13px;
+    min-width: 600px;
+    font-size: 11px;
   }
 
   .entries-table th {
-    padding: 14px 10px;
-    font-size: 11px;
-    position: sticky;
-    top: 0;
-    background: rgba(255, 140, 0, 0.15);
-    backdrop-filter: blur(10px);
+    padding: 10px 4px;
+    font-size: 9px;
   }
 
   .entries-table td {
-    padding: 14px 10px;
+    padding: 10px 4px;
   }
 
   .entries-table .quantity-input {
-    width: 70px;
-    min-height: 40px;
-    font-size: 14px;
+    width: 50px;
+    min-height: 32px;
+    font-size: 12px;
+  }
+
+  .entries-table tfoot td {
+    padding: 12px 4px;
+    font-size: 12px;
   }
 }
