@@ -596,7 +596,7 @@ const MonthlyServices = () => {
               </button>
             </div>
 
-            {(() => {
+            {dashboardStats && (() => {
               const breakdown = getRevenueBreakdown();
               return (
                 <>
