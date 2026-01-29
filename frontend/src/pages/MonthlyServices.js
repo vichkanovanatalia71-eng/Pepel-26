@@ -239,14 +239,14 @@ const MonthlyServices = () => {
               >
                 Весь рік
               </button>
-              {monthNames.map((month, i) => (
+              {getAvailableMonths().map((monthNum) => (
                 <button
-                  key={i}
-                  className={`chip ${selectedMonth === i + 1 ? 'active' : ''}`}
-                  onClick={() => setSelectedMonth(i + 1)}
-                  data-testid={`chip-month-${i + 1}`}
+                  key={monthNum}
+                  className={`chip ${selectedMonth === monthNum ? 'active' : ''}`}
+                  onClick={() => setSelectedMonth(monthNum)}
+                  data-testid={`chip-month-${monthNum}`}
                 >
-                  {month}
+                  {monthNames[monthNum - 1]}
                 </button>
               ))}
             </div>
