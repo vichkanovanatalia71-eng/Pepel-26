@@ -31,7 +31,42 @@ const MonthlyServices = () => {
   const [quantities, setQuantities] = useState({});
   const [revenueDetails, setRevenueDetails] = useState(null);
 
+  const fetchServices = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/services`);
+      setServices(response.data.sort((a, b) => (a.code || '').localeCompare(b.code || '')));
+      console.log('✅ Services loaded:', response.data.length);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
+  const fetchDoctors = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/doctors`);
+      setDoctors(response.data);
+      console.log('✅ Doctors loaded:', response.data.length);
+      if (response.data.length > 0) {
+        setModalDoctor(response.data[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  };
+
+  const fetchAllEntries = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/monthly-services`);
+      const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      console.log('📊 Fetched entries:', sorted.length);
+      setAllEntries(sorted);
+    } catch (error) {
+      console.error('Error fetching entries:', error);
+    }
+  };
+
   useEffect(() => {
+    console.log('🚀 Initial load - fetching data...');
     fetchServices();
     fetchDoctors();
     fetchAllEntries();
