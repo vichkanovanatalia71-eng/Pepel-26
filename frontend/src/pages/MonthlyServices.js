@@ -449,6 +449,42 @@ const MonthlyServices = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal ОБОРОТ */}
+      <Dialog open={showRevenueModal} onOpenChange={setShowRevenueModal}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>💰 Детальна статистика обороту</DialogTitle>
+          </DialogHeader>
+          <div className="revenue-details">
+            <p>Детальна статистика в розробці...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal ДОХІД ЛІКАРІВ */}
+      <Dialog open={showDoctorIncomeModal} onOpenChange={setShowDoctorIncomeModal}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>👨‍⚕️ Дохід лікарів</DialogTitle>
+          </DialogHeader>
+          <div className="revenue-details">
+            <p>Детальна статистика в розробці...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal ВИТРАТИ */}
+      <Dialog open={showExpensesModal} onOpenChange={setShowExpensesModal}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>📉 Витрати</DialogTitle>
+          </DialogHeader>
+          <div className="revenue-details">
+            <p>Детальна статистика в розробці...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
