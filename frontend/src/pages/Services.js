@@ -100,7 +100,13 @@ const Services = () => {
 
   const updateExpenseItem = (index, field, value) => {
     const items = [...formData.expense_items];
-    items[index][field] = value;
+    
+    // Конвертуємо числові поля
+    if (field === 'quantity' || field === 'price_per_unit') {
+      items[index][field] = value === '' ? 0 : parseFloat(value) || 0;
+    } else {
+      items[index][field] = value;
+    }
     
     // Автоматичний розрахунок total_cost
     if (field === 'quantity' || field === 'price_per_unit') {
