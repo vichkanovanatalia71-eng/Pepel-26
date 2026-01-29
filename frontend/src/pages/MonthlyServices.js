@@ -561,6 +561,168 @@ const MonthlyServices = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal детальної статистики ОБОРОТ */}
+      <Dialog open={showRevenueModal} onOpenChange={setShowRevenueModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
+          <DialogHeader>
+            <DialogTitle>💰 Детальна статистика обороту</DialogTitle>
+          </DialogHeader>
+          
+          {revenueDetails && (
+            <div className="revenue-details">
+              {/* Загальна інформація */}
+              <div className="details-summary-row">
+                <div className="detail-card-mini">
+                  <div className="mini-label">Загальний оборот</div>
+                  <div className="mini-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
+                </div>
+                <div className="detail-card-mini">
+                  <div className="mini-label">Кількість послуг</div>
+                  <div className="mini-value">{dashboardStats.total_quantity}</div>
+                </div>
+                <div className="detail-card-mini highlight-mini">
+                  <div className="mini-label">Середній чек</div>
+                  <div className="mini-value">{revenueDetails.avgCheck.toFixed(2)} ₴</div>
+                </div>
+                {revenueDetails.comparison && (
+                  <div className={`detail-card-mini ${revenueDetails.comparison.trend === 'up' ? 'success-mini' : 'danger-mini'}`}>
+                    <div className="mini-label">Зміна</div>
+                    <div className="mini-value">
+                      {revenueDetails.comparison.trend === 'up' ? '↗' : '↘'} {Math.abs(revenueDetails.comparison.change).toFixed(1)}%
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Топ-5 послуг */}
+              <div className="details-section">
+                <h4>🏆 Топ-5 найприбутковіших послуг</h4>
+                <div className="top-services-list">
+                  {revenueDetails.top5Services.map((service, index) => (
+                    <div key={service.code} className="top-service-item">
+                      <div className="top-rank">#{index + 1}</div>
+                      <div className="top-service-info">
+                        <div className="top-service-name">
+                          <span className="service-code-badge-small">{service.code}</span>
+                          {service.name}
+                        </div>
+                        <div className="top-service-stats">
+                          {service.quantity} шт × {service.price}₴ = <strong>{service.revenue.toLocaleString('uk-UA')} ₴</strong>
+                        </div>
+                      </div>
+                      <div className="top-service-percent">
+                        {((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Breakdown всіх послуг */}
+              <div className="details-section">
+                <h4>📋 Всі послуги (сортовано за оборотом)</h4>
+                <div className="services-breakdown-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Код</th>
+                        <th>Назва послуги</th>
+                        <th>Ціна</th>
+                        <th>К-ть</th>
+                        <th>Оборот</th>
+                        <th>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {revenueDetails.servicesBreakdown.map(service => (
+                        <tr key={service.code}>
+                          <td><span className="code-badge-table">{service.code}</span></td>
+                          <td>{service.name}</td>
+                          <td>{service.price.toLocaleString('uk-UA')} ₴</td>
+                          <td><strong>{service.quantity}</strong></td>
+                          <td className="revenue-cell"><strong>{service.revenue.toLocaleString('uk-UA')} ₴</strong></td>
+                          <td>
+                            <div className="percent-bar">
+                              <div 
+                                className="percent-fill" 
+                                style={{ width: `${(service.revenue / dashboardStats.total_revenue) * 100}%` }}
+                              />
+                              <span className="percent-text">
+                                {((service.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Розподіл по лікарях */}
+              {revenueDetails.doctorsBreakdown.length > 1 && (
+                <div className="details-section">
+                  <h4>👥 Розподіл обороту по лікарях</h4>
+                  <div className="doctors-breakdown">
+                    {revenueDetails.doctorsBreakdown.map(doctor => (
+                      <div key={doctor.short_name} className="doctor-revenue-card">
+                        <div className="doctor-header">
+                          <div className="doctor-name-badge">{doctor.short_name}</div>
+                          <div className="doctor-full-name">{doctor.name}</div>
+                        </div>
+                        <div className="doctor-stats-row">
+                          <div className="doctor-stat">
+                            <span>Оборот:</span>
+                            <strong>{doctor.revenue.toLocaleString('uk-UA')} ₴</strong>
+                          </div>
+                          <div className="doctor-stat">
+                            <span>Послуг:</span>
+                            <strong>{doctor.quantity} шт</strong>
+                          </div>
+                          <div className="doctor-stat highlight">
+                            <span>% від загального:</span>
+                            <strong>{((doctor.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%</strong>
+                          </div>
+                        </div>
+                        <div className="progress-bar-container">
+                          <div 
+                            className="progress-bar-fill" 
+                            style={{ width: `${(doctor.revenue / dashboardStats.total_revenue) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Динаміка по місяцях */}
+              {revenueDetails.monthlyBreakdown.length > 1 && (
+                <div className="details-section">
+                  <h4>📈 Динаміка обороту по місяцях</h4>
+                  <div className="monthly-chart">
+                    {revenueDetails.monthlyBreakdown.map(item => (
+                      <div key={`${item.year}-${item.month}`} className="month-bar-item">
+                        <div className="month-label">{monthNames[item.month - 1]} {item.year}</div>
+                        <div className="month-bar-container">
+                          <div 
+                            className="month-bar-fill" 
+                            style={{ 
+                              width: `${(item.revenue / Math.max(...revenueDetails.monthlyBreakdown.map(m => m.revenue))) * 100}%` 
+                            }}
+                          />
+                          <span className="month-bar-value">{item.revenue.toLocaleString('uk-UA')} ₴</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
