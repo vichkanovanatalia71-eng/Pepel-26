@@ -478,12 +478,71 @@ const MonthlyServices = () => {
 
       {/* Modal ОБОРОТ */}
       <Dialog open={showRevenueModal} onOpenChange={setShowRevenueModal}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
           <DialogHeader>
             <DialogTitle>💰 Детальна статистика обороту</DialogTitle>
           </DialogHeader>
           <div className="revenue-details">
-            <p>Детальна статистика в розробці...</p>
+            <div className="export-buttons">
+              <button className="btn btn-secondary btn-sm" onClick={exportToExcel}>
+                📊 Excel
+              </button>
+            </div>
+
+            {dashboardStats && (
+              <>
+                <div className="details-summary-row">
+                  <div className="detail-card-mini">
+                    <div className="mini-label">Оборот</div>
+                    <div className="mini-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
+                  </div>
+                  <div className="detail-card-mini">
+                    <div className="mini-label">Послуг</div>
+                    <div className="mini-value">{dashboardStats.total_quantity}</div>
+                  </div>
+                  <div className="detail-card-mini highlight-mini">
+                    <div className="mini-label">Середній чек</div>
+                    <div className="mini-value">
+                      {dashboardStats.total_quantity > 0 
+                        ? (dashboardStats.total_revenue / dashboardStats.total_quantity).toFixed(0) 
+                        : 0} ₴
+                    </div>
+                  </div>
+                </div>
+
+                <div className="details-section">
+                  <h4>📋 Breakdown по послугах</h4>
+                  <div className="services-breakdown-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Код</th>
+                          <th>Послуга</th>
+                          <th>К-ть</th>
+                          <th>Оборот</th>
+                          <th>%</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredEntries.map(entry => {
+                          const service = services.find(s => s.id === entry.service_id);
+                          const percent = (entry.total_revenue / dashboardStats.total_revenue * 100).toFixed(1);
+                          return (
+                            <tr key={entry.id}>
+                              <td><span className="code-badge-table">{service?.code}</span></td>
+                              <td>{service?.name || 'N/A'}</td>
+                              <td>{entry.quantity}</td>
+                              <td className="revenue-cell">{entry.total_revenue.toLocaleString('uk-UA')} ₴</td>
+                              <td>{percent}%</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
