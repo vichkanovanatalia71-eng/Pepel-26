@@ -7,7 +7,81 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+}
+
+/* Filters Section */
+.filters-section {
+  background: rgba(40, 40, 48, 0.6);
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  margin-bottom: 20px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.filter-group-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group-inline label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFA500;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.filter-select {
+  padding: 10px 14px;
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-weight: 500;
+  min-width: 180px;
+}
+
+.filter-select-small {
+  padding: 10px 14px;
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 10px;
+  color: #FFFFFF;
+  min-width: 120px;
+}
+
+.filter-input-year {
+  padding: 10px 14px;
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 10px;
+  color: #FFFFFF;
+  width: 100px;
+}
+
+.filter-label-active {
+  font-size: 13px;
+  color: #888888;
+  padding: 8px 16px;
+  background: rgba(255, 140, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 140, 0, 0.2);
+}
+
+.filter-label-active strong {
+  color: #FFA500;
+  font-weight: 600;
 }
 
 /* Summary Dashboard */
@@ -15,7 +89,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .summary-card {
@@ -62,6 +136,7 @@
   background: rgba(255, 140, 0, 0.15);
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .summary-label {
@@ -81,50 +156,10 @@
   background-clip: text;
 }
 
-/* Filter Toggle */
-.filter-toggle {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.filter-btn {
-  padding: 12px 20px;
-  background: rgba(255, 140, 0, 0.1);
-  border: 1px solid rgba(255, 140, 0, 0.3);
-  border-radius: 12px;
-  color: #FFA500;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.filter-btn:hover {
-  background: rgba(255, 140, 0, 0.2);
-  box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
-}
-
-.filter-btn.active {
-  background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
-  color: #0F0F12;
-  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.5);
-}
-
-.month-filter {
-  display: flex;
-  gap: 12px;
-}
-
-.month-filter select,
-.month-filter input {
-  padding: 10px 14px;
-  background: rgba(40, 40, 48, 0.6);
-  border: 1px solid rgba(255, 140, 0, 0.2);
-  border-radius: 10px;
-  color: #FFA500;
-  font-weight: 600;
+.summary-count {
+  font-size: 11px;
+  color: #666666;
+  margin-top: 4px;
 }
 
 /* Entries List */
@@ -144,6 +179,7 @@
 .entry-card:hover {
   border-color: rgba(255, 140, 0, 0.3);
   box-shadow: 0 4px 20px rgba(255, 140, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .entry-header {
@@ -185,11 +221,13 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .btn-delete-entry:hover {
   background: rgba(239, 68, 68, 0.2);
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  transform: scale(1.1);
 }
 
 .entry-details {
@@ -225,6 +263,7 @@
   padding: 4px 8px;
   border-radius: 6px;
   display: inline-block;
+  border: 1px solid rgba(255, 140, 0, 0.3);
 }
 
 .entry-financial {
@@ -257,12 +296,12 @@
   text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
 }
 
-/* Modal Styles */
+/* Modal */
 .selection-section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   padding: 20px;
   background: rgba(255, 140, 0, 0.05);
   border-radius: 12px;
@@ -270,18 +309,21 @@
 }
 
 .services-grid-modal {
+  margin-bottom: 20px;
+}
+
+.services-scroll-container {
   max-height: 400px;
   overflow-y: auto;
-  padding: 16px;
+  padding: 12px;
   background: rgba(20, 20, 24, 0.4);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 20px;
 }
 
 .service-input-row {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr auto;
   gap: 12px;
   padding: 12px;
   margin-bottom: 8px;
@@ -300,49 +342,50 @@
 .service-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .service-code-badge {
   background: rgba(255, 140, 0, 0.2);
   color: #FFA500;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
-  min-width: 40px;
+  min-width: 45px;
   text-align: center;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.service-details-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
 
 .service-name-small {
   color: #E0E0E0;
   font-size: 13px;
-  flex: 1;
-}
-
-.service-price-qty {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-end;
+  font-weight: 500;
 }
 
 .price-label {
   color: #888888;
-  font-size: 13px;
-  min-width: 60px;
-  text-align: right;
+  font-size: 12px;
 }
 
 .qty-input {
   width: 80px;
-  padding: 8px;
+  padding: 10px;
   background: rgba(40, 40, 48, 0.6);
   border: 1px solid rgba(255, 140, 0, 0.3);
   border-radius: 8px;
   color: #FFFFFF;
   text-align: center;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .qty-input:focus {
@@ -357,10 +400,13 @@
   justify-content: flex-end;
 }
 
-/* Mobile responsive */
+/* Mobile */
 @media (max-width: 767px) {
   .page-header {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
   .page-header h1 {
@@ -368,26 +414,60 @@
   }
 
   .page-header .btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    width: 100%;
+  }
+
+  .filters-section {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .filter-group-inline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .filter-group-inline label {
+    font-size: 10px;
+  }
+
+  .filter-select,
+  .filter-select-small,
+  .filter-input-year {
+    width: 100%;
+    min-width: auto;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .filter-label-active {
+    font-size: 12px;
+    padding: 10px;
   }
 
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .summary-card {
-    padding: 14px;
+    padding: 12px;
     flex-direction: column;
     text-align: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .summary-icon {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     font-size: 28px;
     margin: 0 auto;
   }
@@ -397,27 +477,20 @@
   }
 
   .summary-value {
-    font-size: 18px;
+    font-size: 16px;
   }
 
-  .filter-toggle {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+  .summary-count {
+    font-size: 10px;
   }
 
-  .filter-btn {
-    width: 100%;
-    padding: 12px;
+  .card {
+    padding: 14px;
   }
 
-  .month-filter {
-    width: 100%;
-  }
-
-  .month-filter select,
-  .month-filter input {
-    flex: 1;
+  .card h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
   }
 
   .entries-list {
@@ -425,12 +498,11 @@
   }
 
   .entry-card {
-    padding: 14px;
-    border-radius: 14px;
+    padding: 12px;
   }
 
   .entry-details {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 8px;
     padding: 10px;
   }
@@ -440,13 +512,12 @@
   }
 
   .entry-detail-item strong {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .entry-financial {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 8px;
-    padding-top: 10px;
   }
 
   .fin-item span {
@@ -454,31 +525,56 @@
   }
 
   .fin-item strong {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .service-name {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   /* Modal mobile */
   .selection-section {
     grid-template-columns: 1fr;
     gap: 12px;
-    padding: 16px;
+    padding: 14px;
+  }
+
+  .services-scroll-container {
+    max-height: 300px;
+    padding: 8px;
   }
 
   .service-input-row {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 10px;
+    padding: 12px;
   }
 
-  .service-price-qty {
-    justify-content: space-between;
+  .service-info {
+    gap: 10px;
+  }
+
+  .service-details-compact {
+    gap: 2px;
+  }
+
+  .service-name-small {
+    font-size: 12px;
+  }
+
+  .price-label {
+    font-size: 11px;
+  }
+
+  .qty-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
   }
 
   .modal-actions {
     flex-direction: column;
+    gap: 10px;
   }
 
   .modal-actions .btn {
