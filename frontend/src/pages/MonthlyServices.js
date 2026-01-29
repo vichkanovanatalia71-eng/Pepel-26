@@ -324,186 +324,48 @@ const MonthlyServices = () => {
     return text.split('').map(char => map[char] || char).join('');
   };
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     if (!revenueDetails || !dashboardStats) return;
-
-    const doc = new jsPDF('p', 'mm', 'a4');
     
-    // Повний dark background
-    doc.setFillColor(15, 15, 18);
-    doc.rect(0, 0, 210, 297, 'F');
-    
-    let yPos = 20;
-    
-    // Заголовок
-    doc.setTextColor(255, 165, 0);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('STATYSTYKA OBOROTU', 105, yPos, { align: 'center' });
-    
-    yPos += 12;
-    
-    // Загальна інформація
-    doc.setFontSize(9);
-    doc.setTextColor(200, 200, 200);
-    const oborot = `Oborot: ${dashboardStats.total_revenue.toLocaleString('en-US').replace(/,/g, ' ')} UAH`;
-    const posluh = `Posluh: ${dashboardStats.total_quantity}`;
-    const check = `Ser. check: ${revenueDetails.avgCheck.toFixed(0)} UAH`;
-    doc.text(oborot, 20, yPos);
-    doc.text(posluh, 90, yPos);
-    doc.text(check, 140, yPos);
-    
-    yPos += 10;
-    
-    // Топ-5
-    doc.setFontSize(11);
-    doc.setTextColor(255, 165, 0);
-    doc.text('TOP-5 posluh:', 20, yPos);
-    yPos += 6;
-    
-    autoTable(doc, {
-      startY: yPos,
-      head: [['#', 'Kod', 'Nazva', 'K-t', 'Oborot', '%']],
-      body: revenueDetails.top5Services.map((s, i) => {
-        // Транслітерація назви
-        const name = transliterate(s.name).substring(0, 28);
-        const revenue = s.revenue.toLocaleString('en-US').replace(/,/g, ' ');
-        const percent = ((s.revenue / dashboardStats.total_revenue) * 100).toFixed(1);
-        return [i + 1, s.code, name, s.quantity, revenue, `${percent}%`];
-      }),
-      theme: 'plain',
-      styles: { 
-        fillColor: [40, 40, 48], 
-        textColor: [220, 220, 220],
-        fontSize: 7,
-        cellPadding: 2,
-        lineColor: [60, 60, 60],
-        lineWidth: 0.1
-      },
-      headStyles: { 
-        fillColor: [255, 140, 0], 
-        textColor: [15, 15, 18],
-        fontStyle: 'bold',
-        fontSize: 8
-      },
-      alternateRowStyles: { fillColor: [30, 30, 35] },
-      margin: { left: 15, right: 15 }
-    });
-    
-    yPos = doc.lastAutoTable.finalY + 6;
-    
-    // Популярність
-    if (revenueDetails.topByQuantity) {
-      doc.setFontSize(11);
-      doc.setTextColor(167, 139, 250);
-      doc.text('Naypopulyarnishi (za kilkistyu):', 20, yPos);
-      yPos += 6;
-      
-      autoTable(doc, {
-        startY: yPos,
-        head: [['#', 'Kod', 'Nazva', 'Kilkist']],
-        body: revenueDetails.topByQuantity.slice(0, 5).map((s, i) => [
-          i + 1,
-          s.code,
-          transliterate(s.name).substring(0, 38),
-          s.quantity
-        ]),
-        theme: 'plain',
-        styles: { 
-          fillColor: [40, 40, 48], 
-          textColor: [220, 220, 220],
-          fontSize: 7,
-          cellPadding: 2
+    try {
+      // Відправити дані на backend для генерації PDF
+      const response = await axios.post(`${API_URL}/api/export/revenue-pdf`, {
+        stats: {
+          total_revenue: dashboardStats.total_revenue,
+          total_quantity: dashboardStats.total_quantity,
+          avg_check: revenueDetails.avgCheck
         },
-        headStyles: { 
-          fillColor: [147, 51, 234], 
-          textColor: [255, 255, 255],
-          fontStyle: 'bold',
-          fontSize: 8
-        },
-        alternateRowStyles: { fillColor: [30, 30, 35] },
-        margin: { left: 15, right: 15 }
+        services: revenueDetails.servicesBreakdown.map(s => ({
+          code: s.code,
+          name: s.name,
+          quantity: s.quantity,
+          revenue: s.revenue
+        })),
+        doctors: revenueDetails.doctorsBreakdown.map(d => ({
+          short_name: d.short_name,
+          name: d.name,
+          quantity: d.quantity,
+          revenue: d.revenue
+        })),
+        monthly: revenueDetails.monthlyBreakdown.map(m => ({
+          month: m.month,
+          year: m.year,
+          revenue: m.revenue
+        }))
+      }, {
+        responseType: 'blob'
       });
       
-      yPos = doc.lastAutoTable.finalY + 6;
+      // Завантажити файл
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Статистика_Оборот_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.click();
+    } catch (error) {
+      console.error('PDF export error:', error);
+      alert('Помилка експорту PDF');
     }
-    
-    // По лікарях
-    if (revenueDetails.doctorsBreakdown.length > 0) {
-      doc.setFontSize(11);
-      doc.setTextColor(255, 165, 0);
-      doc.text('Po likaryakh:', 20, yPos);
-      yPos += 6;
-      
-      autoTable(doc, {
-        startY: yPos,
-        head: [['Likar', 'Oborot (UAH)', 'Posluh', '%']],
-        body: revenueDetails.doctorsBreakdown.map(d => [
-          d.short_name,
-          d.revenue.toLocaleString('en-US').replace(/,/g, ' '),
-          d.quantity,
-          `${((d.revenue / dashboardStats.total_revenue) * 100).toFixed(1)}%`
-        ]),
-        theme: 'plain',
-        styles: { 
-          fillColor: [40, 40, 48], 
-          textColor: [220, 220, 220],
-          fontSize: 7,
-          cellPadding: 2
-        },
-        headStyles: { 
-          fillColor: [255, 140, 0], 
-          textColor: [15, 15, 18],
-          fontStyle: 'bold',
-          fontSize: 8
-        },
-        alternateRowStyles: { fillColor: [30, 30, 35] },
-        margin: { left: 15, right: 15 }
-      });
-      
-      yPos = doc.lastAutoTable.finalY + 6;
-    }
-    
-    // Динаміка
-    if (revenueDetails.monthlyBreakdown.length > 0 && yPos < 250) {
-      doc.setFontSize(11);
-      doc.setTextColor(255, 165, 0);
-      doc.text('Dynamika po misyatsyakh:', 20, yPos);
-      yPos += 6;
-      
-      autoTable(doc, {
-        startY: yPos,
-        head: [['Misyats', 'Rik', 'Oborot (UAH)']],
-        body: revenueDetails.monthlyBreakdown.map(m => [
-          transliterate(monthNames[m.month - 1]),
-          m.year,
-          m.revenue.toLocaleString('en-US').replace(/,/g, ' ')
-        ]),
-        theme: 'plain',
-        styles: { 
-          fillColor: [40, 40, 48], 
-          textColor: [220, 220, 220],
-          fontSize: 7,
-          cellPadding: 2
-        },
-        headStyles: { 
-          fillColor: [255, 140, 0], 
-          textColor: [15, 15, 18],
-          fontStyle: 'bold',
-          fontSize: 8
-        },
-        alternateRowStyles: { fillColor: [30, 30, 35] },
-        margin: { left: 15, right: 15 }
-      });
-    }
-    
-    // Footer
-    doc.setFontSize(7);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Stvoreno: ${new Date().toLocaleString('en-US')}`, 105, 285, { align: 'center' });
-    doc.text('ME of Ukraine MedTrack', 105, 290, { align: 'center' });
-    
-    doc.save(`Statystyka_Oborot_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const availableYears = [...new Set(allEntries.map(e => e.year))].sort((a, b) => b - a);
