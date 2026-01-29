@@ -256,15 +256,24 @@ const MonthlyServices = () => {
       {/* Dashboard */}
       {dashboardStats && (
         <div className="summary-cards">
-          <div className="summary-card">
+          <div 
+            className="summary-card clickable" 
+            onClick={openRevenueModal}
+            data-testid="revenue-card"
+          >
             <div className="summary-icon">💰</div>
             <div>
               <div className="summary-label">Оборот</div>
               <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
               <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
             </div>
+            <div className="card-click-hint">👁️</div>
           </div>
-          <div className="summary-card">
+          <div 
+            className="summary-card clickable"
+            onClick={openDoctorIncomeModal}
+            data-testid="doctor-card"
+          >
             <div className="summary-icon">👨‍⚕️</div>
             <div>
               <div className="summary-label">
@@ -275,13 +284,19 @@ const MonthlyServices = () => {
               </div>
               <div className="summary-value">{dashboardStats.total_doctor_income.toLocaleString('uk-UA')} ₴</div>
             </div>
+            <div className="card-click-hint">👁️</div>
           </div>
-          <div className="summary-card">
+          <div 
+            className="summary-card clickable"
+            onClick={openExpensesModal}
+            data-testid="expenses-card"
+          >
             <div className="summary-icon">📉</div>
             <div>
               <div className="summary-label">Витрати</div>
               <div className="summary-value">{dashboardStats.total_expenses.toLocaleString('uk-UA')} ₴</div>
             </div>
+            <div className="card-click-hint">👁️</div>
           </div>
           <div className="summary-card highlight">
             <div className="summary-icon">💵</div>
