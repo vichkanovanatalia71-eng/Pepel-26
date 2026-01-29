@@ -74,7 +74,7 @@ const MonthlyServices = () => {
     }
   };
 
-  const filterData = () => {
+  const filterData = useCallback(() => {
     let filtered = [...allEntries];
     
     // Фільтр за лікарем
@@ -105,7 +105,7 @@ const MonthlyServices = () => {
     };
     
     setDashboardStats(stats);
-  };
+  }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
 
   const handleBulkAdd = async () => {
     try {
