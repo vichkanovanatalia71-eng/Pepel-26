@@ -34,10 +34,6 @@ const Services = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
-
   const fetchServices = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/services`);
@@ -46,6 +42,10 @@ const Services = () => {
       console.error('Error fetching services:', error);
     }
   };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
