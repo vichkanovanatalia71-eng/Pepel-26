@@ -23,6 +23,9 @@ const MonthlyServices = () => {
   const [selectedMonth, setSelectedMonth] = useState('all');
   
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showRevenueModal, setShowRevenueModal] = useState(false);
+  const [showDoctorIncomeModal, setShowDoctorIncomeModal] = useState(false);
+  const [showExpensesModal, setShowExpensesModal] = useState(false);
   const [modalDoctor, setModalDoctor] = useState('');
   const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
   const [modalYear, setModalYear] = useState(new Date().getFullYear());
