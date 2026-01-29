@@ -37,43 +37,6 @@ const MonthlyServices = () => {
     fetchAllEntries();
   }, []);
 
-  useEffect(() => {
-    if (allEntries.length > 0) {
-      filterData();
-    }
-  }, [allEntries, filterData]);
-
-  const fetchServices = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/services`);
-      setServices(response.data.sort((a, b) => (a.code || '').localeCompare(b.code || '')));
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const fetchDoctors = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/doctors`);
-      setDoctors(response.data);
-      if (response.data.length > 0) {
-        setModalDoctor(response.data[0].id);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const fetchAllEntries = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/monthly-services`);
-      const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      setAllEntries(sorted);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   const filterData = useCallback(() => {
     let filtered = [...allEntries];
     
@@ -106,6 +69,12 @@ const MonthlyServices = () => {
     
     setDashboardStats(stats);
   }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
+
+  useEffect(() => {
+    if (allEntries.length > 0) {
+      filterData();
+    }
+  }, [allEntries, filterData]);
 
   const handleBulkAdd = async () => {
     try {
