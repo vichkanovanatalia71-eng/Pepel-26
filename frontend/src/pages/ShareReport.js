@@ -287,32 +287,20 @@ const ShareReport = () => {
             <ResponsiveContainer width="100%" height={238}>
               <PieChart>
                 <Pie
-                  data={(() => {
-                    const chartData = showOverviewChart ? [
-                      { name: 'Дохід лікаря', value: doctorData.total.doctorIncome },
-                      { name: 'Витрати', value: doctorData.total.expenses },
-                      { name: 'ЄП', value: doctorData.total.ep },
-                      { name: 'ВЗ', value: doctorData.total.vz }
-                    ] : [
-                      { name: 'Витрати', value: doctorData.total.expenses },
-                      { name: 'ЄП (5%)', value: doctorData.total.ep },
-                      { name: 'ВЗ (1%)', value: doctorData.total.vz }
-                    ];
-                    console.log('Chart 1 data:', chartData);
-                    return chartData;
-                  })()}
+                  data={showOverviewChart ? zagalna : vitrati}
                   cx="50%"
                   cy="50%"
                   innerRadius={showOverviewChart ? 0 : 40}
                   outerRadius={window.innerWidth <= 767 ? 60 : 70}
                   paddingAngle={2}
                   dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
                 >
-                  {(showOverviewChart ? [
-                    '#A78BFA', '#EF4444', '#FF8C00', '#FFA500'
-                  ] : [
-                    '#EF4444', '#FF8C00', '#FFA500'
-                  ]).map((color, index) => (
+                  {(showOverviewChart ? 
+                    ['#A78BFA', '#EF4444', '#FF8C00', '#FFA500'] : 
+                    ['#EF4444', '#FF8C00', '#FFA500']
+                  ).map((color, index) => (
                     <Cell key={`cell-${index}`} fill={color} />
                   ))}
                 </Pie>
