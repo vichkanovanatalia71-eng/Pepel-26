@@ -211,6 +211,11 @@
   color: #10B981;
 }
 
+.share-table .highlight-cell {
+  color: #FFA500;
+  font-weight: 600;
+}
+
 .share-table .income-cell {
   color: #A78BFA;
   font-weight: 700;
