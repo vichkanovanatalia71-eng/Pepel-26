@@ -243,7 +243,7 @@ const ShareReport = () => {
                 {showOverviewChart ? '💸 Витрати' : '📊 Загальне'}
               </button>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie
                   data={showOverviewChart ? [
