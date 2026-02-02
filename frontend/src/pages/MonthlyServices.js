@@ -1162,6 +1162,43 @@ const MonthlyServices = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="revenue-details">
+            {/* Кнопка поділитись */}
+            <div className="export-buttons">
+              <button 
+                className="btn btn-primary btn-sm"
+                onClick={async () => {
+                  try {
+                    // Зберегти звіт та отримати share token
+                    const reportData = {
+                      title: selectedDoctor !== 'all' && doctors.find(d => d.id === selectedDoctor)
+                        ? `Дохід ${doctors.find(d => d.id === selectedDoctor)?.name}`
+                        : 'Дохід лікарів',
+                      filter: {
+                        doctor: selectedDoctor,
+                        year: selectedYear,
+                        month: selectedMonth
+                      },
+                      entries: filteredEntries,
+                      services: services,
+                      doctors: doctors
+                    };
+                    
+                    const response = await axios.post(`${API_URL}/api/reports/share`, { data: reportData });
+                    const shareUrl = `${window.location.origin}/share/${response.data.share_token}`;
+                    
+                    // Копіювати в clipboard
+                    navigator.clipboard.writeText(shareUrl);
+                    alert(`Посилання скопійовано!\n\n${shareUrl}\n\nДоступне до: ${new Date(response.data.expires_at).toLocaleDateString('uk-UA')}`);
+                  } catch (error) {
+                    console.error('Share error:', error);
+                    alert('Помилка створення посилання');
+                  }
+                }}
+              >
+                📤 Поділитись
+              </button>
+            </div>
+
             {dashboardStats && (() => {
               // Агрегувати дані по місяцях щоб уникнути дублікатів
               const monthlyAggregate = {};
