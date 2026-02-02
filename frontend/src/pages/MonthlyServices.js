@@ -709,12 +709,14 @@ const MonthlyServices = () => {
             <div>
               <div className="summary-label">Готівка в касі</div>
               <div className="summary-value">
-                {currentCashBalance ? currentCashBalance.amount.toLocaleString('uk-UA') : '0'} ₴
+                {displayedCashBalance ? displayedCashBalance.amount.toLocaleString('uk-UA') : '0'} ₴
               </div>
               <div className="summary-count">
-                {currentCashBalance 
-                  ? `${monthNames[currentCashBalance.month - 1]} ${currentCashBalance.year}` 
-                  : 'Не вказано'
+                {displayedCashBalance?.isAggregate 
+                  ? 'Сумарно за період' 
+                  : displayedCashBalance 
+                    ? `${monthNames[displayedCashBalance.month - 1]} ${displayedCashBalance.year}` 
+                    : 'Не вказано'
                 }
               </div>
             </div>
