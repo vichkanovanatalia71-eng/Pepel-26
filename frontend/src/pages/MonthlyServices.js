@@ -639,6 +639,26 @@ const MonthlyServices = () => {
               <div className="summary-value">{dashboardStats.total_fop_income.toLocaleString('uk-UA')} ₴</div>
             </div>
           </div>
+          <div 
+            className="summary-card clickable cash-balance-card"
+            onClick={openCashBalanceModal}
+            data-testid="cash-balance-card"
+          >
+            <div className="summary-icon">💵</div>
+            <div>
+              <div className="summary-label">Готівка в касі</div>
+              <div className="summary-value">
+                {currentCashBalance ? currentCashBalance.amount.toLocaleString('uk-UA') : '0'} ₴
+              </div>
+              <div className="summary-count">
+                {currentCashBalance 
+                  ? `${monthNames[currentCashBalance.month - 1]} ${currentCashBalance.year}` 
+                  : 'Не вказано'
+                }
+              </div>
+            </div>
+            <div className="card-click-hint">✏️</div>
+          </div>
         </div>
       )}
 
