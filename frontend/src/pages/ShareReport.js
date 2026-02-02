@@ -26,6 +26,13 @@ const ShareReport = () => {
     loadReport();
   }, [token]);
 
+  // Встановити початковий activeTab
+  useEffect(() => {
+    if (reportData && doctorsData.length > 0 && !activeTab) {
+      setActiveTab(doctorsData[0].doctor_id);
+    }
+  }, [reportData]);
+
   const loadReport = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/reports/share/${token}`);
