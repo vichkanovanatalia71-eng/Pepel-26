@@ -1439,25 +1439,56 @@
 
   .selection-section {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 14px;
+    gap: 10px;
+    padding: 12px;
   }
 
   .service-input-row {
     grid-template-columns: 1fr;
     gap: 10px;
+    padding: 12px;
+  }
+
+  .service-info {
+    gap: 8px;
+  }
+
+  .service-code-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+    min-width: 38px;
+  }
+
+  .service-name-small {
+    font-size: 11px;
+  }
+
+  .price-label {
+    font-size: 10px;
   }
 
   .qty-input {
     width: 100%;
+    padding: 12px;
+    font-size: 14px;
   }
 
   .modal-actions {
     flex-direction: column;
+    gap: 8px;
   }
 
   .modal-actions .btn {
     width: 100%;
+  }
+
+  .services-scroll-container {
+    max-height: 300px;
+    padding: 8px;
+  }
+
+  .services-grid-modal h4 {
+    font-size: 12px;
   }
 
   /* Modal optimizations for mobile */
