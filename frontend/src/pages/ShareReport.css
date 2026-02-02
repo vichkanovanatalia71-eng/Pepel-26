@@ -351,12 +351,13 @@
   }
 
   .chart-card {
-    padding: 6px;
-    min-height: 240px;
+    padding: 8px;
+    min-height: auto;
+    overflow: visible;
   }
 
   .chart-header {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .chart-header h4 {
@@ -368,33 +369,26 @@
     font-size: 7px;
   }
 
+  /* Remove height constraints - let Recharts render naturally */
+  .chart-card .recharts-wrapper {
+    height: auto !important;
+  }
+
+  .chart-card svg {
+    max-height: 220px;
+  }
+
+  /* Show legend on mobile with smaller font */
   .recharts-legend-wrapper {
-    font-size: 9px !important;
+    font-size: 8px !important;
+  }
+
+  .recharts-legend-item {
+    font-size: 8px !important;
   }
 
   .recharts-legend-item-text {
-    font-size: 9px !important;
-  }
-
-  .chart-card svg,
-  .chart-card .recharts-wrapper {
-    height: 220px !important;
-    width: 100% !important;
-  }
-
-  /* Make pie charts bigger on mobile */
-  .chart-card .recharts-surface {
-    overflow: hidden !important;
-  }
-
-  .chart-card .recharts-wrapper {
-    position: relative !important;
-  }
-
-  /* Ensure only one chart per card */
-  .chart-card {
-    position: relative;
-    overflow: hidden;
+    font-size: 8px !important;
   }
 
   .share-table-section {
