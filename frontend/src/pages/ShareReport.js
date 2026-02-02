@@ -98,6 +98,7 @@ const ShareReport = () => {
       
       const ep = entry.total_revenue * 0.05;
       const vz = entry.total_revenue * 0.01;
+      const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
       
       byDoctor[entry.doctor_id].months[monthKey].quantity += entry.quantity;
       byDoctor[entry.doctor_id].months[monthKey].revenue += entry.total_revenue;
