@@ -344,92 +344,100 @@
 .selection-section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background: rgba(255, 140, 0, 0.05);
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, rgba(40, 40, 48, 0.6) 100%);
   border-radius: 12px;
-  border: 1px solid rgba(255, 140, 0, 0.2);
+  border: 1px solid rgba(255, 140, 0, 0.25);
 }
 
 .services-grid-modal {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+
+.services-grid-modal h4 {
+  font-size: 13px;
+  color: #FFA500;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .services-scroll-container {
   max-height: 400px;
   overflow-y: auto;
-  padding: 12px;
-  background: rgba(20, 20, 24, 0.4);
-  border-radius: 12px;
+  padding: 10px;
+  background: rgba(20, 20, 24, 0.5);
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .service-input-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 12px;
-  padding: 12px;
-  margin-bottom: 8px;
-  background: rgba(40, 40, 48, 0.4);
-  border-radius: 10px;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 6px;
+  background: rgba(40, 40, 48, 0.5);
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   align-items: center;
   transition: all 0.2s ease;
 }
 
 .service-input-row:hover {
-  border-color: rgba(255, 140, 0, 0.3);
-  background: rgba(40, 40, 48, 0.6);
+  border-color: rgba(255, 140, 0, 0.4);
+  background: rgba(40, 40, 48, 0.7);
 }
 
 .service-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .service-code-badge {
-  background: rgba(255, 140, 0, 0.2);
+  background: rgba(255, 140, 0, 0.25);
   color: #FFA500;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 10px;
   font-weight: 700;
-  min-width: 45px;
+  min-width: 42px;
   text-align: center;
-  border: 1px solid rgba(255, 140, 0, 0.3);
+  border: 1px solid rgba(255, 140, 0, 0.4);
   flex-shrink: 0;
 }
 
 .service-details-compact {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
 }
 
 .service-name-small {
   color: #E0E0E0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .price-label {
   color: #888888;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .qty-input {
-  width: 80px;
-  padding: 10px;
-  background: rgba(40, 40, 48, 0.6);
-  border: 1px solid rgba(255, 140, 0, 0.3);
+  width: 75px;
+  padding: 8px;
+  background: rgba(40, 40, 48, 0.7);
+  border: 1px solid rgba(255, 140, 0, 0.35);
   border-radius: 8px;
   color: #FFFFFF;
   text-align: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .qty-input:focus {
@@ -440,7 +448,7 @@
 
 .modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
 }
 
