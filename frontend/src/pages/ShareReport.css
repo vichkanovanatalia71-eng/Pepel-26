@@ -384,7 +384,17 @@
 
   /* Make pie charts bigger on mobile */
   .chart-card .recharts-surface {
-    overflow: visible !important;
+    overflow: hidden !important;
+  }
+
+  .chart-card .recharts-wrapper {
+    position: relative !important;
+  }
+
+  /* Ensure only one chart per card */
+  .chart-card {
+    position: relative;
+    overflow: hidden;
   }
 
   .share-table-section {
