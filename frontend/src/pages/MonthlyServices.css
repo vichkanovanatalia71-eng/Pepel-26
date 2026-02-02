@@ -1451,7 +1451,122 @@
   .modal-actions .btn {
     width: 100%;
   }
+
+  /* Modal optimizations for mobile */
+  .revenue-modal {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .revenue-details {
+    font-size: 13px;
+  }
+
+  .details-summary-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .detail-card-mini {
+    padding: 10px;
+  }
+
+  .mini-label {
+    font-size: 9px;
+  }
+
+  .mini-value {
+    font-size: 16px;
+  }
+
+  .comparison-alert {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .comparison-icon {
+    font-size: 24px;
+  }
+
+  .comparison-text strong {
+    font-size: 13px;
+  }
+
+  .comparison-text p {
+    font-size: 11px;
+  }
+
+  .details-section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .details-section h4 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .export-buttons {
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+
+  .btn-sm {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* Compact tables for mobile */
+  .materials-table,
+  .doctor-income-table,
+  .services-breakdown-table table {
+    font-size: 10px;
+  }
+
+  .materials-table th,
+  .doctor-income-table th,
+  .services-breakdown-table th {
+    padding: 8px 4px;
+    font-size: 9px;
+  }
+
+  .materials-table td,
+  .doctor-income-table td,
+  .services-breakdown-table td {
+    padding: 8px 4px;
+  }
+
+  .top-services-list {
+    gap: 8px;
+  }
+
+  .top-service-item {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .top-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .top-service-name {
+    font-size: 12px;
+  }
+
+  .top-service-stats {
+    font-size: 11px;
+  }
+
+  .top-service-percent {
+    font-size: 14px;
+  }
 }
+
 
 /* Print styles for PDF export */
 @media print {
