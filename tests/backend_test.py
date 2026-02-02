@@ -379,9 +379,48 @@ def main():
 
     # Test 3: Services
     print("\n📍 PHASE 3: Paid Services")
-    tester.test_create_service("Консультація лікаря", 500, 300, 50)
-    tester.test_create_service("УЗД обстеження", 800, 500, 100)
-    tester.test_create_service("ЕКГ", 300, 180, 30)
+    service1_id = tester.test_create_service(
+        "001",
+        "Консультація лікаря",
+        500,
+        [
+            {
+                "material_name": "Бланки",
+                "quantity": 1,
+                "unit": "шт",
+                "price_per_unit": 10,
+                "total_cost": 10
+            }
+        ]
+    )
+    service2_id = tester.test_create_service(
+        "002",
+        "УЗД обстеження",
+        800,
+        [
+            {
+                "material_name": "Гель для УЗД",
+                "quantity": 1,
+                "unit": "мл",
+                "price_per_unit": 50,
+                "total_cost": 50
+            }
+        ]
+    )
+    service3_id = tester.test_create_service(
+        "003",
+        "ЕКГ",
+        300,
+        [
+            {
+                "material_name": "Електроди",
+                "quantity": 4,
+                "unit": "шт",
+                "price_per_unit": 5,
+                "total_cost": 20
+            }
+        ]
+    )
     tester.test_get_services()
 
     # Test 4: Incomes
