@@ -50,7 +50,8 @@ const MonthlyServices = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [allEntries, selectedDoctor, selectedYear, selectedMonth]);
+    calculateDisplayedCashBalance();
+  }, [allEntries, selectedDoctor, selectedYear, selectedMonth, allCashBalances]);
 
   const loadData = async () => {
     try {
