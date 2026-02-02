@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-01-29T15:58:29.591940",
-  "total_tests": 17,
-  "passed": 17,
-  "failed": 0,
-  "success_rate": 100.0,
+  "timestamp": "2026-02-02T21:54:15.435565",
+  "total_tests": 21,
+  "passed": 19,
+  "failed": 2,
+  "success_rate": 90.5,
   "test_details": [
     {
       "test": "Root API",
@@ -13,15 +13,19 @@
     },
     {
       "test": "Create Doctor (ПЛМ)",
-      "status": "PASSED",
+      "status": "FAILED",
       "endpoint": "api/doctors",
-      "status_code": 200
+      "expected": 200,
+      "actual": 400,
+      "error": "{\"detail\":\"Doctor with short_name 'ПЛМ' already exists\"}"
     },
     {
       "test": "Create Doctor (ОСЛ)",
-      "status": "PASSED",
+      "status": "FAILED",
       "endpoint": "api/doctors",
-      "status_code": 200
+      "expected": 200,
+      "actual": 400,
+      "error": "{\"detail\":\"Doctor with short_name 'ОСЛ' already exists\"}"
     },
     {
       "test": "Get Doctors",
@@ -51,18 +55,6 @@
       "test": "Get Services",
       "status": "PASSED",
       "endpoint": "api/services",
-      "status_code": 200
-    },
-    {
-      "test": "Create Income (Month 1/2026)",
-      "status": "PASSED",
-      "endpoint": "api/incomes",
-      "status_code": 200
-    },
-    {
-      "test": "Create Income (Month 1/2026)",
-      "status": "PASSED",
-      "endpoint": "api/incomes",
       "status_code": 200
     },
     {
@@ -96,15 +88,51 @@
       "status_code": 200
     },
     {
-      "test": "Dashboard Stats (1/2026)",
+      "test": "Dashboard Stats (2/2026)",
       "status": "PASSED",
-      "endpoint": "api/dashboard/stats?month=1&year=2026",
+      "endpoint": "api/dashboard/stats?month=2&year=2026",
       "status_code": 200
     },
     {
       "test": "Get Documents",
       "status": "PASSED",
       "endpoint": "api/documents",
+      "status_code": 200
+    },
+    {
+      "test": "Get Monthly Services",
+      "status": "PASSED",
+      "endpoint": "api/monthly-services",
+      "status_code": 200
+    },
+    {
+      "test": "Create Cash Balance (2/2026)",
+      "status": "PASSED",
+      "endpoint": "api/cash-balance",
+      "status_code": 200
+    },
+    {
+      "test": "Get Cash Balance (2/2026)",
+      "status": "PASSED",
+      "endpoint": "api/cash-balance/2/2026",
+      "status_code": 200
+    },
+    {
+      "test": "Get All Cash Balances",
+      "status": "PASSED",
+      "endpoint": "api/cash-balance",
+      "status_code": 200
+    },
+    {
+      "test": "Create Shared Report",
+      "status": "PASSED",
+      "endpoint": "api/reports/share",
+      "status_code": 200
+    },
+    {
+      "test": "Get Shared Report",
+      "status": "PASSED",
+      "endpoint": "api/reports/share/51e59fb1-81d",
       "status_code": 200
     }
   ]
