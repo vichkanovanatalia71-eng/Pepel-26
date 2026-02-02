@@ -255,7 +255,7 @@ const ShareReport = () => {
                   cx="50%"
                   cy="50%"
                   innerRadius={showOverviewChart ? 0 : 60}
-                  outerRadius={window.innerWidth <= 767 ? 100 : 90}
+                  outerRadius={window.innerWidth <= 767 ? 85 : 76}
                   paddingAngle={2}
                   dataKey="value"
                 >
@@ -271,7 +271,11 @@ const ShareReport = () => {
                   ))}
                 </Pie>
                 <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
-                <Legend />
+                <Legend 
+                  wrapperStyle={{ fontSize: '10px' }}
+                  iconType="circle"
+                  iconSize={8}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
