@@ -905,6 +905,16 @@ async def export_revenue_pdf(data: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Cash Balance
+@api_router.get("/cash-balance", response_model=List[CashBalance])
+async def get_all_cash_balances():
+    balances = await db.cash_balance.find({}, {"_id": 0}).to_list(1000)
+    for balance in balances:
+        if isinstance(balance.get('created_at'), str):
+            balance['created_at'] = datetime.fromisoformat(balance['created_at'])
+        if isinstance(balance.get('updated_at'), str):
+            balance['updated_at'] = datetime.fromisoformat(balance['updated_at'])
+    return balances
+
 @api_router.post("/cash-balance", response_model=CashBalance)
 async def create_or_update_cash_balance(data: CashBalanceCreate):
     # Перевірити чи вже є запис
