@@ -79,22 +79,17 @@ const MonthlyServices = () => {
 
   const loadAllCashBalances = async () => {
     try {
-      // Отримати унікальні періоди з entries
-      const periods = [...new Set(allEntries.map(e => `${e.year}-${e.month}`))];
-      const balances = [];
-      
-      for (const period of periods) {
-        const [year, month] = period.split('-').map(Number);
-        const res = await axios.get(`${API_URL}/api/cash-balance/${month}/${year}`);
-        if (res.data.exists) {
-          balances.push(res.data.data);
-        }
+      // Отримати всі cash balances з бази (створимо endpoint)
+      const res = await axios.get(`${API_URL}/api/cash-balance`);
+      if (res.data && Array.isArray(res.data)) {
+        setAllCashBalances(res.data);
+        calculateDisplayedCashBalance(res.data);
       }
-      
-      setAllCashBalances(balances);
-      calculateDisplayedCashBalance(balances);
     } catch (error) {
       console.error('Error loading cash balances:', error);
+      // Fallback - якщо endpoint не існує
+      setAllCashBalances([]);
+      setDisplayedCashBalance(null);
     }
   };
 
