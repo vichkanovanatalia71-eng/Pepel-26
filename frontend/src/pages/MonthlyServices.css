@@ -812,7 +812,6 @@
   transform: scale(1.2);
 }
 
-/* Export buttons */
 .export-buttons {
   display: flex;
   gap: 12px;
@@ -823,6 +822,56 @@
 .btn-sm {
   padding: 8px 16px;
   font-size: 13px;
+}
+
+/* Comparison Alert */
+.comparison-alert {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.positive-alert {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.negative-alert {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.comparison-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.comparison-text {
+  flex: 1;
+}
+
+.comparison-text strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.positive-alert .comparison-text strong {
+  color: #10B981;
+}
+
+.negative-alert .comparison-text strong {
+  color: #EF4444;
+}
+
+.comparison-text p {
+  font-size: 13px;
+  color: #CCCCCC;
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* AI Sections */
