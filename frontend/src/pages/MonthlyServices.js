@@ -918,7 +918,7 @@ const MonthlyServices = () => {
                       <tr>
                         <th>Місяць</th>
                         <th>К-ть</th>
-                        <th>Оборот</th>
+                        <th>Сума</th>
                         <th>Витрати</th>
                         <th>ЄП (5%)</th>
                         <th>ВЗ (1%)</th>
