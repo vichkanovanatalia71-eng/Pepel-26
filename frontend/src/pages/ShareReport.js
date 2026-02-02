@@ -6,7 +6,6 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import './ShareReport.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
-
 const COLORS = ['#FF8C00', '#FFA500', '#10B981', '#A78BFA', '#EF4444', '#3B82F6'];
 
 const ShareReport = () => {
@@ -37,7 +36,7 @@ const ShareReport = () => {
       } else if (error.response?.status === 404) {
         setError('Звіт не знайдено');
       } else {
-        setError('Помилка завантаження звіту');
+        setError('Помилка завантаження');
       }
       setLoading(false);
     }
@@ -48,7 +47,7 @@ const ShareReport = () => {
       <div className="share-report-page">
         <div className="loading-container">
           <div className="spinner"></div>
-          <p>Завантаження звіту...</p>
+          <p>Завантаження...</p>
         </div>
       </div>
     );
@@ -60,7 +59,6 @@ const ShareReport = () => {
         <div className="error-container">
           <div className="error-icon">❌</div>
           <h2>{error}</h2>
-          <p>Посилання недійсне або термін дії закінчився</p>
         </div>
       </div>
     );
@@ -68,15 +66,24 @@ const ShareReport = () => {
 
   const data = reportData?.data;
 
-  // Агрегація по місяцях
-  const aggregateByMonth = (entries) => {
-    const monthlyAggregate = {};
+  // Групування по лікарях
+  const groupByDoctor = () => {
+    const byDoctor = {};
     
-    entries.forEach(entry => {
-      const monthKey = `${entry.year}-${entry.month}`;
+    data.entries.forEach(entry => {
+      const doctor = data.doctors.find(d => d.id === entry.doctor_id);
+      if (!byDoctor[entry.doctor_id]) {
+        byDoctor[entry.doctor_id] = {
+          doctor_id: entry.doctor_id,
+          name: doctor?.name || 'N/A',
+          short_name: doctor?.short_name || 'N/A',
+          months: {}
+        };
+      }
       
-      if (!monthlyAggregate[monthKey]) {
-        monthlyAggregate[monthKey] = {
+      const monthKey = `${entry.year}-${entry.month}`;
+      if (!byDoctor[entry.doctor_id].months[monthKey]) {
+        byDoctor[entry.doctor_id].months[monthKey] = {
           month: entry.month,
           year: entry.year,
           quantity: 0,
@@ -84,144 +91,223 @@ const ShareReport = () => {
           expenses: 0,
           ep: 0,
           vz: 0,
-          toDistribute: 0,
           doctorIncome: 0
         };
       }
       
       const ep = entry.total_revenue * 0.05;
       const vz = entry.total_revenue * 0.01;
-      const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
       
-      monthlyAggregate[monthKey].quantity += entry.quantity;
-      monthlyAggregate[monthKey].revenue += entry.total_revenue;
-      monthlyAggregate[monthKey].expenses += entry.total_expenses;
-      monthlyAggregate[monthKey].ep += ep;
-      monthlyAggregate[monthKey].vz += vz;
-      monthlyAggregate[monthKey].toDistribute += toDistribute;
-      monthlyAggregate[monthKey].doctorIncome += entry.doctor_income;
+      byDoctor[entry.doctor_id].months[monthKey].quantity += entry.quantity;
+      byDoctor[entry.doctor_id].months[monthKey].revenue += entry.total_revenue;
+      byDoctor[entry.doctor_id].months[monthKey].expenses += entry.total_expenses;
+      byDoctor[entry.doctor_id].months[monthKey].ep += ep;
+      byDoctor[entry.doctor_id].months[monthKey].vz += vz;
+      byDoctor[entry.doctor_id].months[monthKey].doctorIncome += entry.doctor_income;
     });
     
-    return Object.values(monthlyAggregate).sort((a, b) => {
-      if (a.year !== b.year) return a.year - b.year;
-      return a.month - b.month;
-    });
+    return Object.values(byDoctor).map(doc => ({
+      ...doc,
+      monthsArray: Object.values(doc.months).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      }),
+      total: Object.values(doc.months).reduce((acc, m) => ({
+        quantity: acc.quantity + m.quantity,
+        revenue: acc.revenue + m.revenue,
+        expenses: acc.expenses + m.expenses,
+        ep: acc.ep + m.ep,
+        vz: acc.vz + m.vz,
+        doctorIncome: acc.doctorIncome + m.doctorIncome
+      }), { quantity: 0, revenue: 0, expenses: 0, ep: 0, vz: 0, doctorIncome: 0 })
+    }));
   };
 
-  const monthlyData = aggregateByMonth(data.entries);
+  const doctorsData = groupByDoctor();
+
+  // Данні для charts
+  const getExpensesChartData = (doctorData) => [
+    { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
+    { name: 'ЄП (5%)', value: doctorData.total.ep, color: '#FF8C00' },
+    { name: 'ВЗ (1%)', value: doctorData.total.vz, color: '#FFA500' }
+  ];
+
+  const getMonthlyChartData = (doctorData) =>
+    doctorData.monthsArray.map((m, i) => ({
+      name: monthNames[m.month - 1],
+      value: m.doctorIncome,
+      color: COLORS[i % COLORS.length]
+    }));
 
   return (
     <div className="share-report-page">
       {/* Header */}
       <div className="share-header">
         <div className="share-logo">
-          <img src="/logo.svg" alt="ME of Ukraine" />
+          <img src="/logo.svg" alt="ME" />
           <span>ME of Ukraine</span>
         </div>
         <div className="share-expiry">
-          <span className="expiry-label">Доступно ще:</span>
-          <span className="expiry-days">{daysLeft} днів</span>
+          <span className="expiry-label">Доступно:</span>
+          <span className="expiry-days">{daysLeft}д</span>
         </div>
       </div>
 
       {/* Title */}
       <div className="share-title">
         <h1>{data.title}</h1>
-        <p className="share-subtitle">
-          Згенеровано: {new Date(reportData.created_at).toLocaleDateString('uk-UA')}
-        </p>
+        <p>{new Date(reportData.created_at).toLocaleDateString('uk-UA')}</p>
       </div>
 
-      {/* Stats Cards - Read only */}
-      <div className="share-stats">
-        {monthlyData.reduce((sum, m) => sum + m.revenue, 0) > 0 && (
-          <>
-            <div className="share-stat-card">
-              <div className="stat-icon">💰</div>
-              <div>
-                <div className="stat-label">Сума послуг</div>
-                <div className="stat-value">
-                  {monthlyData.reduce((sum, m) => sum + m.revenue, 0).toLocaleString('uk-UA')} ₴
-                </div>
-              </div>
-            </div>
-            <div className="share-stat-card">
-              <div className="stat-icon">📉</div>
-              <div>
-                <div className="stat-label">Витрати</div>
-                <div className="stat-value">
-                  {monthlyData.reduce((sum, m) => sum + m.expenses, 0).toLocaleString('uk-UA')} ₴
-                </div>
-              </div>
-            </div>
-            <div className="share-stat-card highlight">
-              <div className="stat-icon">👨‍⚕️</div>
-              <div>
-                <div className="stat-label">Дохід лікаря</div>
-                <div className="stat-value">
-                  {monthlyData.reduce((sum, m) => sum + m.doctorIncome, 0).toLocaleString('uk-UA')} ₴
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Table */}
-      <div className="share-table-section">
-        <h3>Детальна інформація</h3>
-        <div className="table-wrapper">
-          <table className="share-table">
-            <thead>
-              <tr>
-                <th>Місяць</th>
-                <th>К-ть</th>
-                <th>Сума</th>
-                <th>Витрати</th>
-                <th>ЄП (5%)</th>
-                <th>ВЗ (1%)</th>
-                <th>До розподілу</th>
-                <th>Дохід</th>
-              </tr>
-            </thead>
-            <tbody>
-              {monthlyData.map(m => (
-                <tr key={`${m.year}-${m.month}`}>
-                  <td><strong>{monthNames[m.month - 1]} {m.year}</strong></td>
-                  <td>{m.quantity}</td>
-                  <td className="revenue-cell">{m.revenue.toLocaleString('uk-UA')} ₴</td>
-                  <td>{m.expenses.toLocaleString('uk-UA')} ₴</td>
-                  <td>{m.ep.toLocaleString('uk-UA')} ₴</td>
-                  <td>{m.vz.toLocaleString('uk-UA')} ₴</td>
-                  <td className="highlight-cell">{m.toDistribute.toLocaleString('uk-UA')} ₴</td>
-                  <td className="income-cell"><strong>{m.doctorIncome.toLocaleString('uk-UA')} ₴</strong></td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>ВСЬОГО:</strong></td>
-                <td><strong>{monthlyData.reduce((s, m) => s + m.quantity, 0)}</strong></td>
-                <td className="revenue-cell"><strong>{monthlyData.reduce((s, m) => s + m.revenue, 0).toLocaleString('uk-UA')} ₴</strong></td>
-                <td><strong>{monthlyData.reduce((s, m) => s + m.expenses, 0).toLocaleString('uk-UA')} ₴</strong></td>
-                <td><strong>{monthlyData.reduce((s, m) => s + m.ep, 0).toLocaleString('uk-UA')} ₴</strong></td>
-                <td><strong>{monthlyData.reduce((s, m) => s + m.vz, 0).toLocaleString('uk-UA')} ₴</strong></td>
-                <td className="highlight-cell"><strong>{monthlyData.reduce((s, m) => s + m.toDistribute, 0).toLocaleString('uk-UA')} ₴</strong></td>
-                <td className="income-cell"><strong>{monthlyData.reduce((s, m) => s + m.doctorIncome, 0).toLocaleString('uk-UA')} ₴</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      {/* Tabs по лікарях */}
+      {doctorsData.length > 1 ? (
+        <Tabs defaultValue={doctorsData[0].doctor_id} className="doctor-tabs">
+          <TabsList className="tabs-list-share">
+            {doctorsData.map(doc => (
+              <TabsTrigger key={doc.doctor_id} value={doc.doctor_id}>
+                {doc.short_name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
+          {doctorsData.map(doc => (
+            <TabsContent key={doc.doctor_id} value={doc.doctor_id}>
+              {renderDoctorContent(doc)}
+            </TabsContent>
+          ))}
+        </Tabs>
+      ) : doctorsData.length === 1 ? (
+        renderDoctorContent(doctorsData[0])
+      ) : null}
 
       {/* Footer */}
       <div className="share-footer">
         <p>ME of Ukraine MedTrack</p>
-        <p>Згенеровано: {new Date(reportData.created_at).toLocaleString('uk-UA')}</p>
-        <p className="expiry-warning">Звіт буде доступний до {new Date(reportData.expires_at).toLocaleDateString('uk-UA')}</p>
+        <p className="expiry-warning">
+          Доступний до {new Date(reportData.expires_at).toLocaleDateString('uk-UA')}
+        </p>
       </div>
     </div>
   );
+
+  function renderDoctorContent(doctorData) {
+    const expensesData = getExpensesChartData(doctorData);
+    const monthlyData = getMonthlyChartData(doctorData);
+    
+    return (
+      <div className="doctor-content">
+        {/* Stats Grid */}
+        <div className="share-stats-compact">
+          <div className="stat-mini">
+            <div className="stat-mini-label">Сума</div>
+            <div className="stat-mini-value">{doctorData.total.revenue.toLocaleString('uk-UA')} ₴</div>
+          </div>
+          <div className="stat-mini">
+            <div className="stat-mini-label">К-ть</div>
+            <div className="stat-mini-value">{doctorData.total.quantity}</div>
+          </div>
+          <div className="stat-mini highlight-stat">
+            <div className="stat-mini-label">Дохід</div>
+            <div className="stat-mini-value">{doctorData.total.doctorIncome.toLocaleString('uk-UA')} ₴</div>
+          </div>
+        </div>
+
+        {/* Charts Row */}
+        <div className="charts-row">
+          {/* Pie: Витрати */}
+          <div className="chart-card">
+            <h4>Витрати та податки</h4>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={expensesData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {expensesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Pie: Дохід по місяцях */}
+          {monthlyData.length > 1 && (
+            <div className="chart-card">
+              <h4>Дохід по місяцях</h4>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={monthlyData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    dataKey="value"
+                  >
+                    {monthlyData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+
+        {/* Table */}
+        <div className="share-table-section">
+          <div className="table-wrapper-compact">
+            <table className="share-table">
+              <thead>
+                <tr>
+                  <th>Місяць</th>
+                  <th>К-ть</th>
+                  <th>Сума</th>
+                  <th>Витрати</th>
+                  <th>ЄП</th>
+                  <th>ВЗ</th>
+                  <th>Дохід</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctorData.monthsArray.map(m => (
+                  <tr key={`${m.year}-${m.month}`}>
+                    <td><strong>{monthNames[m.month - 1]}</strong></td>
+                    <td>{m.quantity}</td>
+                    <td className="revenue-cell">{m.revenue.toLocaleString('uk-UA')}</td>
+                    <td>{m.expenses.toLocaleString('uk-UA')}</td>
+                    <td>{m.ep.toLocaleString('uk-UA')}</td>
+                    <td>{m.vz.toLocaleString('uk-UA')}</td>
+                    <td className="income-cell"><strong>{m.doctorIncome.toLocaleString('uk-UA')}</strong></td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td><strong>ВСЬОГО:</strong></td>
+                  <td><strong>{doctorData.total.quantity}</strong></td>
+                  <td className="revenue-cell"><strong>{doctorData.total.revenue.toLocaleString('uk-UA')}</strong></td>
+                  <td><strong>{doctorData.total.expenses.toLocaleString('uk-UA')}</strong></td>
+                  <td><strong>{doctorData.total.ep.toLocaleString('uk-UA')}</strong></td>
+                  <td><strong>{doctorData.total.vz.toLocaleString('uk-UA')}</strong></td>
+                  <td className="income-cell"><strong>{doctorData.total.doctorIncome.toLocaleString('uk-UA')}</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default ShareReport;
