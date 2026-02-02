@@ -904,6 +904,46 @@ async def export_revenue_pdf(data: Dict[str, Any]):
         logging.error(f"PDF generation error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Cash Balance
+@api_router.post("/cash-balance", response_model=CashBalance)
+async def create_or_update_cash_balance(data: CashBalanceCreate):
+    # Перевірити чи вже є запис
+    existing = await db.cash_balance.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+    
+    if existing:
+        # Оновити
+        await db.cash_balance.update_one(
+            {"month": data.month, "year": data.year},
+            {"$set": {"amount": data.amount, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        updated = await db.cash_balance.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+        if isinstance(updated['created_at'], str):
+            updated['created_at'] = datetime.fromisoformat(updated['created_at'])
+        if isinstance(updated['updated_at'], str):
+            updated['updated_at'] = datetime.fromisoformat(updated['updated_at'])
+        return updated
+    else:
+        # Створити новий
+        balance = CashBalance(**data.model_dump())
+        balance_dict = balance.model_dump()
+        balance_dict['created_at'] = balance_dict['created_at'].isoformat()
+        balance_dict['updated_at'] = balance_dict['updated_at'].isoformat()
+        await db.cash_balance.insert_one(balance_dict)
+        return balance
+
+@api_router.get("/cash-balance/{month}/{year}")
+async def get_cash_balance(month: int, year: int):
+    balance = await db.cash_balance.find_one({"month": month, "year": year}, {"_id": 0})
+    if not balance:
+        return {"exists": False, "amount": None}
+    
+    if isinstance(balance.get('created_at'), str):
+        balance['created_at'] = datetime.fromisoformat(balance['created_at'])
+    if isinstance(balance.get('updated_at'), str):
+        balance['updated_at'] = datetime.fromisoformat(balance['updated_at'])
+    
+    return {"exists": True, "data": balance}
+
 app.include_router(api_router)
 
 app.add_middleware(
