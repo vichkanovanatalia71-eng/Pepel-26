@@ -1162,45 +1162,92 @@ const MonthlyServices = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="revenue-details">
-            {dashboardStats && (
-              <div className="details-section">
-                <div className="doctor-income-table-wrapper">
-                  <table className="doctor-income-table">
-                    <thead>
-                      <tr>
-                        <th>Місяць</th>
-                        <th>К-ть</th>
-                        <th>Сума</th>
-                        <th>Витрати</th>
-                        <th>ЄП (5%)</th>
-                        <th>ВЗ (1%)</th>
-                        <th>До розподілу</th>
-                        <th>Дохід лікаря</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredEntries.map(entry => {
-                        const ep = entry.total_revenue * 0.05;
-                        const vz = entry.total_revenue * 0.01;
-                        const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
-                        return (
-                          <tr key={entry.id}>
-                            <td><strong>{monthNames[entry.month - 1]} {entry.year}</strong></td>
-                            <td>{entry.quantity}</td>
-                            <td className="revenue-cell">{entry.total_revenue.toLocaleString('uk-UA')} ₴</td>
-                            <td>{entry.total_expenses.toLocaleString('uk-UA')} ₴</td>
-                            <td>{ep.toLocaleString('uk-UA')} ₴</td>
-                            <td>{vz.toLocaleString('uk-UA')} ₴</td>
-                            <td className="highlight-cell">{toDistribute.toLocaleString('uk-UA')} ₴</td>
-                            <td className="income-cell"><strong>{entry.doctor_income.toLocaleString('uk-UA')} ₴</strong></td>
+            {dashboardStats && (() => {
+              // Агрегувати дані по місяцях щоб уникнути дублікатів
+              const monthlyAggregate = {};
+              
+              filteredEntries.forEach(entry => {
+                const monthKey = `${entry.year}-${entry.month}`;
+                
+                if (!monthlyAggregate[monthKey]) {
+                  monthlyAggregate[monthKey] = {
+                    month: entry.month,
+                    year: entry.year,
+                    quantity: 0,
+                    revenue: 0,
+                    expenses: 0,
+                    ep: 0,
+                    vz: 0,
+                    toDistribute: 0,
+                    doctorIncome: 0
+                  };
+                }
+                
+                const ep = entry.total_revenue * 0.05;
+                const vz = entry.total_revenue * 0.01;
+                const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
+                
+                monthlyAggregate[monthKey].quantity += entry.quantity;
+                monthlyAggregate[monthKey].revenue += entry.total_revenue;
+                monthlyAggregate[monthKey].expenses += entry.total_expenses;
+                monthlyAggregate[monthKey].ep += ep;
+                monthlyAggregate[monthKey].vz += vz;
+                monthlyAggregate[monthKey].toDistribute += toDistribute;
+                monthlyAggregate[monthKey].doctorIncome += entry.doctor_income;
+              });
+              
+              const monthlyData = Object.values(monthlyAggregate).sort((a, b) => {
+                if (a.year !== b.year) return a.year - b.year;
+                return a.month - b.month;
+              });
+              
+              return (
+                <div className="details-section">
+                  <div className="doctor-income-table-wrapper">
+                    <table className="doctor-income-table">
+                      <thead>
+                        <tr>
+                          <th>Місяць</th>
+                          <th>К-ть</th>
+                          <th>Сума</th>
+                          <th>Витрати</th>
+                          <th>ЄП (5%)</th>
+                          <th>ВЗ (1%)</th>
+                          <th>До розподілу</th>
+                          <th>Дохід лікаря</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {monthlyData.map(monthData => (
+                          <tr key={`${monthData.year}-${monthData.month}`}>
+                            <td><strong>{monthNames[monthData.month - 1]} {monthData.year}</strong></td>
+                            <td>{monthData.quantity}</td>
+                            <td className="revenue-cell">{monthData.revenue.toLocaleString('uk-UA')} ₴</td>
+                            <td>{monthData.expenses.toLocaleString('uk-UA')} ₴</td>
+                            <td>{monthData.ep.toLocaleString('uk-UA')} ₴</td>
+                            <td>{monthData.vz.toLocaleString('uk-UA')} ₴</td>
+                            <td className="highlight-cell">{monthData.toDistribute.toLocaleString('uk-UA')} ₴</td>
+                            <td className="income-cell"><strong>{monthData.doctorIncome.toLocaleString('uk-UA')} ₴</strong></td>
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td><strong>ВСЬОГО:</strong></td>
+                          <td><strong>{monthlyData.reduce((s, m) => s + m.quantity, 0)}</strong></td>
+                          <td className="revenue-cell"><strong>{monthlyData.reduce((s, m) => s + m.revenue, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          <td><strong>{monthlyData.reduce((s, m) => s + m.expenses, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          <td><strong>{monthlyData.reduce((s, m) => s + m.ep, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          <td><strong>{monthlyData.reduce((s, m) => s + m.vz, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          <td className="highlight-cell"><strong>{monthlyData.reduce((s, m) => s + m.toDistribute, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          <td className="income-cell"><strong>{monthlyData.reduce((s, m) => s + m.doctorIncome, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>
