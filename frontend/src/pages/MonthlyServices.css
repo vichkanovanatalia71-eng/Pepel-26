@@ -392,6 +392,7 @@
 
 .service-name-row {
   width: 100%;
+  margin-bottom: 4px;
 }
 
 .service-details-row {
@@ -422,8 +423,9 @@
 }
 
 .price-label {
-  color: #888888;
-  font-size: 12px;
+  color: #FFA500;
+  font-size: 13px;
+  font-weight: 600;
   flex: 1;
 }
 
