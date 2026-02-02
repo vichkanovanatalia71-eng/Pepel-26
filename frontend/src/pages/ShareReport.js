@@ -105,6 +105,7 @@ const ShareReport = () => {
       byDoctor[entry.doctor_id].months[monthKey].expenses += entry.total_expenses;
       byDoctor[entry.doctor_id].months[monthKey].ep += ep;
       byDoctor[entry.doctor_id].months[monthKey].vz += vz;
+      byDoctor[entry.doctor_id].months[monthKey].toDistribute += toDistribute;
       byDoctor[entry.doctor_id].months[monthKey].doctorIncome += entry.doctor_income;
     });
     
