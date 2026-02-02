@@ -240,16 +240,20 @@ const ShareReport = () => {
             <ResponsiveContainer width="100%" height={238}>
               <PieChart>
                 <Pie
-                  data={showOverviewChart ? [
-                    { name: 'Дохід лікаря', value: doctorData.total.doctorIncome },
-                    { name: 'Витрати', value: doctorData.total.expenses },
-                    { name: 'ЄП', value: doctorData.total.ep },
-                    { name: 'ВЗ', value: doctorData.total.vz }
-                  ] : [
-                    { name: 'Витрати', value: doctorData.total.expenses },
-                    { name: 'ЄП (5%)', value: doctorData.total.ep },
-                    { name: 'ВЗ (1%)', value: doctorData.total.vz }
-                  ]}
+                  data={(() => {
+                    const chartData = showOverviewChart ? [
+                      { name: 'Дохід лікаря', value: doctorData.total.doctorIncome },
+                      { name: 'Витрати', value: doctorData.total.expenses },
+                      { name: 'ЄП', value: doctorData.total.ep },
+                      { name: 'ВЗ', value: doctorData.total.vz }
+                    ] : [
+                      { name: 'Витрати', value: doctorData.total.expenses },
+                      { name: 'ЄП (5%)', value: doctorData.total.ep },
+                      { name: 'ВЗ (1%)', value: doctorData.total.vz }
+                    ];
+                    console.log('Chart 1 data:', chartData);
+                    return chartData;
+                  })()}
                   cx="50%"
                   cy="50%"
                   innerRadius={showOverviewChart ? 0 : 40}
