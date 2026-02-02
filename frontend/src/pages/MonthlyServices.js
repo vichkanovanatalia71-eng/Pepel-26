@@ -1159,30 +1159,28 @@ const MonthlyServices = () => {
 
       {/* Modal готівка в касі */}
       <Dialog open={showCashBalanceModal} onOpenChange={setShowCashBalanceModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md cash-balance-modal">
           <DialogHeader>
             <DialogTitle>💰 Готівка в касі</DialogTitle>
           </DialogHeader>
           <div className="cash-balance-content">
-            <p className="cash-balance-prompt">
-              Вкажіть суму коштів в касі станом на <strong>кінець {monthNames[modalMonth - 1]} {modalYear}</strong>:
-            </p>
+            <div className="cash-period-badge">
+              Кінець {monthNames[modalMonth - 1]} {modalYear}
+            </div>
             
             {cashAmount && (
               <div className="existing-cash-note">
-                <span>Поточна сума: </span>
-                <strong>{parseFloat(cashAmount).toLocaleString('uk-UA')} ₴</strong>
+                Поточна сума: <strong>{parseFloat(cashAmount).toLocaleString('uk-UA')} ₴</strong>
               </div>
             )}
             
             <div className="form-group">
-              <label>Сума в касі (грн)</label>
               <input 
                 type="number"
                 step="0.01"
                 value={cashAmount}
                 onChange={(e) => setCashAmount(e.target.value)}
-                placeholder="0.00"
+                placeholder="Введіть суму..."
                 className="cash-input"
                 autoFocus
               />
@@ -1190,7 +1188,7 @@ const MonthlyServices = () => {
             
             <div className="modal-actions">
               <button className="btn btn-success" onClick={saveCashBalance}>
-                Зберегти
+                ✓ Зберегти
               </button>
               <button 
                 className="btn btn-secondary" 
