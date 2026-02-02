@@ -91,6 +91,7 @@ const ShareReport = () => {
           expenses: 0,
           ep: 0,
           vz: 0,
+          toDistribute: 0,
           doctorIncome: 0
         };
       }
