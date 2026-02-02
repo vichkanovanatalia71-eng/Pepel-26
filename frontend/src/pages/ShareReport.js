@@ -138,13 +138,6 @@ const ShareReport = () => {
 
   const doctorsData = groupByDoctor();
 
-  // Встановити початковий activeTab
-  useEffect(() => {
-    if (doctorsData.length > 0 && !activeTab) {
-      setActiveTab(doctorsData[0].doctor_id);
-    }
-  }, [doctorsData, activeTab]);
-
   // Данні для charts
   const getExpensesChartData = (doctorData) => [
     { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
