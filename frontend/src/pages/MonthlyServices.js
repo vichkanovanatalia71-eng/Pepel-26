@@ -1205,20 +1205,47 @@ const MonthlyServices = () => {
       <Dialog open={showCashBalanceModal} onOpenChange={setShowCashBalanceModal}>
         <DialogContent className="max-w-md cash-balance-modal">
           <DialogHeader>
-            <DialogTitle>💰 Готівка в касі</DialogTitle>
+            <DialogTitle>💵 Готівка в касі</DialogTitle>
           </DialogHeader>
           <div className="cash-balance-content">
-            <div className="cash-period-badge">
-              Кінець {monthNames[modalMonth - 1]} {modalYear}
+            {/* Вибір періоду */}
+            <div className="cash-period-selector">
+              <div className="form-group">
+                <label>Місяць</label>
+                <select 
+                  value={cashBalanceMonth} 
+                  onChange={(e) => {
+                    setCashBalanceMonth(parseInt(e.target.value));
+                    loadCashBalanceForPeriod(parseInt(e.target.value), cashBalanceYear);
+                  }}
+                >
+                  {monthNames.map((m, i) => (
+                    <option key={i} value={i + 1}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Рік</label>
+                <input 
+                  type="number" 
+                  value={cashBalanceYear} 
+                  onChange={(e) => {
+                    setCashBalanceYear(parseInt(e.target.value));
+                    loadCashBalanceForPeriod(cashBalanceMonth, parseInt(e.target.value));
+                  }}
+                />
+              </div>
             </div>
             
-            {cashAmount && (
-              <div className="existing-cash-note">
-                Поточна сума: <strong>{parseFloat(cashAmount).toLocaleString('uk-UA')} ₴</strong>
+            {currentCashBalance && (
+              <div className="existing-cash-highlight">
+                <span>Поточна сума:</span>
+                <strong>{currentCashBalance.amount.toLocaleString('uk-UA')} ₴</strong>
               </div>
             )}
             
             <div className="form-group">
+              <label>Сума готівки в касі</label>
               <input 
                 type="number"
                 step="0.01"
@@ -1226,7 +1253,6 @@ const MonthlyServices = () => {
                 onChange={(e) => setCashAmount(e.target.value)}
                 placeholder="Введіть суму..."
                 className="cash-input"
-                autoFocus
               />
             </div>
             
@@ -1239,10 +1265,9 @@ const MonthlyServices = () => {
                 onClick={() => {
                   setShowCashBalanceModal(false);
                   setCashAmount('');
-                  loadData();
                 }}
               >
-                Пропустити
+                Скасувати
               </button>
             </div>
           </div>
