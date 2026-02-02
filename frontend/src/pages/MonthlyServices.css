@@ -821,39 +821,35 @@
   font-size: 13px;
 }
 
-/* Comparison Alert */
+/* Comparison Alert - Compact */
 .comparison-alert {
   display: flex;
-  gap: 16px;
-  padding: 16px 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
   align-items: center;
 }
 
 .positive-alert {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .negative-alert {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.08) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .comparison-icon {
-  font-size: 32px;
+  font-size: 28px;
   flex-shrink: 0;
-}
-
-.comparison-text {
-  flex: 1;
 }
 
 .comparison-text strong {
   display: block;
-  font-size: 16px;
-  margin-bottom: 6px;
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 .positive-alert .comparison-text strong {
@@ -865,9 +861,9 @@
 }
 
 .comparison-text p {
-  font-size: 13px;
+  font-size: 12px;
   color: #CCCCCC;
-  line-height: 1.5;
+  line-height: 1.4;
   margin: 0;
 }
 
