@@ -747,24 +747,24 @@ const MonthlyServices = () => {
                   .filter(s => quantities[s.id] > 0)
                   .map(service => (
                     <div key={service.id} className="service-input-row selected-service-row">
-                      <div className="service-info">
-                        <span className="service-code-badge">{service.code}</span>
-                        <div className="service-details-compact">
-                          <span className="service-name-small">{service.name}</span>
-                          <span className="price-label">{service.price} ₴</span>
-                        </div>
+                      <div className="service-name-row">
+                        <span className="service-name-small">{service.name}</span>
                       </div>
-                      <input 
-                        type="number"
-                        min="0"
-                        value={quantities[service.id] || ''}
-                        onChange={(e) => setQuantities({
-                          ...quantities,
-                          [service.id]: parseInt(e.target.value) || 0
-                        })}
-                        placeholder="0"
-                        className="qty-input qty-input-filled"
-                      />
+                      <div className="service-details-row">
+                        <span className="service-code-badge">{service.code}</span>
+                        <span className="price-label">{service.price} ₴</span>
+                        <input 
+                          type="number"
+                          min="0"
+                          value={quantities[service.id] || ''}
+                          onChange={(e) => setQuantities({
+                            ...quantities,
+                            [service.id]: parseInt(e.target.value) || 0
+                          })}
+                          placeholder="0"
+                          className="qty-input qty-input-filled"
+                        />
+                      </div>
                     </div>
                   ))
                 }
@@ -774,24 +774,24 @@ const MonthlyServices = () => {
                   .filter(s => !quantities[s.id] || quantities[s.id] === 0)
                   .map(service => (
                     <div key={service.id} className="service-input-row">
-                      <div className="service-info">
-                        <span className="service-code-badge">{service.code}</span>
-                        <div className="service-details-compact">
-                          <span className="service-name-small">{service.name}</span>
-                          <span className="price-label">{service.price} ₴</span>
-                        </div>
+                      <div className="service-name-row">
+                        <span className="service-name-small">{service.name}</span>
                       </div>
-                      <input 
-                        type="number"
-                        min="0"
-                        value={quantities[service.id] || ''}
-                        onChange={(e) => setQuantities({
-                          ...quantities,
-                          [service.id]: parseInt(e.target.value) || 0
-                        })}
-                        placeholder="0"
-                        className="qty-input"
-                      />
+                      <div className="service-details-row">
+                        <span className="service-code-badge">{service.code}</span>
+                        <span className="price-label">{service.price} ₴</span>
+                        <input 
+                          type="number"
+                          min="0"
+                          value={quantities[service.id] || ''}
+                          onChange={(e) => setQuantities({
+                            ...quantities,
+                            [service.id]: parseInt(e.target.value) || 0
+                          })}
+                          placeholder="0"
+                          className="qty-input"
+                        />
+                      </div>
                     </div>
                   ))
                 }
