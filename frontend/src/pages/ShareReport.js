@@ -15,6 +15,7 @@ const ShareReport = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showOverviewChart, setShowOverviewChart] = useState(false);
+  const [activeTab, setActiveTab] = useState(null);
 
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
