@@ -444,15 +444,11 @@
   justify-content: flex-end;
 }
 
-/* Revenue Details Modal */
+/* Revenue Details Modal - Optimized */
 .revenue-modal {
-  background: rgba(15, 15, 18, 0.98);
+  background: linear-gradient(135deg, #0F0F12 0%, #1A1A1D 100%);
   border: 1px solid rgba(255, 140, 0, 0.2);
   z-index: 99999 !important;
-}
-
-.revenue-modal + [data-radix-dialog-overlay] {
-  z-index: 99998 !important;
 }
 
 .revenue-details {
@@ -461,61 +457,62 @@
 
 .details-summary-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .detail-card-mini {
-  background: rgba(40, 40, 48, 0.6);
+  background: rgba(40, 40, 48, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   text-align: center;
 }
 
 .detail-card-mini.highlight-mini {
-  background: rgba(255, 140, 0, 0.1);
-  border-color: rgba(255, 140, 0, 0.3);
+  background: rgba(255, 140, 0, 0.15);
+  border-color: rgba(255, 140, 0, 0.4);
 }
 
 .detail-card-mini.success-mini {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .detail-card-mini.danger-mini {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
 }
 
 .mini-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #888888;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
 }
 
 .mini-value {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: #FFFFFF;
 }
 
 .details-section {
-  margin-bottom: 32px;
-  padding: 20px;
-  background: rgba(40, 40, 48, 0.4);
-  border-radius: 14px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(40, 40, 48, 0.5);
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .details-section h4 {
   color: #FFA500;
-  font-size: 16px;
-  margin-bottom: 16px;
+  font-size: 14px;
+  margin-bottom: 14px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 /* Top 5 Services */
