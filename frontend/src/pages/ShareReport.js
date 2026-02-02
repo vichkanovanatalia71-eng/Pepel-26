@@ -286,7 +286,7 @@ const ShareReport = () => {
                     data={monthlyData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={window.innerWidth <= 767 ? 100 : 90}
                     dataKey="value"
                   >
                     {monthlyData.map((entry, index) => (
