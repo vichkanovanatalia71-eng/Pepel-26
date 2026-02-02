@@ -199,12 +199,14 @@
   font-size: 10px;
   text-transform: uppercase;
   border-bottom: 2px solid rgba(255, 140, 0, 0.4);
+  text-align: center;
 }
 
 .share-table td {
   padding: 8px 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: #CCCCCC;
+  text-align: center;
 }
 
 .share-table .revenue-cell {
