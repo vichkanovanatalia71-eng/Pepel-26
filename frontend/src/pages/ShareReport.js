@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import './ShareReport.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+const COLORS = ['#FF8C00', '#FFA500', '#10B981', '#A78BFA', '#EF4444', '#3B82F6'];
 
 const ShareReport = () => {
   const { token } = useParams();
