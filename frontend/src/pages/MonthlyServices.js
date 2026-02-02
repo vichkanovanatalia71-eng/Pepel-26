@@ -629,7 +629,7 @@ const MonthlyServices = () => {
                   </div>
                   <div className="entry-financial">
                     <div className="fin-item">
-                      <span>Оборот:</span>
+                      <span>Сума:</span>
                       <strong>{entry.total_revenue.toLocaleString('uk-UA')} ₴</strong>
                     </div>
                     <div className="fin-item">
