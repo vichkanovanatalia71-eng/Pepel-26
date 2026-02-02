@@ -195,10 +195,16 @@ const ShareReport = () => {
   );
 
   function renderDoctorContent(doctorData) {
+    // Debug
+    console.log('Doctor data:', doctorData.total);
+    console.log('Monthly data:', doctorData.monthsArray);
+    
     const monthlyData = doctorData.monthsArray.map((m, i) => ({
       name: monthNames[m.month - 1],
       value: m.doctorIncome
     }));
+    
+    console.log('Chart monthly data:', monthlyData);
     
     return (
       <div className="doctor-content">
