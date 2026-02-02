@@ -545,37 +545,37 @@
 }
 
 .cash-balance-content {
-  padding: 4px;
+  padding: 8px;
 }
 
-.cash-period-badge {
-  background: linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(255, 140, 0, 0.1) 100%);
-  border: 1px solid rgba(255, 140, 0, 0.35);
-  padding: 10px 16px;
+.cash-period-selector {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.existing-cash-highlight {
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.4);
+  padding: 12px;
   border-radius: 10px;
+  margin-bottom: 16px;
   text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #FFA500;
-  margin-bottom: 14px;
-}
-
-.existing-cash-note {
-  background: rgba(255, 140, 0, 0.12);
-  border: 1px solid rgba(255, 140, 0, 0.35);
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 14px;
-  text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   color: #CCCCCC;
 }
 
-.existing-cash-note strong {
+.existing-cash-highlight strong {
   color: #FFA500;
-  font-size: 16px;
-  display: inline-block;
-  margin-left: 6px;
+  font-size: 20px;
+  display: block;
+  margin-top: 6px;
+}
+
+.cash-balance-card .summary-icon {
+  background: rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
 .cash-input {
