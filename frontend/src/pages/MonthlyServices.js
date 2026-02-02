@@ -120,10 +120,38 @@ const MonthlyServices = () => {
       
       setQuantities({});
       setShowAddModal(false);
-      loadData();
+      setSelectionCollapsed(false);
+      
+      // Перевірити чи є cash balance за цей період
+      const cashBalanceRes = await axios.get(`${API_URL}/api/cash-balance/${modalMonth}/${modalYear}`);
+      if (cashBalanceRes.data.exists) {
+        setCashAmount(cashBalanceRes.data.data.amount);
+      } else {
+        setCashAmount('');
+      }
+      
+      // Показати cash balance modal
+      setShowCashBalanceModal(true);
     } catch (error) {
       console.error('Error:', error);
       alert('Помилка збереження');
+    }
+  };
+
+  const saveCashBalance = async () => {
+    try {
+      await axios.post(`${API_URL}/api/cash-balance`, {
+        month: modalMonth,
+        year: modalYear,
+        amount: parseFloat(cashAmount)
+      });
+      
+      setShowCashBalanceModal(false);
+      setCashAmount('');
+      loadData();
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Помилка збереження готівки');
     }
   };
 
