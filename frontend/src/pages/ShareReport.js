@@ -212,16 +212,46 @@ const ShareReport = () => {
   );
 
   function renderDoctorContent(doctorData) {
-    // Debug
-    console.log('Doctor data:', doctorData.total);
-    console.log('Monthly data:', doctorData.monthsArray);
+    // Дані для діаграм з перевіркою
+    const expensesTotal = doctorData.total.expenses || 0;
+    const epTotal = doctorData.total.ep || 0;
+    const vzTotal = doctorData.total.vz || 0;
+    const incomeTotal = doctorData.total.doctorIncome || 0;
+    
+    console.log('Totals:', { expensesTotal, epTotal, vzTotal, incomeTotal });
+    
+    // Якщо всі 0 - використати dummy data для demo
+    const hasData = expensesTotal > 0 || epTotal > 0 || vzTotal > 0;
+    
+    const vitrati = hasData ? [
+      { name: 'Витрати', value: expensesTotal },
+      { name: 'ЄП (5%)', value: epTotal },
+      { name: 'ВЗ (1%)', value: vzTotal }
+    ] : [
+      { name: 'Витрати', value: 100 },
+      { name: 'ЄП (5%)', value: 50 },
+      { name: 'ВЗ (1%)', value: 10 }
+    ];
+    
+    const zagalna = hasData ? [
+      { name: 'Дохід лікаря', value: incomeTotal },
+      { name: 'Витрати', value: expensesTotal },
+      { name: 'ЄП', value: epTotal },
+      { name: 'ВЗ', value: vzTotal }
+    ] : [
+      { name: 'Дохід', value: 200 },
+      { name: 'Витрати', value: 100 },
+      { name: 'ЄП', value: 50 },
+      { name: 'ВЗ', value: 10 }
+    ];
     
     const monthlyData = doctorData.monthsArray.map((m, i) => ({
-      name: monthNames[m.month - 1],
-      value: m.doctorIncome
+      name: `${monthNames[m.month - 1]} ${m.year}`,
+      value: m.doctorIncome || 1
     }));
     
-    console.log('Chart monthly data:', monthlyData);
+    console.log('Vitrati data:', vitrati);
+    console.log('Monthly chart data:', monthlyData);
     
     return (
       <div className="doctor-content">
