@@ -38,6 +38,8 @@ const MonthlyServices = () => {
   const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
   const [modalYear, setModalYear] = useState(new Date().getFullYear());
   const [quantities, setQuantities] = useState({});
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [aiProcessing, setAiProcessing] = useState(false);
 
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
