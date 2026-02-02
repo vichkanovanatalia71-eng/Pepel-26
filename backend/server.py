@@ -165,6 +165,21 @@ class MonthlyServiceEntryCreate(BaseModel):
     doctor_id: str
     quantity: int
 
+class CashBalance(BaseModel):
+    """Готівка в касі на кінець місяця"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    month: int
+    year: int
+    amount: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CashBalanceCreate(BaseModel):
+    month: int
+    year: int
+    amount: float
+
 # ==== HELPER FUNCTIONS ====
 
 async def analyze_document_with_ai(file_path: str, file_type: str, doc_type: str) -> Dict[str, Any]:
