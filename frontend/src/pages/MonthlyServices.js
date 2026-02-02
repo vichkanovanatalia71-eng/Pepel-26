@@ -1302,6 +1302,59 @@ const MonthlyServices = () => {
                     </table>
                   </div>
                 </div>
+                
+                {/* Breakdown по кожному лікарю */}
+                {doctorsData.map(doctorData => (
+                  <div key={doctorData.doctor_id} className="details-section doctor-section">
+                    <h4>
+                      <span className="doctor-name-badge-inline">{doctorData.short_name}</span>
+                      {doctorData.doctor_name}
+                    </h4>
+                    <div className="doctor-income-table-wrapper">
+                      <table className="doctor-income-table">
+                        <thead>
+                          <tr>
+                            <th>Місяць</th>
+                            <th>К-ть</th>
+                            <th>Сума</th>
+                            <th>Витрати</th>
+                            <th>ЄП (5%)</th>
+                            <th>ВЗ (1%)</th>
+                            <th>До розподілу</th>
+                            <th>Дохід лікаря</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {doctorData.monthsArray.map(monthData => (
+                            <tr key={`${monthData.year}-${monthData.month}`}>
+                              <td><strong>{monthNames[monthData.month - 1]} {monthData.year}</strong></td>
+                              <td>{monthData.quantity}</td>
+                              <td className="revenue-cell">{monthData.revenue.toLocaleString('uk-UA')} ₴</td>
+                              <td>{monthData.expenses.toLocaleString('uk-UA')} ₴</td>
+                              <td>{monthData.ep.toLocaleString('uk-UA')} ₴</td>
+                              <td>{monthData.vz.toLocaleString('uk-UA')} ₴</td>
+                              <td className="highlight-cell">{monthData.toDistribute.toLocaleString('uk-UA')} ₴</td>
+                              <td className="income-cell"><strong>{monthData.doctorIncome.toLocaleString('uk-UA')} ₴</strong></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td><strong>ВСЬОГО {doctorData.short_name}:</strong></td>
+                            <td><strong>{doctorData.monthsArray.reduce((s, m) => s + m.quantity, 0)}</strong></td>
+                            <td className="revenue-cell"><strong>{doctorData.monthsArray.reduce((s, m) => s + m.revenue, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                            <td><strong>{doctorData.monthsArray.reduce((s, m) => s + m.expenses, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                            <td><strong>{doctorData.monthsArray.reduce((s, m) => s + m.ep, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                            <td><strong>{doctorData.monthsArray.reduce((s, m) => s + m.vz, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                            <td className="highlight-cell"><strong>{doctorData.monthsArray.reduce((s, m) => s + m.toDistribute, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                            <td className="income-cell"><strong>{doctorData.monthsArray.reduce((s, m) => s + m.doctorIncome, 0).toLocaleString('uk-UA')} ₴</strong></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </>
               );
             })()}
           </div>
