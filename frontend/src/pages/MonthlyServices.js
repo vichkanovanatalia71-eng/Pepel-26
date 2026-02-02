@@ -722,6 +722,23 @@ const MonthlyServices = () => {
             </div>
             <div className="card-click-hint">✏️</div>
           </div>
+          <div className="summary-card account-balance-card">
+            <div className="summary-icon">🏦</div>
+            <div>
+              <div className="summary-label">На рахунку</div>
+              <div className="summary-value">
+                {(() => {
+                  const totalRevenue = dashboardStats?.total_revenue || 0;
+                  const cashAmount = displayedCashBalance?.amount || 0;
+                  const accountBalance = totalRevenue - cashAmount;
+                  return accountBalance.toLocaleString('uk-UA');
+                })()} ₴
+              </div>
+              <div className="summary-count">
+                Безготівковий розрахунок
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
