@@ -1340,6 +1340,11 @@
   margin-right: 12px;
 }
 
+.doctor-section {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.05) 0%, rgba(40, 40, 48, 0.5) 100%);
+  border-color: rgba(255, 140, 0, 0.2);
+}
+
 .doctor-income-table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
