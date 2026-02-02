@@ -477,6 +477,44 @@ def main():
     print("\n📍 PHASE 7: Document Management")
     tester.test_get_documents()
 
+    # Test 8: Monthly Services
+    print("\n📍 PHASE 8: Monthly Service Entries")
+    monthly_entry_id = None
+    if service1_id and doctor1_id:
+        monthly_entry_id = tester.test_create_monthly_service(
+            current_month,
+            current_year,
+            service1_id,
+            doctor1_id,
+            10
+        )
+    if service2_id and doctor2_id:
+        tester.test_create_monthly_service(
+            current_month,
+            current_year,
+            service2_id,
+            doctor2_id,
+            5
+        )
+    tester.test_get_monthly_services()
+
+    # Test 9: Cash Balance
+    print("\n📍 PHASE 9: Cash Balance Management")
+    tester.test_create_cash_balance(current_month, current_year, 50000)
+    tester.test_get_cash_balance(current_month, current_year)
+    tester.test_get_all_cash_balances()
+
+    # Test 10: Shared Reports
+    print("\n📍 PHASE 10: Shared Reports")
+    share_token = tester.test_create_shared_report({
+        "title": "Test Report",
+        "entries": [],
+        "services": [],
+        "doctors": []
+    })
+    if share_token:
+        tester.test_get_shared_report(share_token)
+
     # Print summary
     print("\n" + "=" * 60)
     print("📊 TEST SUMMARY")
