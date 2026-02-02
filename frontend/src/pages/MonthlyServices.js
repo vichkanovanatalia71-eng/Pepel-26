@@ -239,7 +239,7 @@ const MonthlyServices = () => {
   const exportToExcel = () => {
     const wb = XLSX.utils.book_new();
     
-    // Sheet 1: Детальний breakdown по кожній послузі
+    // Sheet 1: Детальний breakdown
     const detailedData = [
       [
         'Код', 'Назва послуги', 'Лікар', 'Місяць', 'Рік', 'Кількість',
@@ -247,6 +247,15 @@ const MonthlyServices = () => {
         'До розподілу', 'Дохід лікаря', 'Дохід організації'
       ]
     ];
+    
+    let totalQuantity = 0;
+    let totalRevenue = 0;
+    let totalExpenses = 0;
+    let totalEP = 0;
+    let totalVZ = 0;
+    let totalToDistribute = 0;
+    let totalDoctorIncome = 0;
+    let totalOrgIncome = 0;
     
     filteredEntries.forEach(entry => {
       const service = services.find(s => s.id === entry.service_id);
@@ -272,16 +281,42 @@ const MonthlyServices = () => {
         entry.doctor_income,
         entry.fop_income
       ]);
+      
+      totalQuantity += entry.quantity;
+      totalRevenue += entry.total_revenue;
+      totalExpenses += entry.total_expenses;
+      totalEP += ep;
+      totalVZ += vz;
+      totalToDistribute += toDistribute;
+      totalDoctorIncome += entry.doctor_income;
+      totalOrgIncome += entry.fop_income;
     });
+    
+    // ВСЬОГО рядок
+    detailedData.push([
+      '', 'ВСЬОГО:', '', '', '',
+      totalQuantity,
+      '',
+      totalRevenue,
+      totalExpenses,
+      totalEP,
+      totalVZ,
+      totalToDistribute,
+      totalDoctorIncome,
+      totalOrgIncome
+    ]);
     
     const ws1 = XLSX.utils.aoa_to_sheet(detailedData);
     XLSX.utils.book_append_sheet(wb, ws1, 'Детальний звіт');
     
-    // Sheet 2: Агрегація по послугах
+    // Sheet 2: По послугах
     const breakdown = getRevenueBreakdown();
     const servicesData = [
       ['Код', 'Назва', 'Кількість', 'Оборот', '% від загального']
     ];
+    
+    let servicesTotal = 0;
+    let quantityTotal = 0;
     
     breakdown.allServices.forEach(service => {
       const percent = (service.revenue / dashboardStats.total_revenue * 100).toFixed(1);
@@ -292,7 +327,11 @@ const MonthlyServices = () => {
         service.revenue,
         `${percent}%`
       ]);
+      servicesTotal += service.revenue;
+      quantityTotal += service.quantity;
     });
+    
+    servicesData.push(['', 'ВСЬОГО:', quantityTotal, servicesTotal, '100%']);
     
     const ws2 = XLSX.utils.aoa_to_sheet(servicesData);
     XLSX.utils.book_append_sheet(wb, ws2, 'По послугах');
@@ -303,6 +342,9 @@ const MonthlyServices = () => {
         ['Лікар', 'Оборот', 'Кількість послуг', '% від загального']
       ];
       
+      let doctorsRevTotal = 0;
+      let doctorsQtyTotal = 0;
+      
       breakdown.doctors.forEach(doctor => {
         const percent = (doctor.revenue / dashboardStats.total_revenue * 100).toFixed(1);
         doctorsData.push([
@@ -311,7 +353,11 @@ const MonthlyServices = () => {
           doctor.quantity,
           `${percent}%`
         ]);
+        doctorsRevTotal += doctor.revenue;
+        doctorsQtyTotal += doctor.quantity;
       });
+      
+      doctorsData.push(['ВСЬОГО:', doctorsRevTotal, doctorsQtyTotal, '100%']);
       
       const ws3 = XLSX.utils.aoa_to_sheet(doctorsData);
       XLSX.utils.book_append_sheet(wb, ws3, 'По лікарях');
@@ -323,19 +369,23 @@ const MonthlyServices = () => {
         ['Місяць', 'Рік', 'Оборот']
       ];
       
+      let monthlyTotal = 0;
+      
       breakdown.monthly.forEach(item => {
         monthlyData.push([
           monthNames[item.month - 1],
           item.year,
           item.revenue
         ]);
+        monthlyTotal += item.revenue;
       });
+      
+      monthlyData.push(['ВСЬОГО:', '', monthlyTotal]);
       
       const ws4 = XLSX.utils.aoa_to_sheet(monthlyData);
       XLSX.utils.book_append_sheet(wb, ws4, 'По місяцях');
     }
     
-    // Зберегти
     const fileName = `Статистика_Оборот_${new Date().toISOString().split('T')[0]}.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
