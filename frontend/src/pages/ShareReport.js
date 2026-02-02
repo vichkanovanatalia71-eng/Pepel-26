@@ -166,15 +166,20 @@ const ShareReport = () => {
         </div>
       </div>
 
-      {/* Title */}
+      {/* Title - динамічний для tabs */}
       <div className="share-title">
-        <h1>{data.title}</h1>
+        <h1>
+          {doctorsData.length > 1 && activeTab
+            ? `Дохід ${doctorsData.find(d => d.doctor_id === activeTab)?.name || data.title}`
+            : data.title
+          }
+        </h1>
         <p>{new Date(reportData.created_at).toLocaleDateString('uk-UA')}</p>
       </div>
 
       {/* Tabs по лікарях */}
       {doctorsData.length > 1 ? (
-        <Tabs defaultValue={doctorsData[0].doctor_id} className="doctor-tabs">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="doctor-tabs">
           <TabsList className="tabs-list-share">
             {doctorsData.map(doc => (
               <TabsTrigger key={doc.doctor_id} value={doc.doctor_id}>
