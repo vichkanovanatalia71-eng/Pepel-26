@@ -118,22 +118,39 @@ const ShareReport = () => {
       byDoctor[entry.doctor_id].months[monthKey].doctorIncome += entry.doctor_income;
     });
     
-    return Object.values(byDoctor).map(doc => ({
-      ...doc,
-      monthsArray: Object.values(doc.months).sort((a, b) => {
+    return Object.values(byDoctor).map(doc => {
+      const monthsArray = Object.values(doc.months).sort((a, b) => {
         if (a.year !== b.year) return a.year - b.year;
         return a.month - b.month;
-      }),
-      total: Object.values(doc.months).reduce((acc, m) => ({
-        quantity: acc.quantity + m.quantity,
-        revenue: acc.revenue + m.revenue,
-        expenses: acc.expenses + m.expenses,
-        ep: acc.ep + m.ep,
-        vz: acc.vz + m.vz,
-        toDistribute: acc.toDistribute + m.toDistribute,
-        doctorIncome: acc.doctorIncome + m.doctorIncome
-      }), { quantity: 0, revenue: 0, expenses: 0, ep: 0, vz: 0, toDistribute: 0, doctorIncome: 0 })
-    }));
+      });
+      
+      // Правильний розрахунок totals
+      const total = {
+        quantity: 0,
+        revenue: 0,
+        expenses: 0,
+        ep: 0,
+        vz: 0,
+        toDistribute: 0,
+        doctorIncome: 0
+      };
+      
+      monthsArray.forEach(m => {
+        total.quantity += m.quantity;
+        total.revenue += m.revenue;
+        total.expenses += m.expenses;
+        total.ep += m.ep;
+        total.vz += m.vz;
+        total.toDistribute += m.toDistribute;
+        total.doctorIncome += m.doctorIncome;
+      });
+      
+      return {
+        ...doc,
+        monthsArray,
+        total
+      };
+    });
   };
 
   const doctorsData = groupByDoctor();
