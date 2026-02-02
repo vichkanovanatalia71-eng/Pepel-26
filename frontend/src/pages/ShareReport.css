@@ -350,6 +350,7 @@
 
   .chart-card {
     padding: 6px;
+    min-height: 280px;
   }
 
   .chart-header {
@@ -371,7 +372,13 @@
 
   .chart-card svg,
   .chart-card .recharts-wrapper {
-    height: 182px !important;
+    height: 250px !important;
+    width: 100% !important;
+  }
+
+  /* Make pie charts bigger on mobile */
+  .chart-card .recharts-surface {
+    overflow: visible !important;
   }
 
   .share-table-section {
