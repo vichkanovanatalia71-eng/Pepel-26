@@ -180,6 +180,18 @@ class CashBalanceCreate(BaseModel):
     year: int
     amount: float
 
+class SharedReport(BaseModel):
+    """Поширений звіт з обмеженим доступом"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    share_token: str = Field(default_factory=lambda: str(uuid.uuid4())[:12])
+    data: Dict[str, Any]  # Всі дані звіту
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(day=datetime.now(timezone.utc).day) + timedelta(days=30))
+
+class SharedReportCreate(BaseModel):
+    data: Dict[str, Any]
+
 # ==== HELPER FUNCTIONS ====
 
 async def analyze_document_with_ai(file_path: str, file_type: str, doc_type: str) -> Dict[str, Any]:
