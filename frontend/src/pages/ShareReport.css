@@ -352,7 +352,7 @@
 
   .chart-card {
     padding: 6px;
-    min-height: 280px;
+    min-height: 240px;
   }
 
   .chart-header {
@@ -378,7 +378,7 @@
 
   .chart-card svg,
   .chart-card .recharts-wrapper {
-    height: 212px !important;
+    height: 220px !important;
     width: 100% !important;
   }
 
