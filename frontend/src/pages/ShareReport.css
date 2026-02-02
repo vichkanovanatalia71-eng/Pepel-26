@@ -1,37 +1,36 @@
 .share-report-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #0F0F12 0%, #1A1A1D 100%);
-  padding: 24px;
-  color: #E0E0E0;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Header */
+/* Header - Compact */
 .share-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 16px 20px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
   background: rgba(40, 40, 48, 0.6);
-  backdrop-filter: blur(20px);
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 140, 0, 0.2);
 }
 
 .share-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .share-logo img {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
 }
 
 .share-logo span {
-  font-family: 'Manrope', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
   -webkit-background-clip: text;
@@ -40,151 +39,147 @@
 
 .share-expiry {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
+  align-items: center;
 }
 
 .expiry-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #888888;
-  text-transform: uppercase;
 }
 
 .expiry-days {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #10B981;
 }
 
-/* Title */
+/* Title - Compact */
 .share-title {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .share-title h1 {
-  font-size: 2rem;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+  color: #FFFFFF;
 }
 
-.share-subtitle {
+.share-title p {
   color: #888888;
-  font-size: 14px;
+  font-size: 12px;
 }
 
-/* Stats */
-.share-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
+/* Tabs */
+.doctor-tabs {
+  margin-bottom: 16px;
 }
 
-.share-stat-card {
+.tabs-list-share {
   background: rgba(40, 40, 48, 0.6);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1px solid rgba(255, 140, 0, 0.15);
 }
 
-.share-stat-card.highlight {
-  background: linear-gradient(135deg, rgba(255, 140, 0, 0.15) 0%, rgba(40, 40, 48, 0.6) 100%);
+/* Stats Compact */
+.share-stats-compact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-mini {
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-mini.highlight-stat {
+  background: rgba(255, 140, 0, 0.15);
   border-color: rgba(255, 140, 0, 0.3);
 }
 
-.share-stat-card .stat-icon {
-  font-size: 40px;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: rgba(255, 140, 0, 0.15);
-  box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
-}
-
-.share-stat-card .stat-label {
-  font-size: 11px;
+.stat-mini-label {
+  font-size: 10px;
   color: #888888;
   text-transform: uppercase;
   margin-bottom: 4px;
 }
 
-.share-stat-card .stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Table */
-.share-table-section {
-  background: rgba(40, 40, 48, 0.6);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 32px;
-}
-
-.share-table-section h3 {
-  color: #FFA500;
+.stat-mini-value {
   font-size: 18px;
-  margin-bottom: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.highlight-stat .stat-mini-value {
+  color: #FFA500;
+}
+
+/* Charts Row */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.chart-card {
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.chart-card h4 {
+  color: #FFA500;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: center;
   text-transform: uppercase;
 }
 
-.table-wrapper {
+/* Table - Compact */
+.share-table-section {
+  background: rgba(40, 40, 48, 0.6);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 16px;
+}
+
+.table-wrapper-compact {
   overflow-x: auto;
 }
 
 .share-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .share-table th {
-  text-align: left;
-  padding: 12px;
+  padding: 8px 6px;
   background: rgba(255, 140, 0, 0.15);
   color: #FFA500;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  font-weight: 700;
   border-bottom: 2px solid rgba(255, 140, 0, 0.4);
 }
 
 .share-table td {
-  padding: 12px;
+  padding: 8px 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: #CCCCCC;
 }
 
-.share-table tbody tr:hover {
-  background: rgba(255, 140, 0, 0.05);
-}
-
 .share-table .revenue-cell {
   color: #10B981;
-  font-weight: 600;
-}
-
-.share-table .highlight-cell {
-  color: #FFA500;
-  font-weight: 600;
 }
 
 .share-table .income-cell {
@@ -193,31 +188,30 @@
 }
 
 .share-table tfoot {
-  background: linear-gradient(135deg, rgba(255, 140, 0, 0.2) 0%, rgba(255, 140, 0, 0.1) 100%);
+  background: rgba(255, 140, 0, 0.1);
 }
 
 .share-table tfoot td {
-  padding: 14px 12px;
+  padding: 10px 6px;
   border-top: 2px solid #FF8C00;
   color: #FFA500;
-  font-weight: 700;
 }
 
-/* Footer */
+/* Footer - Compact */
 .share-footer {
   text-align: center;
-  padding: 24px;
+  padding: 16px;
   color: #666666;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .share-footer p {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .expiry-warning {
   color: #888888;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 /* Loading/Error */
@@ -228,49 +222,98 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  gap: 20px;
+  gap: 16px;
 }
 
 .error-icon {
-  font-size: 80px;
+  font-size: 60px;
 }
 
 .error-container h2 {
   color: #EF4444;
-  font-size: 24px;
+  font-size: 20px;
 }
 
-.error-container p {
-  color: #888888;
-}
-
-/* Mobile */
+/* Mobile - Ultra Compact */
 @media (max-width: 767px) {
   .share-report-page {
-    padding: 16px;
+    padding: 12px;
   }
 
   .share-header {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
+    padding: 10px 12px;
+    margin-bottom: 12px;
   }
 
-  .share-expiry {
-    align-items: center;
+  .share-logo img {
+    width: 28px;
+    height: 28px;
   }
 
-  .share-stats {
+  .share-logo span {
+    font-size: 14px;
+  }
+
+  .expiry-days {
+    font-size: 16px;
+  }
+
+  .share-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .share-title {
+    margin-bottom: 12px;
+  }
+
+  .share-stats-compact {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+
+  .stat-mini {
+    padding: 8px;
+  }
+
+  .stat-mini-label {
+    font-size: 9px;
+  }
+
+  .stat-mini-value {
+    font-size: 14px;
+  }
+
+  .charts-row {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .chart-card {
+    padding: 12px;
+  }
+
+  .chart-card h4 {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .share-table-section {
+    padding: 12px;
+    margin-bottom: 12px;
   }
 
   .share-table {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .share-table th,
   .share-table td {
-    padding: 8px 6px;
+    padding: 6px 4px;
+  }
+
+  .share-footer {
+    padding: 12px;
     font-size: 10px;
   }
 }
