@@ -339,7 +339,7 @@ const MonthlyServices = () => {
     // Sheet 3: По лікарях
     if (breakdown.doctors.length > 0) {
       const doctorsData = [
-        ['Лікар', 'Оборот', 'Кількість послуг', '% від загального']
+        ['Лікар', 'Сума послуг', 'Кількість', '% від загального']
       ];
       
       let doctorsRevTotal = 0;
