@@ -235,6 +235,122 @@ class MedTrackAPITester:
             print(f"   Found {len(response)} documents")
         return success
 
+    def test_create_monthly_service(self, month, year, service_id, doctor_id, quantity):
+        """Create monthly service entry"""
+        success, response = self.run_test(
+            f"Create Monthly Service Entry",
+            "POST",
+            "api/monthly-services",
+            200,
+            data={
+                "month": month,
+                "year": year,
+                "service_id": service_id,
+                "doctor_id": doctor_id,
+                "quantity": quantity
+            }
+        )
+        if success and 'id' in response:
+            print(f"   Total Revenue: {response.get('total_revenue', 0)} UAH")
+            print(f"   Doctor Income: {response.get('doctor_income', 0)} UAH")
+            return response['id']
+        return None
+
+    def test_get_monthly_services(self):
+        """Get all monthly services"""
+        success, response = self.run_test(
+            "Get Monthly Services",
+            "GET",
+            "api/monthly-services",
+            200
+        )
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} monthly service entries")
+        return success
+
+    def test_delete_monthly_service(self, entry_id):
+        """Delete monthly service entry"""
+        success, response = self.run_test(
+            "Delete Monthly Service Entry",
+            "DELETE",
+            f"api/monthly-services/{entry_id}",
+            200
+        )
+        return success
+
+    def test_create_cash_balance(self, month, year, amount):
+        """Create or update cash balance"""
+        success, response = self.run_test(
+            f"Create Cash Balance ({month}/{year})",
+            "POST",
+            "api/cash-balance",
+            200,
+            data={
+                "month": month,
+                "year": year,
+                "amount": amount
+            }
+        )
+        if success:
+            print(f"   Amount: {response.get('amount', 0)} UAH")
+        return success
+
+    def test_get_cash_balance(self, month, year):
+        """Get cash balance for specific period"""
+        success, response = self.run_test(
+            f"Get Cash Balance ({month}/{year})",
+            "GET",
+            f"api/cash-balance/{month}/{year}",
+            200
+        )
+        if success:
+            exists = response.get('exists', False)
+            if exists:
+                print(f"   Amount: {response.get('data', {}).get('amount', 0)} UAH")
+            else:
+                print(f"   No cash balance found")
+        return success
+
+    def test_get_all_cash_balances(self):
+        """Get all cash balances"""
+        success, response = self.run_test(
+            "Get All Cash Balances",
+            "GET",
+            "api/cash-balance",
+            200
+        )
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} cash balance records")
+        return success
+
+    def test_create_shared_report(self, data):
+        """Create shared report"""
+        success, response = self.run_test(
+            "Create Shared Report",
+            "POST",
+            "api/reports/share",
+            200,
+            data={"data": data}
+        )
+        if success and 'share_token' in response:
+            print(f"   Share Token: {response['share_token']}")
+            print(f"   Expires At: {response.get('expires_at', 'N/A')}")
+            return response['share_token']
+        return None
+
+    def test_get_shared_report(self, share_token):
+        """Get shared report by token"""
+        success, response = self.run_test(
+            f"Get Shared Report",
+            "GET",
+            f"api/reports/share/{share_token}",
+            200
+        )
+        if success:
+            print(f"   Days Left: {response.get('days_left', 0)}")
+        return success
+
+
 def main():
     print("=" * 60)
     print("🏥 ME of Ukraine MedTrack API Testing")
