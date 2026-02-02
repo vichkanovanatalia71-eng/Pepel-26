@@ -144,6 +144,35 @@
   text-transform: uppercase;
 }
 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.chart-header h4 {
+  margin: 0;
+  text-align: left;
+}
+
+.btn-toggle-chart {
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  color: #FFA500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-toggle-chart:hover {
+  background: rgba(255, 140, 0, 0.25);
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+}
+
 /* Table - Compact */
 .share-table-section {
   background: rgba(40, 40, 48, 0.6);
