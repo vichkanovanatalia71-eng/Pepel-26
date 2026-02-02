@@ -68,8 +68,66 @@ const MonthlyServices = () => {
       if (doctorsRes.data.length > 0) {
         setModalDoctor(doctorsRes.data[0].id);
       }
+      
+      // Завантажити всі cash balances
+      loadAllCashBalances();
     } catch (error) {
       console.error('Load error:', error);
+    }
+  };
+
+  const loadAllCashBalances = async () => {
+    try {
+      // Отримати унікальні періоди з entries
+      const periods = [...new Set(allEntries.map(e => `${e.year}-${e.month}`))];
+      const balances = [];
+      
+      for (const period of periods) {
+        const [year, month] = period.split('-').map(Number);
+        const res = await axios.get(`${API_URL}/api/cash-balance/${month}/${year}`);
+        if (res.data.exists) {
+          balances.push(res.data.data);
+        }
+      }
+      
+      setAllCashBalances(balances);
+      calculateDisplayedCashBalance(balances);
+    } catch (error) {
+      console.error('Error loading cash balances:', error);
+    }
+  };
+
+  const calculateDisplayedCashBalance = (balances = allCashBalances) => {
+    let filtered = [...balances];
+    
+    // Фільтр за роком
+    if (selectedYear !== 'all') {
+      filtered = filtered.filter(b => b.year === selectedYear);
+    }
+    
+    // Фільтр за місяцем
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(b => b.month === selectedMonth);
+    }
+    
+    if (filtered.length === 0) {
+      setDisplayedCashBalance(null);
+    } else if (filtered.length === 1) {
+      setDisplayedCashBalance(filtered[0]);
+    } else {
+      // Сумувати всі
+      const total = filtered.reduce((sum, b) => sum + b.amount, 0);
+      const latestPeriod = filtered.sort((a, b) => {
+        if (a.year !== b.year) return b.year - a.year;
+        return b.month - a.month;
+      })[0];
+      
+      setDisplayedCashBalance({
+        amount: total,
+        month: latestPeriod.month,
+        year: latestPeriod.year,
+        isAggregate: true
+      });
     }
   };
 
