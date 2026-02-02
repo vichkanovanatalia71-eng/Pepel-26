@@ -154,6 +154,54 @@ const MonthlyServices = () => {
   
   const openExpensesModal = () => setShowExpensesModal(true);
 
+  const openCashBalanceModal = async () => {
+    // Завантажити поточний cash balance
+    try {
+      const res = await axios.get(`${API_URL}/api/cash-balance/${cashBalanceMonth}/${cashBalanceYear}`);
+      if (res.data.exists) {
+        setCashAmount(res.data.data.amount);
+        setCurrentCashBalance(res.data.data);
+      } else {
+        setCashAmount('');
+        setCurrentCashBalance(null);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    setShowCashBalanceModal(true);
+  };
+
+  const saveCashBalance = async () => {
+    try {
+      await axios.post(`${API_URL}/api/cash-balance`, {
+        month: cashBalanceMonth,
+        year: cashBalanceYear,
+        amount: parseFloat(cashAmount)
+      });
+      
+      setShowCashBalanceModal(false);
+      loadData();
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Помилка збереження');
+    }
+  };
+
+  const loadCashBalanceForPeriod = async (month, year) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/cash-balance/${month}/${year}`);
+      if (res.data.exists) {
+        setCashAmount(res.data.data.amount);
+        setCurrentCashBalance(res.data.data);
+      } else {
+        setCashAmount('');
+        setCurrentCashBalance(null);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const getRevenueBreakdown = () => {
     const serviceStats = {};
     const doctorStats = {};
