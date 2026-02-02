@@ -96,12 +96,11 @@ const MonthlyServices = () => {
   const calculateDisplayedCashBalance = (balances = allCashBalances) => {
     let filtered = [...balances];
     
-    // Фільтр за роком
+    // Фільтр ТІЛЬКИ за роком та місяцем (НЕ за лікарем!)
     if (selectedYear !== 'all') {
       filtered = filtered.filter(b => b.year === selectedYear);
     }
     
-    // Фільтр за місяцем
     if (selectedMonth !== 'all') {
       filtered = filtered.filter(b => b.month === selectedMonth);
     }
@@ -125,6 +124,22 @@ const MonthlyServices = () => {
         isAggregate: true
       });
     }
+  };
+
+  const getTotalRevenueAllDoctors = () => {
+    // Сума послуг за період БЕЗ фільтра лікаря
+    let filtered = [...allEntries];
+    
+    // Фільтр ТІЛЬКИ за періодом
+    if (selectedYear !== 'all') {
+      filtered = filtered.filter(e => e.year === selectedYear);
+    }
+    
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(e => e.month === selectedMonth);
+    }
+    
+    return filtered.reduce((sum, e) => sum + (e.total_revenue || 0), 0);
   };
 
   const applyFilters = () => {
