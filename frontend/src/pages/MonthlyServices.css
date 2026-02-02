@@ -1666,6 +1666,41 @@
     margin: 0 0 12px 0;
     padding: 12px;
     border-radius: 0 0 12px 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-collapse-selection {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .selection-collapsed {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .collapsed-info {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .collapsed-badge {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .collapsed-period {
+    font-size: 13px;
+  }
+
+  .btn-expand-selection {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
   }
 
   .selected-services-badge {
