@@ -254,7 +254,7 @@ const ShareReport = () => {
                   ] : expensesData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={showOverviewChart ? 0 : 60}
+                  innerRadius={showOverviewChart ? 0 : 40}
                   outerRadius={window.innerWidth <= 767 ? 60 : 70}
                   paddingAngle={2}
                   dataKey="value"
