@@ -401,6 +401,19 @@
   width: 100%;
 }
 
+.service-code-badge {
+  background: rgba(255, 140, 0, 0.25);
+  color: #FFA500;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 42px;
+  text-align: center;
+  border: 1px solid rgba(255, 140, 0, 0.4);
+  flex-shrink: 0;
+}
+
 .service-name-small {
   color: #E0E0E0;
   font-size: 13px;
