@@ -31,6 +31,11 @@ const MonthlyServices = () => {
   const [cashBalanceYear, setCashBalanceYear] = useState(new Date().getFullYear());
   const [cashAmount, setCashAmount] = useState('');
   const [currentCashBalance, setCurrentCashBalance] = useState(null);
+  const [selectionCollapsed, setSelectionCollapsed] = useState(false);
+  const [modalDoctor, setModalDoctor] = useState('');
+  const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
+  const [modalYear, setModalYear] = useState(new Date().getFullYear());
+  const [quantities, setQuantities] = useState({});
 
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
