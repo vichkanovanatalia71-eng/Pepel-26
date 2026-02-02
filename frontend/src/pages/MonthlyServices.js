@@ -366,7 +366,7 @@ const MonthlyServices = () => {
     // Sheet 4: По місяцях
     if (breakdown.monthly.length > 0) {
       const monthlyData = [
-        ['Місяць', 'Рік', 'Оборот']
+        ['Місяць', 'Рік', 'Сума послуг']
       ];
       
       let monthlyTotal = 0;
