@@ -932,6 +932,28 @@ const MonthlyServices = () => {
               </div>
             )}
 
+            {/* AI Upload */}
+            <div className="ai-upload-section">
+              <label className="upload-image-btn">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+                {aiProcessing ? (
+                  <span>🤖 Аналіз AI...</span>
+                ) : (
+                  <span>📷 Завантажити зображення з послугами</span>
+                )}
+              </label>
+              {uploadedImage && !aiProcessing && (
+                <div className="uploaded-image-info">
+                  ✓ {uploadedImage.name}
+                </div>
+              )}
+            </div>
+
             <div className="services-grid-modal">
               <div className="services-header-mobile">
                 <h4>Всі послуги ({services.length}):</h4>
