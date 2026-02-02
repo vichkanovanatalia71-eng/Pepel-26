@@ -208,13 +208,31 @@ const MonthlyServices = () => {
       ? (dashboardStats?.total_revenue || 0) / dashboardStats.total_quantity 
       : 0;
     
+    // Порівняння з попереднім місяцем
+    let comparison = null;
+    if (monthlyArray.length >= 2) {
+      const current = monthlyArray[monthlyArray.length - 1];
+      const previous = monthlyArray[monthlyArray.length - 2];
+      const change = ((current.revenue - previous.revenue) / previous.revenue) * 100;
+      comparison = {
+        currentMonth: monthNames[current.month - 1],
+        currentRevenue: current.revenue,
+        previousMonth: monthNames[previous.month - 1],
+        previousRevenue: previous.revenue,
+        change: change,
+        trend: change > 0 ? 'up' : 'down',
+        isPositive: change > 0
+      };
+    }
+    
     return {
       top5: servicesArray.slice(0, 5),
       topByQuantity: byQuantity.slice(0, 5),
       allServices: servicesArray,
       doctors: doctorsArray,
       monthly: monthlyArray,
-      avgCheck
+      avgCheck,
+      comparison
     };
   };
 
