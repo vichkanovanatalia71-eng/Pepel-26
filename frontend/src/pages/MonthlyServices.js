@@ -31,6 +31,8 @@ const MonthlyServices = () => {
   const [cashBalanceYear, setCashBalanceYear] = useState(new Date().getFullYear());
   const [cashAmount, setCashAmount] = useState('');
   const [currentCashBalance, setCurrentCashBalance] = useState(null);
+  const [allCashBalances, setAllCashBalances] = useState([]);
+  const [displayedCashBalance, setDisplayedCashBalance] = useState(null);
   const [selectionCollapsed, setSelectionCollapsed] = useState(false);
   const [modalDoctor, setModalDoctor] = useState('');
   const [modalMonth, setModalMonth] = useState(new Date().getMonth() + 1);
