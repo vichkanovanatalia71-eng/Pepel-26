@@ -275,6 +275,7 @@ const ShareReport = () => {
                   <th>Витрати</th>
                   <th>ЄП</th>
                   <th>ВЗ</th>
+                  <th>До розподілу</th>
                   <th>Дохід</th>
                 </tr>
               </thead>
@@ -287,6 +288,7 @@ const ShareReport = () => {
                     <td>{m.expenses.toLocaleString('uk-UA')}</td>
                     <td>{m.ep.toLocaleString('uk-UA')}</td>
                     <td>{m.vz.toLocaleString('uk-UA')}</td>
+                    <td className="highlight-cell">{m.toDistribute.toLocaleString('uk-UA')}</td>
                     <td className="income-cell"><strong>{m.doctorIncome.toLocaleString('uk-UA')}</strong></td>
                   </tr>
                 ))}
@@ -299,6 +301,7 @@ const ShareReport = () => {
                   <td><strong>{doctorData.total.expenses.toLocaleString('uk-UA')}</strong></td>
                   <td><strong>{doctorData.total.ep.toLocaleString('uk-UA')}</strong></td>
                   <td><strong>{doctorData.total.vz.toLocaleString('uk-UA')}</strong></td>
+                  <td className="highlight-cell"><strong>{(doctorData.total.revenue - doctorData.total.expenses - doctorData.total.ep - doctorData.total.vz).toLocaleString('uk-UA')}</strong></td>
                   <td className="income-cell"><strong>{doctorData.total.doctorIncome.toLocaleString('uk-UA')}</strong></td>
                 </tr>
               </tfoot>
