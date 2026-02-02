@@ -738,7 +738,7 @@ const MonthlyServices = () => {
               <div className="summary-label">На рахунку</div>
               <div className="summary-value">
                 {(() => {
-                  const totalRevenue = dashboardStats?.total_revenue || 0;
+                  const totalRevenue = getTotalRevenueAllDoctors();
                   const cashAmount = displayedCashBalance?.amount || 0;
                   const accountBalance = totalRevenue - cashAmount;
                   return accountBalance.toLocaleString('uk-UA');
