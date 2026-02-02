@@ -452,6 +452,102 @@
   justify-content: flex-end;
 }
 
+/* Add services modal specific */
+.add-services-modal .modal-form {
+  position: relative;
+}
+
+.sticky-selection {
+  position: sticky;
+  top: -20px;
+  z-index: 10;
+  margin: -20px -20px 16px -20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.12) 0%, rgba(40, 40, 48, 0.9) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.selected-services-badge {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 10px 16px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #10B981;
+  font-size: 13px;
+}
+
+.selected-services-badge strong {
+  font-size: 18px;
+  color: #10B981;
+}
+
+.services-header-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.btn-show-selected {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-show-selected:hover {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.selected-service-row {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  position: relative;
+}
+
+.selected-service-row::before {
+  content: '✓';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #10B981;
+  color: #0F0F12;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qty-input-filled {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+.sticky-actions {
+  position: sticky;
+  bottom: -20px;
+  background: linear-gradient(0deg, rgba(15, 15, 18, 0.98) 0%, rgba(15, 15, 18, 0.95) 100%);
+  margin: 16px -20px -20px -20px;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 140, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+/* Mobile optimizations for add modal */
+
 /* Revenue Details Modal - Optimized */
 .revenue-modal {
   background: linear-gradient(135deg, #0F0F12 0%, #1A1A1D 100%);
