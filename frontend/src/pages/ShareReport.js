@@ -138,20 +138,6 @@ const ShareReport = () => {
 
   const doctorsData = groupByDoctor();
 
-  // Данні для charts
-  const getExpensesChartData = (doctorData) => [
-    { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
-    { name: 'ЄП (5%)', value: doctorData.total.ep, color: '#FF8C00' },
-    { name: 'ВЗ (1%)', value: doctorData.total.vz, color: '#FFA500' }
-  ];
-
-  const getMonthlyChartData = (doctorData) =>
-    doctorData.monthsArray.map((m, i) => ({
-      name: monthNames[m.month - 1],
-      value: m.doctorIncome,
-      color: COLORS[i % COLORS.length]
-    }));
-
   return (
     <div className="share-report-page">
       {/* Header */}
