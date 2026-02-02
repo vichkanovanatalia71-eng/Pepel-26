@@ -219,21 +219,41 @@ const ShareReport = () => {
 
         {/* Charts Row */}
         <div className="charts-row">
-          {/* Pie: Витрати */}
+          {/* Pie: Витрати або Загальний */}
           <div className="chart-card">
-            <h4>Витрати та податки</h4>
+            <div className="chart-header">
+              <h4>{showOverviewChart ? 'Загальна картина' : 'Витрати та податки'}</h4>
+              <button 
+                className="btn-toggle-chart"
+                onClick={() => setShowOverviewChart(!showOverviewChart)}
+              >
+                {showOverviewChart ? '💸 Витрати' : '📊 Загальне'}
+              </button>
+            </div>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
-                  data={expensesData}
+                  data={showOverviewChart ? [
+                    { name: 'Дохід лікаря', value: doctorData.total.doctorIncome, color: '#A78BFA' },
+                    { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
+                    { name: 'ЄП', value: doctorData.total.ep, color: '#FF8C00' },
+                    { name: 'ВЗ', value: doctorData.total.vz, color: '#FFA500' }
+                  ] : expensesData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
+                  innerRadius={showOverviewChart ? 0 : 50}
                   outerRadius={80}
                   paddingAngle={2}
                   dataKey="value"
                 >
-                  {expensesData.map((entry, index) => (
+                  {(showOverviewChart ? 
+                    [
+                      { name: 'Дохід лікаря', value: doctorData.total.doctorIncome, color: '#A78BFA' },
+                      { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
+                      { name: 'ЄП', value: doctorData.total.ep, color: '#FF8C00' },
+                      { name: 'ВЗ', value: doctorData.total.vz, color: '#FFA500' }
+                    ] : expensesData
+                  ).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
