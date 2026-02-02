@@ -107,7 +107,7 @@ class MedTrackAPITester:
             print(f"   Found {len(response)} doctors")
         return success
 
-    def test_create_service(self, name, price, doctor_share, expenses):
+    def test_create_service(self, code, name, price, expense_items):
         """Create a paid service"""
         success, response = self.run_test(
             f"Create Service ({name})",
@@ -115,16 +115,16 @@ class MedTrackAPITester:
             "api/services",
             200,
             data={
+                "code": code,
                 "name": name,
                 "price": price,
-                "doctor_share": doctor_share,
-                "expenses": expenses
+                "expense_items": expense_items
             }
         )
         if success and 'id' in response:
             self.service_ids.append(response['id'])
-            fop_income = price - doctor_share - expenses
-            print(f"   FOP Income: {fop_income} UAH")
+            print(f"   Doctor Share: {response.get('doctor_share', 0)} UAH")
+            print(f"   FOP Income: {response.get('fop_income', 0)} UAH")
             return response['id']
         return None
 
