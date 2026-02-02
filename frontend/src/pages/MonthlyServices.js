@@ -1201,9 +1201,65 @@ const MonthlyServices = () => {
                 return a.month - b.month;
               });
               
+              // Агрегація по лікарях (якщо "Всі лікарі")
+              const byDoctor = {};
+              if (selectedDoctor === 'all') {
+                filteredEntries.forEach(entry => {
+                  const doctor = doctors.find(d => d.id === entry.doctor_id);
+                  const docKey = entry.doctor_id;
+                  
+                  if (!byDoctor[docKey]) {
+                    byDoctor[docKey] = {
+                      doctor_id: docKey,
+                      doctor_name: doctor?.name || 'N/A',
+                      short_name: doctor?.short_name || 'N/A',
+                      months: {}
+                    };
+                  }
+                  
+                  const monthKey = `${entry.year}-${entry.month}`;
+                  if (!byDoctor[docKey].months[monthKey]) {
+                    byDoctor[docKey].months[monthKey] = {
+                      month: entry.month,
+                      year: entry.year,
+                      quantity: 0,
+                      revenue: 0,
+                      expenses: 0,
+                      ep: 0,
+                      vz: 0,
+                      toDistribute: 0,
+                      doctorIncome: 0
+                    };
+                  }
+                  
+                  const ep = entry.total_revenue * 0.05;
+                  const vz = entry.total_revenue * 0.01;
+                  const toDistribute = entry.total_revenue - entry.total_expenses - ep - vz;
+                  
+                  byDoctor[docKey].months[monthKey].quantity += entry.quantity;
+                  byDoctor[docKey].months[monthKey].revenue += entry.total_revenue;
+                  byDoctor[docKey].months[monthKey].expenses += entry.total_expenses;
+                  byDoctor[docKey].months[monthKey].ep += ep;
+                  byDoctor[docKey].months[monthKey].vz += vz;
+                  byDoctor[docKey].months[monthKey].toDistribute += toDistribute;
+                  byDoctor[docKey].months[monthKey].doctorIncome += entry.doctor_income;
+                });
+              }
+              
+              const doctorsData = Object.values(byDoctor).map(doc => ({
+                ...doc,
+                monthsArray: Object.values(doc.months).sort((a, b) => {
+                  if (a.year !== b.year) return a.year - b.year;
+                  return a.month - b.month;
+                })
+              }));
+              
               return (
-                <div className="details-section">
-                  <div className="doctor-income-table-wrapper">
+                <>
+                  {/* Загальна таблиця */}
+                  <div className="details-section">
+                    <h4>{selectedDoctor === 'all' ? 'Загальна таблиця (всі лікарі)' : ''}</h4>
+                    <div className="doctor-income-table-wrapper">
                     <table className="doctor-income-table">
                       <thead>
                         <tr>
