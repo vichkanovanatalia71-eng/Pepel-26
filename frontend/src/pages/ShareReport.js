@@ -247,11 +247,15 @@ const ShareReport = () => {
               <PieChart>
                 <Pie
                   data={showOverviewChart ? [
-                    { name: 'Дохід лікаря', value: doctorData.total.doctorIncome, color: '#A78BFA' },
-                    { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
-                    { name: 'ЄП', value: doctorData.total.ep, color: '#FF8C00' },
-                    { name: 'ВЗ', value: doctorData.total.vz, color: '#FFA500' }
-                  ] : expensesData}
+                    { name: 'Дохід лікаря', value: doctorData.total.doctorIncome },
+                    { name: 'Витрати', value: doctorData.total.expenses },
+                    { name: 'ЄП', value: doctorData.total.ep },
+                    { name: 'ВЗ', value: doctorData.total.vz }
+                  ] : [
+                    { name: 'Витрати', value: doctorData.total.expenses },
+                    { name: 'ЄП (5%)', value: doctorData.total.ep },
+                    { name: 'ВЗ (1%)', value: doctorData.total.vz }
+                  ]}
                   cx="50%"
                   cy="50%"
                   innerRadius={showOverviewChart ? 0 : 40}
@@ -259,15 +263,12 @@ const ShareReport = () => {
                   paddingAngle={2}
                   dataKey="value"
                 >
-                  {(showOverviewChart ? 
-                    [
-                      { name: 'Дохід лікаря', value: doctorData.total.doctorIncome, color: '#A78BFA' },
-                      { name: 'Витрати', value: doctorData.total.expenses, color: '#EF4444' },
-                      { name: 'ЄП', value: doctorData.total.ep, color: '#FF8C00' },
-                      { name: 'ВЗ', value: doctorData.total.vz, color: '#FFA500' }
-                    ] : expensesData
-                  ).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  {(showOverviewChart ? [
+                    '#A78BFA', '#EF4444', '#FF8C00', '#FFA500'
+                  ] : [
+                    '#EF4444', '#FF8C00', '#FFA500'
+                  ]).map((color, index) => (
+                    <Cell key={`cell-${index}`} fill={color} />
                   ))}
                 </Pie>
                 <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
