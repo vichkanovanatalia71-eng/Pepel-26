@@ -542,7 +542,7 @@ const MonthlyServices = () => {
           >
             <div className="summary-icon">💰</div>
             <div>
-              <div className="summary-label">Оборот</div>
+              <div className="summary-label">Наданих послуг</div>
               <div className="summary-value">{dashboardStats.total_revenue.toLocaleString('uk-UA')} ₴</div>
               <div className="summary-count">{dashboardStats.total_quantity} послуг</div>
             </div>
