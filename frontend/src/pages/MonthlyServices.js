@@ -650,13 +650,14 @@ const MonthlyServices = () => {
 
       {/* Modal додавання */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto revenue-modal">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto revenue-modal add-services-modal">
           <DialogHeader>
             <DialogTitle>Додати надані послуги</DialogTitle>
           </DialogHeader>
           
           <div className="modal-form">
-            <div className="selection-section">
+            {/* Sticky header на mobile */}
+            <div className="selection-section sticky-selection">
               <div className="form-group">
                 <label>Лікар</label>
                 <select value={modalDoctor} onChange={(e) => setModalDoctor(e.target.value)}>
@@ -683,37 +684,94 @@ const MonthlyServices = () => {
               </div>
             </div>
 
+            {/* Показати вибрані послуги зверху */}
+            {Object.keys(quantities).filter(id => quantities[id] > 0).length > 0 && (
+              <div className="selected-services-badge">
+                Вибрано: <strong>{Object.keys(quantities).filter(id => quantities[id] > 0).length}</strong> послуг
+              </div>
+            )}
+
             <div className="services-grid-modal">
-              <h4>Всі послуги:</h4>
+              <div className="services-header-mobile">
+                <h4>Всі послуги ({services.length}):</h4>
+                <button 
+                  type="button"
+                  className="btn-show-selected"
+                  onClick={() => {
+                    const selected = Object.keys(quantities).filter(id => quantities[id] > 0);
+                    if (selected.length > 0) {
+                      document.querySelector('.services-scroll-container').scrollTop = 0;
+                    }
+                  }}
+                >
+                  {Object.keys(quantities).filter(id => quantities[id] > 0).length > 0 
+                    ? '✓ Показати вибрані' 
+                    : 'Оберіть послуги'
+                  }
+                </button>
+              </div>
+              
               <div className="services-scroll-container">
-                {services.map(service => (
-                  <div key={service.id} className="service-input-row">
-                    <div className="service-info">
-                      <span className="service-code-badge">{service.code}</span>
-                      <div className="service-details-compact">
-                        <span className="service-name-small">{service.name}</span>
-                        <span className="price-label">{service.price} ₴</span>
+                {/* Вибрані послуги зверху */}
+                {services
+                  .filter(s => quantities[s.id] > 0)
+                  .map(service => (
+                    <div key={service.id} className="service-input-row selected-service-row">
+                      <div className="service-info">
+                        <span className="service-code-badge">{service.code}</span>
+                        <div className="service-details-compact">
+                          <span className="service-name-small">{service.name}</span>
+                          <span className="price-label">{service.price} ₴</span>
+                        </div>
                       </div>
+                      <input 
+                        type="number"
+                        min="0"
+                        value={quantities[service.id] || ''}
+                        onChange={(e) => setQuantities({
+                          ...quantities,
+                          [service.id]: parseInt(e.target.value) || 0
+                        })}
+                        placeholder="0"
+                        className="qty-input qty-input-filled"
+                      />
                     </div>
-                    <input 
-                      type="number"
-                      min="0"
-                      value={quantities[service.id] || ''}
-                      onChange={(e) => setQuantities({
-                        ...quantities,
-                        [service.id]: parseInt(e.target.value) || 0
-                      })}
-                      placeholder="0"
-                      className="qty-input"
-                    />
-                  </div>
-                ))}
+                  ))
+                }
+                
+                {/* Решта послуг */}
+                {services
+                  .filter(s => !quantities[s.id] || quantities[s.id] === 0)
+                  .map(service => (
+                    <div key={service.id} className="service-input-row">
+                      <div className="service-info">
+                        <span className="service-code-badge">{service.code}</span>
+                        <div className="service-details-compact">
+                          <span className="service-name-small">{service.name}</span>
+                          <span className="price-label">{service.price} ₴</span>
+                        </div>
+                      </div>
+                      <input 
+                        type="number"
+                        min="0"
+                        value={quantities[service.id] || ''}
+                        onChange={(e) => setQuantities({
+                          ...quantities,
+                          [service.id]: parseInt(e.target.value) || 0
+                        })}
+                        placeholder="0"
+                        className="qty-input"
+                      />
+                    </div>
+                  ))
+                }
               </div>
             </div>
 
-            <div className="modal-actions">
+            {/* Sticky footer на mobile */}
+            <div className="modal-actions sticky-actions">
               <button className="btn btn-success" onClick={handleBulkAdd}>
-                Зберегти
+                Зберегти ({Object.keys(quantities).filter(id => quantities[id] > 0).length})
               </button>
               <button 
                 className="btn btn-secondary" 
