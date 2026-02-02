@@ -1010,6 +1010,113 @@ async def get_shared_report(share_token: str):
         "is_expired": False
     }
 
+# AI Image Analysis for Services
+@api_router.post("/analyze-services-image")
+async def analyze_services_image(file: UploadFile = File(...), month: int = Form(...), year: int = Form(...)):
+    """Аналіз зображення зі списком послуг через AI"""
+    try:
+        # Зберегти файл тимчасово
+        contents = await file.read()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp:
+            tmp.write(contents)
+            tmp_path = tmp.name
+        
+        # AI аналіз через Gemini Vision
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"image-analysis-{uuid.uuid4()}",
+            system_message="Ти експерт з розпізнавання медичних документів. Витягуй структуровані дані з зображень."
+        ).with_model("gemini", "gemini-2.5-flash")
+        
+        file_content = FileContentWithMimeType(
+            file_path=tmp_path,
+            mime_type=file.content_type or "image/jpeg"
+        )
+        
+        prompt = f"""Проаналізуй це зображення зі списком наданих медичних послуг.
+
+СТРУКТУРА ЗОБРАЖЕННЯ:
+- Розділи по лікарях (ПЛМ, ОСЛ або повні імена)
+- Для кожного лікаря: список "Код[номер]-[кількість]"
+- Наприклад: "Код1-13" означає послуга 001, кількість 13
+
+ЗАВДАННЯ:
+1. Знайди всіх лікарів (ПЛМ, ОСЛ, або імена Пепеляшко, Овсієнко)
+2. Для кожного лікаря витягни список послуг
+3. Конвертуй коди: Код1→001, Код14→014, тощо
+
+ПОВЕРНИ JSON:
+{{
+  "services": [
+    {{"doctor_short_name": "ПЛМ", "code": "001", "quantity": 13}},
+    {{"doctor_short_name": "ПЛМ", "code": "002", "quantity": 1}},
+    {{"doctor_short_name": "ОСЛ", "code": "001", "quantity": 2}}
+  ]
+}}
+
+Місяць: {month}, Рік: {year}"""
+
+        message = UserMessage(
+            text=prompt,
+            file_contents=[file_content]
+        )
+        
+        response = await chat.send_message(message)
+        
+        # Очистити temp файл
+        os.unlink(tmp_path)
+        
+        # Парсинг JSON з відповіді
+        import json
+        import re
+        
+        json_match = re.search(r'\{.*\}', response, re.DOTALL)
+        if json_match:
+            result = json.loads(json_match.group())
+            
+            # Мапінг на service IDs
+            services_list = await db.services.find({}, {"_id": 0}).to_list(1000)
+            doctors_list = await db.doctors.find({}, {"_id": 0}).to_list(1000)
+            
+            parsed_services = []
+            for item in result.get('services', []):
+                # Знайти service по коду
+                service = next((s for s in services_list if s['code'] == item['code']), None)
+                # Знайти лікаря
+                doctor = next((d for d in doctors_list if d['short_name'] == item['doctor_short_name']), None)
+                
+                if service and doctor:
+                    parsed_services.append({
+                        'service_id': service['id'],
+                        'doctor_id': doctor['id'],
+                        'code': item['code'],
+                        'quantity': item['quantity']
+                    })
+            
+            return {
+                "success": True,
+                "services": parsed_services,
+                "raw_response": response
+            }
+        else:
+            return {
+                "success": False,
+                "error": "AI не повернув структурований результат",
+                "raw_response": response
+            }
+            
+    except Exception as e:
+        logging.error(f"Image analysis error: {str(e)}")
+        if 'tmp_path' in locals():
+            try:
+                os.unlink(tmp_path)
+            except:
+                pass
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 app.include_router(api_router)
 
 app.add_middleware(
