@@ -1186,9 +1186,14 @@ const MonthlyServices = () => {
                     const response = await axios.post(`${API_URL}/api/reports/share`, { data: reportData });
                     const shareUrl = `${window.location.origin}/share/${response.data.share_token}`;
                     
-                    // Копіювати в clipboard
-                    navigator.clipboard.writeText(shareUrl);
-                    alert(`Посилання скопійовано!\n\n${shareUrl}\n\nДоступне до: ${new Date(response.data.expires_at).toLocaleDateString('uk-UA')}`);
+                    // Копіювати в clipboard з fallback
+                    try {
+                      await navigator.clipboard.writeText(shareUrl);
+                      alert(`✅ Посилання скопійовано!\n\n${shareUrl}\n\nДоступне до: ${new Date(response.data.expires_at).toLocaleDateString('uk-UA')}`);
+                    } catch (clipError) {
+                      // Fallback - показати URL для ручного копіювання
+                      prompt('Скопіюйте посилання (Ctrl+C):', shareUrl);
+                    }
                   } catch (error) {
                     console.error('Share error:', error);
                     alert('Помилка створення посилання');
