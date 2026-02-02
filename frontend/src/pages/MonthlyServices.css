@@ -465,6 +465,76 @@
   padding: 16px 20px;
   background: linear-gradient(135deg, rgba(255, 140, 0, 0.12) 0%, rgba(40, 40, 48, 0.9) 100%);
   backdrop-filter: blur(10px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.btn-collapse-selection {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-collapse-selection:hover {
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
+}
+
+.selection-collapsed {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(40, 40, 48, 0.8);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+}
+
+.collapsed-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.collapsed-badge {
+  background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
+  color: #0F0F12;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.collapsed-period {
+  color: #CCCCCC;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-expand-selection {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 8px;
+  color: #FFA500;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-expand-selection:hover {
+  background: rgba(255, 140, 0, 0.15);
+  border-color: #FF8C00;
 }
 
 .selected-services-badge {
