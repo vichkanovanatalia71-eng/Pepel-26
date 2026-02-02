@@ -631,7 +631,35 @@ const MonthlyServices = () => {
                       <div className="mini-label">Середній чек</div>
                       <div className="mini-value">{breakdown.avgCheck.toFixed(0)} ₴</div>
                     </div>
+                    {breakdown.comparison && (
+                      <div className={`detail-card-mini ${breakdown.comparison.isPositive ? 'success-mini' : 'danger-mini'}`}>
+                        <div className="mini-label">Динаміка</div>
+                        <div className="mini-value">
+                          {breakdown.comparison.trend === 'up' ? '↗' : '↘'} {Math.abs(breakdown.comparison.change).toFixed(1)}%
+                        </div>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Порівняння з попереднім місяцем */}
+                  {breakdown.comparison && (
+                    <div className={`comparison-alert ${breakdown.comparison.isPositive ? 'positive-alert' : 'negative-alert'}`}>
+                      <div className="comparison-icon">
+                        {breakdown.comparison.isPositive ? '📈' : '📉'}
+                      </div>
+                      <div className="comparison-text">
+                        <strong>
+                          {breakdown.comparison.isPositive ? 'Позитивна динаміка!' : 'Негативна динаміка'}
+                        </strong>
+                        <p>
+                          {breakdown.comparison.currentMonth}: {breakdown.comparison.currentRevenue.toLocaleString('uk-UA')} ₴ 
+                          {' '}({breakdown.comparison.isPositive ? 'більше' : 'менше'} на{' '}
+                          {Math.abs(breakdown.comparison.change).toFixed(1)}% ніж{' '}
+                          {breakdown.comparison.previousMonth}: {breakdown.comparison.previousRevenue.toLocaleString('uk-UA')} ₴)
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Топ-5 за оборотом */}
                   <div className="details-section">
