@@ -657,32 +657,61 @@ const MonthlyServices = () => {
           </DialogHeader>
           
           <div className="modal-form">
-            {/* Sticky header на mobile */}
+            {/* Sticky header з можливістю згортання */}
             <div className="selection-section sticky-selection">
-              <div className="form-group">
-                <label>Лікар</label>
-                <select value={modalDoctor} onChange={(e) => setModalDoctor(e.target.value)}>
-                  {doctors.map(d => (
-                    <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Місяць</label>
-                <select value={modalMonth} onChange={(e) => setModalMonth(parseInt(e.target.value))}>
-                  {monthNames.map((m, i) => (
-                    <option key={i} value={i + 1}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Рік</label>
-                <input 
-                  type="number" 
-                  value={modalYear} 
-                  onChange={(e) => setModalYear(parseInt(e.target.value))}
-                />
-              </div>
+              {!selectionCollapsed ? (
+                <>
+                  <div className="form-group">
+                    <label>Лікар</label>
+                    <select value={modalDoctor} onChange={(e) => setModalDoctor(e.target.value)}>
+                      {doctors.map(d => (
+                        <option key={d.id} value={d.id}>{d.name} ({d.short_name})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Місяць</label>
+                    <select value={modalMonth} onChange={(e) => setModalMonth(parseInt(e.target.value))}>
+                      {monthNames.map((m, i) => (
+                        <option key={i} value={i + 1}>{m}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Рік</label>
+                    <input 
+                      type="number" 
+                      value={modalYear} 
+                      onChange={(e) => setModalYear(parseInt(e.target.value))}
+                    />
+                  </div>
+                  <button 
+                    type="button"
+                    className="btn-collapse-selection"
+                    onClick={() => setSelectionCollapsed(true)}
+                  >
+                    ✓ Підтвердити
+                  </button>
+                </>
+              ) : (
+                <div className="selection-collapsed">
+                  <div className="collapsed-info">
+                    <span className="collapsed-badge">
+                      {doctors.find(d => d.id === modalDoctor)?.short_name || 'Лікар'}
+                    </span>
+                    <span className="collapsed-period">
+                      {monthNames[modalMonth - 1]} {modalYear}
+                    </span>
+                  </div>
+                  <button 
+                    type="button"
+                    className="btn-expand-selection"
+                    onClick={() => setSelectionCollapsed(false)}
+                  >
+                    Змінити
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Показати вибрані послуги зверху */}
