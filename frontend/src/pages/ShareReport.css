@@ -271,83 +271,128 @@
 /* Mobile - Ultra Compact */
 @media (max-width: 767px) {
   .share-report-page {
-    padding: 12px;
+    padding: 10px;
   }
 
   .share-header {
-    padding: 10px 12px;
-    margin-bottom: 12px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .share-logo {
+    gap: 8px;
   }
 
   .share-logo img {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
 
   .share-logo span {
-    font-size: 14px;
+    font-size: 13px;
+  }
+
+  .share-expiry {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .expiry-label {
+    font-size: 8px;
   }
 
   .expiry-days {
-    font-size: 16px;
-  }
-
-  .share-title h1 {
-    font-size: 1.25rem;
+    font-size: 14px;
   }
 
   .share-title {
+    margin-bottom: 10px;
+  }
+
+  .share-title h1 {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .share-title p {
+    font-size: 10px;
+  }
+
+  /* Stats - 2x2 grid для mobile */
+  .share-stats-compact {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
     margin-bottom: 12px;
   }
 
-  .share-stats-compact {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-  }
-
   .stat-mini {
-    padding: 8px;
+    padding: 8px 6px;
   }
 
   .stat-mini-label {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .stat-mini-value {
     font-size: 14px;
   }
 
+  /* Charts - smaller */
   .charts-row {
     grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 10px;
   }
 
   .chart-card {
-    padding: 12px;
+    padding: 10px;
   }
 
-  .chart-card h4 {
-    font-size: 11px;
-    margin-bottom: 8px;
+  .chart-header h4 {
+    font-size: 10px;
   }
 
+  .btn-toggle-chart {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  /* Hide legend on mobile, use tooltip instead */
+  .chart-card .recharts-legend-wrapper {
+    display: none !important;
+  }
+
+  /* Table - minimal */
   .share-table-section {
-    padding: 12px;
-    margin-bottom: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
   }
 
   .share-table {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .share-table th,
   .share-table td {
-    padding: 6px 4px;
+    padding: 5px 3px;
   }
 
   .share-footer {
-    padding: 12px;
-    font-size: 10px;
+    padding: 10px;
+    font-size: 9px;
+  }
+
+  .expiry-warning {
+    font-size: 8px;
+  }
+
+  /* Tabs compact */
+  .tabs-list-share {
+    padding: 3px;
+  }
+
+  .doctor-tabs [data-radix-tabs-trigger] {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
