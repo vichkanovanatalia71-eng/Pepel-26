@@ -441,7 +441,7 @@ const MonthlyServices = () => {
   return (
     <div className="monthly-services-page" data-testid="monthly-services-page">
       <div className="page-header">
-        <h1>📊 Облік послуг</h1>
+        <h1>💳 Платні послуги</h1>
         <button 
           className="btn btn-primary" 
           onClick={() => setShowAddModal(true)} 
