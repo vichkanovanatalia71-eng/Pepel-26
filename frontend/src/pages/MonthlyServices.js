@@ -197,10 +197,55 @@ const MonthlyServices = () => {
       setQuantities({});
       setShowAddModal(false);
       setSelectionCollapsed(false);
+      setUploadedImage(null);
       loadData();
     } catch (error) {
       console.error('Error:', error);
       alert('Помилка збереження');
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setAiProcessing(true);
+    setUploadedImage(file);
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('month', modalMonth);
+      formData.append('year', modalYear);
+      
+      const response = await axios.post(`${API_URL}/api/analyze-services-image`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      if (response.data.success) {
+        // Автоматично заповнити quantities з AI результату
+        const aiQuantities = {};
+        response.data.services.forEach(item => {
+          const service = services.find(s => s.code === item.code);
+          if (service) {
+            aiQuantities[service.id] = item.quantity;
+          }
+        });
+        
+        setQuantities(aiQuantities);
+        
+        // Встановити лікаря якщо AI розпізнав
+        if (response.data.doctor_id) {
+          setModalDoctor(response.data.doctor_id);
+        }
+        
+        alert(`✅ Розпізнано ${Object.keys(aiQuantities).length} послуг!`);
+      }
+    } catch (error) {
+      console.error('AI analysis error:', error);
+      alert('Помилка аналізу зображення');
+    } finally {
+      setAiProcessing(false);
     }
   };
 
