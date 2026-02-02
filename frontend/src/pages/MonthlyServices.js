@@ -733,7 +733,7 @@ const MonthlyServices = () => {
       <Dialog open={showRevenueModal} onOpenChange={setShowRevenueModal}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto revenue-modal">
           <DialogHeader>
-            <DialogTitle>💰 Детальна статистика обороту</DialogTitle>
+            <DialogTitle>💰 Детальна статистика наданих послуг</DialogTitle>
           </DialogHeader>
           <div className="revenue-details">
             <div className="export-buttons">
