@@ -280,7 +280,7 @@ const ShareReport = () => {
           {monthlyData.length > 1 && (
             <div className="chart-card">
               <h4>Дохід по місяцях</h4>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
                     data={monthlyData}
