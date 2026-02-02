@@ -294,8 +294,8 @@ const ShareReport = () => {
                     outerRadius={window.innerWidth <= 767 ? 60 : 70}
                     dataKey="value"
                   >
-                    {monthlyData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {COLORS.map((color, index) => (
+                      <Cell key={`cell-${index}`} fill={color} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
