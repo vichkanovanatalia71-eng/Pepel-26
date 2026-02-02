@@ -121,8 +121,9 @@ const ShareReport = () => {
         expenses: acc.expenses + m.expenses,
         ep: acc.ep + m.ep,
         vz: acc.vz + m.vz,
+        toDistribute: acc.toDistribute + m.toDistribute,
         doctorIncome: acc.doctorIncome + m.doctorIncome
-      }), { quantity: 0, revenue: 0, expenses: 0, ep: 0, vz: 0, doctorIncome: 0 })
+      }), { quantity: 0, revenue: 0, expenses: 0, ep: 0, vz: 0, toDistribute: 0, doctorIncome: 0 })
     }));
   };
 
