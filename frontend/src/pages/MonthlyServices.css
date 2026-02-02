@@ -1460,6 +1460,27 @@
     border-radius: 0 !important;
   }
 
+  /* Mobile close button - larger and visible */
+  [data-radix-dialog-content] button[aria-label="Close"] {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 140, 0, 0.2) !important;
+    border: 2px solid rgba(255, 140, 0, 0.5) !important;
+    top: 10px !important;
+    right: 10px !important;
+  }
+
+  [data-radix-dialog-content] button[aria-label="Close"]:hover {
+    background: rgba(255, 140, 0, 0.3) !important;
+  }
+
+  [data-radix-dialog-content] button[aria-label="Close"] svg {
+    width: 24px !important;
+    height: 24px !important;
+    color: #FFA500 !important;
+  }
+
   .revenue-details {
     font-size: 13px;
   }
