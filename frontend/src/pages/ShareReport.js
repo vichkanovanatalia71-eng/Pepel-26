@@ -284,13 +284,13 @@ const ShareReport = () => {
           {monthlyData.length > 1 && (
             <div className="chart-card">
               <h4>Дохід по місяцях</h4>
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={238}>
                 <PieChart>
                   <Pie
                     data={monthlyData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={window.innerWidth <= 767 ? 100 : 90}
+                    outerRadius={window.innerWidth <= 767 ? 85 : 76}
                     dataKey="value"
                   >
                     {monthlyData.map((entry, index) => (
@@ -298,7 +298,11 @@ const ShareReport = () => {
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => `${value.toLocaleString('uk-UA')} ₴`} />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '10px' }}
+                    iconType="circle"
+                    iconSize={8}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
