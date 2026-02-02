@@ -966,6 +966,50 @@ async def get_cash_balance(month: int, year: int):
     
     return {"exists": True, "data": balance}
 
+# Shared Reports
+@api_router.post("/reports/share")
+async def create_shared_report(report: SharedReportCreate):
+    """Створити поширений звіт"""
+    shared_report = SharedReport(**report.model_dump())
+    report_dict = shared_report.model_dump()
+    report_dict['created_at'] = report_dict['created_at'].isoformat()
+    report_dict['expires_at'] = report_dict['expires_at'].isoformat()
+    
+    await db.shared_reports.insert_one(report_dict)
+    
+    return {
+        "share_token": shared_report.share_token,
+        "expires_at": shared_report.expires_at.isoformat(),
+        "share_url": f"/share/{shared_report.share_token}"
+    }
+
+@api_router.get("/reports/share/{share_token}")
+async def get_shared_report(share_token: str):
+    """Отримати поширений звіт"""
+    report = await db.shared_reports.find_one({"share_token": share_token}, {"_id": 0})
+    
+    if not report:
+        raise HTTPException(status_code=404, detail="Звіт не знайдено")
+    
+    # Перевірити expiry
+    expires_at = datetime.fromisoformat(report['expires_at'])
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=410, detail="Термін дії звіту закінчився")
+    
+    # Розрахувати дні що залишились
+    days_left = (expires_at - datetime.now(timezone.utc)).days
+    
+    if isinstance(report.get('created_at'), str):
+        report['created_at'] = datetime.fromisoformat(report['created_at'])
+    if isinstance(report.get('expires_at'), str):
+        report['expires_at'] = datetime.fromisoformat(report['expires_at'])
+    
+    return {
+        "report": report,
+        "days_left": days_left,
+        "is_expired": False
+    }
+
 app.include_router(api_router)
 
 app.add_middleware(
