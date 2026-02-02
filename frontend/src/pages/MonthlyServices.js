@@ -312,7 +312,7 @@ const MonthlyServices = () => {
     // Sheet 2: По послугах
     const breakdown = getRevenueBreakdown();
     const servicesData = [
-      ['Код', 'Назва', 'Кількість', 'Оборот', '% від загального']
+      ['Код', 'Назва', 'Кількість', 'Сума', '% від загального']
     ];
     
     let servicesTotal = 0;
