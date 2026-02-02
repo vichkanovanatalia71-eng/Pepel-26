@@ -367,12 +367,16 @@
   }
 
   .recharts-legend-wrapper {
-    display: none !important;
+    font-size: 9px !important;
+  }
+
+  .recharts-legend-item-text {
+    font-size: 9px !important;
   }
 
   .chart-card svg,
   .chart-card .recharts-wrapper {
-    height: 250px !important;
+    height: 212px !important;
     width: 100% !important;
   }
 
