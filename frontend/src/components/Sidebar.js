@@ -5,10 +5,10 @@ import './Sidebar.css';
 const Sidebar = () => {
   const location = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(
-    location.pathname === '/services' || location.pathname === '/doctors'
+    location.pathname === '/services' || location.pathname === '/doctors' || location.pathname === '/pmg-settings'
   );
 
-  const isSettingsActive = location.pathname === '/services' || location.pathname === '/doctors';
+  const isSettingsActive = location.pathname === '/services' || location.pathname === '/doctors' || location.pathname === '/pmg-settings';
 
   return (
     <aside className="sidebar">
@@ -70,6 +70,14 @@ const Sidebar = () => {
               >
                 <i className="icon">👥</i>
                 <span>Лікарі</span>
+              </NavLink>
+              <NavLink 
+                to="/pmg-settings" 
+                className={({ isActive }) => isActive ? 'nav-link sub-link active' : 'nav-link sub-link'} 
+                data-testid="nav-pmg-settings"
+              >
+                <i className="icon">📊</i>
+                <span>Капітація та коефіцієнти</span>
               </NavLink>
             </div>
           )}
