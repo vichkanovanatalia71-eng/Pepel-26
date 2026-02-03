@@ -3,6 +3,7 @@ import React from 'react';
 const DashboardCards = ({
   dashboardStats,
   displayedCashBalance,
+  displayedBankBalance,
   selectedDoctor,
   doctors,
   selectedYear,
@@ -11,7 +12,8 @@ const DashboardCards = ({
   onRevenueClick,
   onDoctorIncomeClick,
   onExpensesClick,
-  onCashBalanceClick
+  onCashBalanceClick,
+  onBankBalanceClick
 }) => {
   if (!dashboardStats) return null;
 
@@ -94,13 +96,26 @@ const DashboardCards = ({
         <div className="card-click-hint">✏️</div>
       </div>
 
-      <div className="summary-card bank-card">
+      <div 
+        className="summary-card clickable bank-card"
+        onClick={onBankBalanceClick}
+        data-testid="bank-balance-card"
+      >
         <div className="summary-icon">🏦</div>
         <div>
           <div className="summary-label">Рахунок у банку</div>
-          <div className="summary-value">— ₴</div>
-          <div className="summary-count">Скоро</div>
+          <div className="summary-value">
+            {displayedBankBalance ? displayedBankBalance.amount.toLocaleString('uk-UA') : '0'} ₴
+          </div>
+          <div className="summary-count">
+            {displayedBankBalance 
+              ? (displayedBankBalance.isAggregate 
+                  ? 'Сума за період' 
+                  : `${monthNames[displayedBankBalance.month - 1]} ${displayedBankBalance.year}`)
+              : 'Не вказано'}
+          </div>
         </div>
+        <div className="card-click-hint">✏️</div>
       </div>
     </div>
   );
