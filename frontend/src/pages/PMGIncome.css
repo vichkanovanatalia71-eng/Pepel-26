@@ -903,4 +903,29 @@
     padding: 8px 10px;
     font-size: 12px;
   }
+  
+  .action-buttons {
+    flex-direction: row;
+  }
+  
+  .action-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .age-group-row-extended {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .age-inputs-group {
+    justify-content: space-between;
+  }
+  
+  .age-input-small,
+  .verified-count {
+    width: 60px;
+    font-size: 14px;
+  }
 }
