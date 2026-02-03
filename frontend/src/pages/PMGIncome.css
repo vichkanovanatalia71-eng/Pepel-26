@@ -373,6 +373,277 @@
   background: rgba(255, 140, 0, 0.3);
   border-radius: 3px;
 }
+/* New Wide Modal Layout for Desktop */
+.pmg-entry-modal-wide {
+  background: #1a1a1d;
+  max-width: 1000px !important;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.entry-modal-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.entry-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.entry-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Compact Form Elements */
+.entry-section-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.entry-label-compact {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FF8C00;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.entry-select-compact,
+.entry-input-compact {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.entry-select-compact:focus,
+.entry-input-compact:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.entry-select-compact:disabled,
+.entry-input-compact:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.period-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.year-input {
+  width: 90px;
+}
+
+.upload-btn-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: rgba(255, 140, 0, 0.1);
+  border: 2px dashed rgba(255, 140, 0, 0.3);
+  border-radius: 10px;
+  color: #FF8C00;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn-compact:hover {
+  background: rgba(255, 140, 0, 0.15);
+  border-color: rgba(255, 140, 0, 0.5);
+}
+
+.upload-btn-compact.uploading {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.upload-btn-compact input[type="file"] {
+  display: none;
+}
+
+.entry-total-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: rgba(255, 140, 0, 0.1);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 10px;
+  margin-top: auto;
+}
+
+.entry-total-compact span {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.entry-total-compact strong {
+  font-size: 20px;
+  color: #FF8C00;
+  font-weight: 700;
+}
+
+/* Age Groups Table Layout */
+.age-groups-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.age-table-header {
+  display: grid;
+  grid-template-columns: 1fr 70px 110px 110px;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 140, 0, 0.1);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FF8C00;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.age-table-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 110px 110px;
+  gap: 8px;
+  padding: 6px 10px;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.age-table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.age-col {
+  display: flex;
+  align-items: center;
+}
+
+.age-col-group {
+  font-size: 13px;
+  color: #CCCCCC;
+  font-weight: 500;
+}
+
+.age-col-coef {
+  font-size: 12px;
+  color: #FF8C00;
+  font-weight: 600;
+  justify-content: center;
+}
+
+.age-col-input {
+  justify-content: center;
+}
+
+.age-input-table {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.age-input-table:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.age-input-table.warning-subtle {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.age-input-table.warning-subtle:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.input-hint-small {
+  font-size: 11px;
+  color: #666;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Actions Bar */
+.entry-actions-horizontal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive - Mobile falls back to vertical */
+@media (max-width: 900px) {
+  .pmg-entry-modal-wide {
+    max-width: 95vw !important;
+  }
+  
+  .entry-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .entry-left-column {
+    order: 1;
+  }
+  
+  .entry-right-column {
+    order: 2;
+  }
+  
+  .age-table-header,
+  .age-table-row {
+    grid-template-columns: 1fr 60px 90px 90px;
+    font-size: 10px;
+  }
+  
+  .age-col-group {
+    font-size: 12px;
+  }
+  
+  .age-input-table {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
 
 .entry-section {
   margin-bottom: 20px;
