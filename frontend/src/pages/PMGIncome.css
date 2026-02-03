@@ -1327,150 +1327,150 @@
 /* Mobile Responsive Design - Following MonthlyServices pattern */
 @media (max-width: 767px) {
   .pmg-income-page {
-    padding: 12px;
-    padding-bottom: 100px;
+    padding: 12px !important;
+    padding-bottom: 100px !important;
   }
   
   .pmg-income-page .page-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    margin-bottom: 14px;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
   }
   
   .pmg-income-page .page-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
   
   .pmg-income-page .header-actions {
-    width: 100%;
+    width: 100% !important;
   }
   
   .pmg-income-page .header-actions .btn {
-    width: 100%;
-    font-size: 14px;
-    padding: 12px 16px;
+    width: 100% !important;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
   }
   
   /* Filters - Vertical stack */
   .pmg-filters {
-    padding: 12px;
-    margin-bottom: 12px;
+    padding: 12px !important;
+    margin-bottom: 12px !important;
   }
   
   .pmg-filters .filter-group {
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+    margin-bottom: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
   }
   
   .pmg-filters .filter-group:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
   }
   
   .pmg-filters .filter-group label {
-    font-size: 10px;
-    margin-bottom: 0;
-    margin-right: 0;
+    font-size: 10px !important;
+    margin-bottom: 0 !important;
+    margin-right: 0 !important;
   }
   
   .pmg-filters .chips-group {
-    width: 100%;
-    gap: 5px;
+    width: 100% !important;
+    gap: 5px !important;
   }
   
   .pmg-filters .chips-scrollable {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   
   .pmg-filters .chip {
-    padding: 7px 12px;
-    font-size: 11px;
-    max-width: 100%;
+    padding: 7px 12px !important;
+    font-size: 11px !important;
+    max-width: 100% !important;
   }
   
   /* KPI Cards - 2 columns on mobile */
   .pmg-kpi-cards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
   }
   
   .kpi-card {
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-    padding: 12px;
-    gap: 8px;
+    flex-direction: column !important;
+    text-align: center !important;
+    align-items: center !important;
+    padding: 12px !important;
+    gap: 8px !important;
   }
   
   .kpi-icon {
-    font-size: 28px;
-    margin: 0 auto;
+    font-size: 28px !important;
+    margin: 0 auto !important;
   }
   
   .kpi-label {
-    font-size: 9px;
+    font-size: 9px !important;
   }
   
   .kpi-value {
-    font-size: 16px;
+    font-size: 16px !important;
   }
   
   .kpi-period {
-    font-size: 10px;
+    font-size: 10px !important;
   }
   
   /* Charts - Stack vertically */
   .pmg-charts {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 14px;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 14px !important;
   }
   
   .chart-card {
-    padding: 14px;
+    padding: 14px !important;
   }
   
   .chart-card h3 {
-    font-size: 14px;
-    margin-bottom: 12px;
+    font-size: 14px !important;
+    margin-bottom: 12px !important;
   }
   
   .chart-container {
-    min-height: 220px;
+    min-height: 220px !important;
   }
   
   /* Table - Horizontal scroll container */
   .declarations-table-section {
-    padding: 14px;
-    overflow-x: auto;
+    padding: 14px !important;
+    overflow-x: auto !important;
   }
   
   .declarations-table-wrapper {
-    min-width: 700px;
+    min-width: 700px !important;
   }
   
   .declarations-table th {
-    font-size: 11px;
-    padding: 8px 6px;
+    font-size: 11px !important;
+    padding: 8px 6px !important;
   }
   
   .declarations-table td {
-    font-size: 11px;
-    padding: 8px 6px;
+    font-size: 11px !important;
+    padding: 8px 6px !important;
   }
   
   .action-buttons {
-    gap: 4px;
+    gap: 4px !important;
   }
   
   .action-btn {
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
   }
 }
 
