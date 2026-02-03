@@ -12,7 +12,6 @@ import {
   DoctorIncomeModal,
   ExpensesModal,
   CashBalanceModal,
-  BankBalanceModal,
   AddServicesModal,
   DashboardCards,
   EntriesList
@@ -29,6 +28,7 @@ const MonthlyServices = () => {
     filteredEntries,
     displayedCashBalance,
     displayedBankBalance,
+    totalRevenueForPeriod,
     loading,
     monthNames,
     selectedDoctor,
