@@ -97,13 +97,32 @@ const PMGIncome = () => {
   const totals = useMemo(() => {
     if (filteredDeclarations.length === 0) return null;
     
-    const totalPatients = filteredDeclarations.reduce((sum, d) => sum + d.total_patients, 0);
+    // Фінансові дані сумуються за всі періоди
     const totalAmount = filteredDeclarations.reduce((sum, d) => sum + d.total_amount, 0);
     const totalEP = filteredDeclarations.reduce((sum, d) => sum + d.total_ep, 0);
     const totalVZ = filteredDeclarations.reduce((sum, d) => sum + d.total_vz, 0);
     const netAmount = filteredDeclarations.reduce((sum, d) => sum + d.net_amount, 0);
     
-    return { totalPatients, totalAmount, totalEP, totalVZ, netAmount };
+    // Кількість декларацій - тільки з останнього періоду (сума по всіх лікарях)
+    // Знаходимо останній період
+    const latestDeclaration = filteredDeclarations[0]; // вже відсортовано від нового до старого
+    const latestMonth = latestDeclaration.month;
+    const latestYear = latestDeclaration.year;
+    
+    // Сумуємо декларації тільки за останній період (по всіх лікарях)
+    const latestPeriodDeclarations = filteredDeclarations.filter(
+      d => d.month === latestMonth && d.year === latestYear
+    );
+    const totalPatients = latestPeriodDeclarations.reduce((sum, d) => sum + d.total_patients, 0);
+    
+    return { 
+      totalPatients, 
+      totalAmount, 
+      totalEP, 
+      totalVZ, 
+      netAmount,
+      latestPeriod: `${MONTH_NAMES[latestMonth - 1]} ${latestYear}`
+    };
   }, [filteredDeclarations]);
 
   // Data for charts
