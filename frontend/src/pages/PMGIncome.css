@@ -305,6 +305,201 @@
   justify-content: center;
 }
 
+/* Unified Entry Modal */
+.entry-modal .entry-modal-content {
+  padding: 8px 0;
+}
+
+.entry-section {
+  margin-bottom: 20px;
+}
+
+.entry-label {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.entry-select,
+.entry-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.entry-select:focus,
+.entry-input:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+.entry-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(255, 140, 0, 0.1);
+  border: 2px dashed rgba(255, 140, 0, 0.4);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #FFA500;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.upload-btn:hover {
+  background: rgba(255, 140, 0, 0.15);
+  border-color: #FF8C00;
+}
+
+.upload-btn.uploading {
+  background: rgba(255, 140, 0, 0.2);
+  cursor: wait;
+  animation: pulse 1.5s infinite;
+}
+
+.upload-btn input {
+  display: none;
+}
+
+.upload-hint-small {
+  font-size: 11px;
+  color: #666;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.entry-divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  gap: 16px;
+}
+
+.entry-divider::before,
+.entry-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.entry-divider span {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.age-groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.age-group-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.age-group-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.age-label {
+  font-size: 14px;
+  color: #CCCCCC;
+  min-width: 90px;
+}
+
+.age-coeff {
+  font-size: 11px;
+  color: #666;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.age-input {
+  width: 100px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.age-input:focus {
+  border-color: #FF8C00;
+  outline: none;
+}
+
+.age-input::placeholder {
+  color: #444;
+}
+
+.entry-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.15) 0%, rgba(255, 140, 0, 0.05) 100%);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.entry-total span {
+  font-size: 14px;
+  color: #888;
+}
+
+.entry-total strong {
+  font-size: 20px;
+  color: #FFA500;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.entry-actions .btn {
+  flex: 1;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Upload Modal */
 .upload-modal-content {
   padding: 16px 0;
@@ -346,11 +541,6 @@
 .upload-area .uploading {
   color: #FFA500;
   animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
 }
 
 .upload-area.disabled {
