@@ -1560,7 +1560,7 @@
   
   /* Actions - Full width buttons */
   .entry-actions-horizontal {
-    flex-direction: column !important;
+    flex-direction: column-reverse !important;
     gap: 8px !important;
     margin-top: 16px !important;
     padding-top: 12px !important;
