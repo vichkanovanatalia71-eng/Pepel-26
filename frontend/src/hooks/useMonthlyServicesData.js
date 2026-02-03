@@ -9,6 +9,7 @@ export const useMonthlyServicesData = () => {
   const [allEntries, setAllEntries] = useState([]);
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [allCashBalances, setAllCashBalances] = useState([]);
+  const [allBankBalances, setAllBankBalances] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Filters
@@ -24,11 +25,12 @@ export const useMonthlyServicesData = () => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [servicesRes, doctorsRes, entriesRes, cashRes] = await Promise.all([
+      const [servicesRes, doctorsRes, entriesRes, cashRes, bankRes] = await Promise.all([
         axios.get(`${API_URL}/api/services`),
         axios.get(`${API_URL}/api/doctors`),
         axios.get(`${API_URL}/api/monthly-services`),
-        axios.get(`${API_URL}/api/cash-balance`).catch(() => ({ data: [] }))
+        axios.get(`${API_URL}/api/cash-balance`).catch(() => ({ data: [] })),
+        axios.get(`${API_URL}/api/bank-balance`).catch(() => ({ data: [] }))
       ]);
 
       setServices(servicesRes.data.sort((a, b) => (a.code || '').localeCompare(b.code || '')));
@@ -36,6 +38,7 @@ export const useMonthlyServicesData = () => {
       const sorted = entriesRes.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setAllEntries(sorted);
       setAllCashBalances(cashRes.data || []);
+      setAllBankBalances(bankRes.data || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
