@@ -5,9 +5,12 @@
   margin: 0 auto;
   overflow-x: hidden;
   width: 100%;
+  box-sizing: border-box;
 }
 
-.pmg-income-page * {
+.pmg-income-page *,
+.pmg-income-page *::before,
+.pmg-income-page *::after {
   box-sizing: border-box;
 }
 
