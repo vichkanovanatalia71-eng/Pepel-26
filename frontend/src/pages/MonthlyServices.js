@@ -880,8 +880,62 @@ const MonthlyServices = () => {
 
       {/* Список */}
       <div className="card">
-        <h3>Надані послуги ({filteredEntries.length})</h3>
-        {filteredEntries.length === 0 ? (
+        <div className="entries-header">
+          <h3>Надані послуги ({getSortedAndFilteredEntries().length})</h3>
+          
+          {selectedEntries.size > 0 && (
+            <button 
+              className="btn-bulk-delete"
+              onClick={handleBulkDelete}
+            >
+              🗑️ Видалити ({selectedEntries.size})
+            </button>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="entries-controls">
+          {/* Search */}
+          <div className="search-box">
+            <input 
+              type="text"
+              placeholder="Пошук (код, назва, лікар, місяць)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+          </div>
+
+          {/* Sort */}
+          <div className="sort-box">
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
+            >
+              <option value="date-desc">Нові → Старі</option>
+              <option value="date-asc">Старі → Нові</option>
+              <option value="amount-desc">Сума ↓</option>
+              <option value="amount-asc">Сума ↑</option>
+              <option value="quantity-desc">Кількість ↓</option>
+              <option value="quantity-asc">Кількість ↑</option>
+            </select>
+          </div>
+
+          {/* Select All */}
+          <div className="select-all-box">
+            <label className="checkbox-label">
+              <input 
+                type="checkbox"
+                checked={selectedEntries.size === getSortedAndFilteredEntries().length && getSortedAndFilteredEntries().length > 0}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+              />
+              <span>Вибрати всі</span>
+            </label>
+          </div>
+        </div>
+
+        {getSortedAndFilteredEntries().length === 0 ? (
           <div className="empty-state">
             <p>Записів не знайдено</p>
           </div>
