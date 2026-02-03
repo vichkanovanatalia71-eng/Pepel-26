@@ -591,7 +591,7 @@ const PMGIncome = () => {
 
       {/* Unified Entry Modal */}
       <Dialog open={showEntryModal} onOpenChange={setShowEntryModal}>
-        <DialogContent className="max-w-lg entry-modal">
+        <DialogContent className="max-w-lg entry-modal max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>📝 Внесення даних декларацій</DialogTitle>
           </DialogHeader>
