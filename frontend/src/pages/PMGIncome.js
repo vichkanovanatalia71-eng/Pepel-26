@@ -278,7 +278,7 @@ const PMGIncome = () => {
             onClick={() => setShowUploadModal(true)}
             data-testid="upload-pdf-btn"
           >
-            📄 Завантажити PDF
+            📷 Завантажити скріншот
           </button>
           <button 
             className="btn btn-primary"
