@@ -269,6 +269,82 @@ const MonthlyServices = () => {
     setSelectedMonth('all');
   };
 
+  const getSortedAndFilteredEntries = () => {
+    let entries = [...filteredEntries];
+    
+    // Пошук
+    if (searchQuery) {
+      entries = entries.filter(entry => {
+        const service = services.find(s => s.id === entry.service_id);
+        const doctor = doctors.find(d => d.id === entry.doctor_id);
+        const query = searchQuery.toLowerCase();
+        
+        return (
+          service?.code?.toLowerCase().includes(query) ||
+          service?.name?.toLowerCase().includes(query) ||
+          doctor?.name?.toLowerCase().includes(query) ||
+          doctor?.short_name?.toLowerCase().includes(query) ||
+          monthNames[entry.month - 1]?.toLowerCase().includes(query)
+        );
+      });
+    }
+    
+    // Сортування
+    switch (sortBy) {
+      case 'date-desc':
+        entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        break;
+      case 'date-asc':
+        entries.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        break;
+      case 'amount-desc':
+        entries.sort((a, b) => b.total_revenue - a.total_revenue);
+        break;
+      case 'amount-asc':
+        entries.sort((a, b) => a.total_revenue - b.total_revenue);
+        break;
+      case 'quantity-desc':
+        entries.sort((a, b) => b.quantity - a.quantity);
+        break;
+      case 'quantity-asc':
+        entries.sort((a, b) => a.quantity - b.quantity);
+        break;
+      default:
+        break;
+    }
+    
+    return entries;
+  };
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      const allIds = new Set(getSortedAndFilteredEntries().map(e => e.id));
+      setSelectedEntries(allIds);
+    } else {
+      setSelectedEntries(new Set());
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedEntries.size === 0) {
+      alert('Оберіть записи для видалення');
+      return;
+    }
+    
+    if (window.confirm(`Видалити ${selectedEntries.size} записів?`)) {
+      try {
+        for (const entryId of selectedEntries) {
+          await axios.delete(`${API_URL}/api/monthly-services/${entryId}`);
+        }
+        setSelectedEntries(new Set());
+        loadData();
+      } catch (error) {
+        console.error('Bulk delete error:', error);
+        alert('Помилка видалення');
+      }
+    }
+  };
+
   const openRevenueModal = () => setShowRevenueModal(true);
   
   const openDoctorIncomeModal = () => setShowDoctorIncomeModal(true);
