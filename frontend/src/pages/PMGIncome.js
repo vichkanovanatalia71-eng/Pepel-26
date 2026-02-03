@@ -187,7 +187,7 @@ const PMGIncome = () => {
     if (latestPeriodDeclarations.length === 0) return [];
     
     const grouped = {};
-    AGE_GROUPS.forEach(ag => {
+    ageGroups.forEach(ag => {
       grouped[ag.key] = { name: ag.label, patients: 0, amount: 0 };
     });
     
