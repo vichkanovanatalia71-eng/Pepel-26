@@ -1184,17 +1184,29 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
         # Зберегти файл тимчасово
         content = await file.read()
         
-        # Конвертувати в base64 для AI
-        file_content = FileContentWithMimeType(
-            content=base64.b64encode(content).decode('utf-8'),
-            mime_type=file.content_type or "image/jpeg"
-        )
+        # Визначити розширення файлу
+        ext = '.jpg'
+        if file.content_type:
+            if 'png' in file.content_type:
+                ext = '.png'
+            elif 'webp' in file.content_type:
+                ext = '.webp'
         
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"pmg-image-{uuid.uuid4()}",
-            model="gemini-2.5-flash",
-            system_message="""Ти експерт з аналізу медичних фінансових звітів від НСЗУ (Національна служба здоров'я України).
+        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp_file:
+            tmp_file.write(content)
+            tmp_path = tmp_file.name
+        
+        try:
+            # Створити file content для AI
+            file_content = FileContentWithMimeType(
+                file_path=tmp_path,
+                mime_type=file.content_type or "image/jpeg"
+            )
+            
+            chat = LlmChat(
+                api_key=EMERGENT_LLM_KEY,
+                session_id=f"pmg-image-{uuid.uuid4()}",
+                system_message="""Ти експерт з аналізу медичних фінансових звітів від НСЗУ (Національна служба здоров'я України).
 
 Проаналізуй скріншот дашборду НСЗУ та витягни дані у форматі JSON:
 {
@@ -1220,28 +1232,32 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
 - Ім'я лікаря може бути в фільтрі "ПІБ лікаря" або в заголовку
 
 Поверни ТІЛЬКИ валідний JSON без markdown форматування."""
-        )
-        
-        response = await chat.send_message_async(
-            UserMessage(content="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
-                       files=[file_content])
-        )
-        
-        # Парсити JSON з відповіді
-        import json
-        response_text = response.text.strip()
-        if response_text.startswith('```'):
-            response_text = response_text.split('```')[1]
-            if response_text.startswith('json'):
-                response_text = response_text[4:]
-        response_text = response_text.strip()
-        
-        parsed_data = json.loads(response_text)
-        
-        return {
-            "success": True,
-            "parsed_data": parsed_data
-        }
+            ).with_model("gemini", "gemini-2.5-flash")
+            
+            response = await chat.send_message_async(
+                UserMessage(content="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
+                           files=[file_content])
+            )
+            
+            # Парсити JSON з відповіді
+            import json
+            response_text = response.text.strip()
+            if response_text.startswith('```'):
+                response_text = response_text.split('```')[1]
+                if response_text.startswith('json'):
+                    response_text = response_text[4:]
+            response_text = response_text.strip()
+            
+            parsed_data = json.loads(response_text)
+            
+            return {
+                "success": True,
+                "parsed_data": parsed_data
+            }
+        finally:
+            # Видалити тимчасовий файл
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
         
     except Exception as e:
         logging.error(f"PMG Image analysis error: {e}")
