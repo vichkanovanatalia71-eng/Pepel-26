@@ -12,6 +12,7 @@ import {
   DoctorIncomeModal,
   ExpensesModal,
   CashBalanceModal,
+  BankBalanceModal,
   AddServicesModal,
   DashboardCards,
   EntriesList
@@ -27,6 +28,7 @@ const MonthlyServices = () => {
     allEntries,
     filteredEntries,
     displayedCashBalance,
+    displayedBankBalance,
     loading,
     monthNames,
     selectedDoctor,
@@ -65,6 +67,7 @@ const MonthlyServices = () => {
   const [showDoctorIncomeModal, setShowDoctorIncomeModal] = useState(false);
   const [showExpensesModal, setShowExpensesModal] = useState(false);
   const [showCashBalanceModal, setShowCashBalanceModal] = useState(false);
+  const [showBankBalanceModal, setShowBankBalanceModal] = useState(false);
 
   // Entries list states
   const [sortBy, setSortBy] = useState('date-desc');
