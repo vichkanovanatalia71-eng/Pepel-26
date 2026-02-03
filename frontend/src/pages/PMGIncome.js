@@ -242,12 +242,6 @@ const PMGIncome = () => {
     } finally {
       setUploading(false);
     }
-  }; {
-      console.error('Upload error:', error);
-      alert('Помилка завантаження PDF');
-    } finally {
-      setUploading(false);
-    }
   };
 
   // Update form patient count
