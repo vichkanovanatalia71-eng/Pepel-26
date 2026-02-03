@@ -398,6 +398,7 @@ const PMGIncome = () => {
             <div className="kpi-content">
               <div className="kpi-label">Активних декларацій</div>
               <div className="kpi-value">{totals.totalPatients.toLocaleString('uk-UA')}</div>
+              <div className="kpi-period">на {totals.latestPeriod}</div>
             </div>
           </div>
           
