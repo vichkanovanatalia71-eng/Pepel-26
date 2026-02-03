@@ -561,15 +561,18 @@
 
 .age-col-group {
   font-size: 14px;
-  color: #CCCCCC;
+  color: #E0E0E0;
   font-weight: 500;
 }
 
 .age-col-coef {
   font-size: 13px;
-  color: #FF8C00;
-  font-weight: 600;
+  color: #FFA500;
+  font-weight: 700;
   justify-content: center;
+  background: rgba(255, 140, 0, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
 .age-col-input {
@@ -579,8 +582,8 @@
 .age-input-table {
   width: 100%;
   padding: 11px 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 140, 0, 0.25);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(255, 140, 0, 0.3);
   border-radius: 10px;
   color: #FFFFFF;
   font-size: 15px;
@@ -592,17 +595,18 @@
 .age-input-table:focus {
   border-color: #FF8C00;
   outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .age-input-table.warning-subtle {
-  border-color: rgba(239, 68, 68, 0.25);
-  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .age-input-table.warning-subtle:focus {
   border-color: #EF4444;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
 }
 
 .input-hint-small {
