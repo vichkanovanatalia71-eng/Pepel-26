@@ -16,12 +16,13 @@ const MONTH_NAMES = [
   'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
 ];
 
-const AGE_GROUPS = [
-  { key: '0-5', label: '0-5 років', coefficient: 2.465 },
-  { key: '6-17', label: '6-17 років', coefficient: 1.25 },
-  { key: '18-39', label: '18-39 років', coefficient: 0.616 },
-  { key: '40-64', label: '40-64 років', coefficient: 0.86 },
-  { key: '65+', label: '65+ років', coefficient: 1.3 }
+// Default age groups - will be loaded from settings
+const DEFAULT_AGE_GROUPS = [
+  { key: '0-5', label: 'від 0 до 5 років', coefficient: 2.465 },
+  { key: '6-17', label: 'від 6 до 17 років', coefficient: 1.25 },
+  { key: '18-39', label: 'від 18 до 39 років', coefficient: 0.616 },
+  { key: '40-64', label: 'від 40 до 64 років', coefficient: 0.86 },
+  { key: '65+', label: 'понад 65 років', coefficient: 1.3 }
 ];
 
 const COLORS = ['#FF8C00', '#FFA500', '#FFB347', '#FFCC80', '#FFE0B2'];
@@ -35,6 +36,10 @@ const PMGIncome = () => {
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedDoctorFilter, setSelectedDoctorFilter] = useState('all');
   
+  // PMG Settings from database
+  const [ageGroups, setAgeGroups] = useState(DEFAULT_AGE_GROUPS);
+  const [capitationRate, setCapitationRate] = useState(1007.3);
+  
   // Unified modal state
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -46,7 +51,7 @@ const PMGIncome = () => {
   const [formYear, setFormYear] = useState(new Date().getFullYear());
   const [formCapitationRate, setFormCapitationRate] = useState(1007.3);
   const [formAgeGroups, setFormAgeGroups] = useState(
-    AGE_GROUPS.map(ag => ({
+    DEFAULT_AGE_GROUPS.map(ag => ({
       age_group: ag.key,
       patients_count: 0,
       not_verified: 0,
