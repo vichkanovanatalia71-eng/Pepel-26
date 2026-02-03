@@ -117,6 +117,42 @@ backend:
         agent: "main"
         comment: "API endpoints for PMG declarations CRUD operations working correctly"
 
+  - task: "Add unverified declarations logic"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated PMG calculation logic to account for not_verified field. Formula: verified_patients = patients_count - not_verified. Only verified patients are used for financial calculations (amount, totals, taxes)."
+
+  - task: "Delete doctor from declaration API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "New API endpoint DELETE /api/pmg-declarations/{month}/{year}/{doctor_id} to remove specific doctor's data from a declaration. If it's the last doctor, entire declaration is deleted. Totals are recalculated after removal."
+
+  - task: "Get doctor declaration data API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "New API endpoint GET /api/pmg-declarations/{month}/{year}/{doctor_id} to retrieve specific doctor's data for editing."
+
 frontend:
   - task: "Doctor filter on PMG Income page"
     implemented: true
@@ -148,14 +184,43 @@ frontend:
         agent: "testing"
         comment: "CONFIRMED ✅ Monthly Dynamics chart successfully removed. Verified no references to 'Динаміка по місяцях' found anywhere on the page. No JavaScript errors related to undefined monthlyChartData variable. Only 3 charts remain as expected: Age groups pie chart, Doctor distribution pie chart, Age groups bar chart. Implementation is clean and complete."
 
+  - task: "Add unverified declarations field in form"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PMGIncome.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated form layout to show three columns: Total declarations, Unverified, Paid (Total - Unverified). Added not_verified field to form state. Updated form total calculation to use only verified patients. Visual formula display: Всього - Невериф. = Оплачено"
+
+  - task: "Edit/Delete functionality for PMG declarations"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PMGIncome.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added edit/delete action buttons to declaration table. Each row now shows individual doctor data with action buttons. Edit button opens modal with existing data (period/doctor fields disabled in edit mode). Delete button removes doctor's data from that period with confirmation. Table restructured to show per-doctor rows instead of per-period."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Add unverified declarations field in form"
+    - "Edit/Delete functionality for PMG declarations"
+    - "Add unverified declarations logic (backend)"
+    - "Delete doctor from declaration API"
+    - "Get doctor declaration data API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -169,3 +234,5 @@ agent_communication:
     message: "✅ Task completed successfully. Both features (doctor filter and chart removal) tested and working. Ready for user verification."
   - agent: "testing"
     message: "✅ TESTING COMPLETE - Both tasks working perfectly! Doctor filter implementation is excellent with proper UI, data filtering, and chart behavior. Monthly Dynamics chart successfully removed. All functionality tested thoroughly including edge cases. No issues found. Ready for production use."
+  - agent: "main"
+    message: "Implemented unverified declarations feature and edit/delete functionality. Backend changes: 1) Updated calculation logic to subtract not_verified from patients_count for all financial calculations. 2) Added DELETE endpoint for removing specific doctor from declaration. 3) Added GET endpoint for retrieving doctor data for editing. Frontend changes: 1) Enhanced form UI with 3-column layout (Total, Unverified, Paid) with visual formula. 2) Added edit/delete buttons to each table row. 3) Restructured table to show per-doctor rows. 4) Edit mode disables period/doctor fields. Need comprehensive testing of: data entry with unverified counts, edit flow, delete flow, calculation accuracy, API endpoints."
