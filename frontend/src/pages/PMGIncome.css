@@ -148,6 +148,12 @@
   color: #FFFFFF;
 }
 
+.kpi-period {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+}
+
 /* Charts Grid */
 .pmg-charts-grid {
   display: grid;
