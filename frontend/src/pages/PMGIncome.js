@@ -33,6 +33,7 @@ const PMGIncome = () => {
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState('all');
+  const [selectedDoctorFilter, setSelectedDoctorFilter] = useState('all');
   
   // Unified modal state
   const [showEntryModal, setShowEntryModal] = useState(false);
