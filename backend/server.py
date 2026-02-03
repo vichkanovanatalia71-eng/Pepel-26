@@ -1234,7 +1234,7 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
 Поверни ТІЛЬКИ валідний JSON без markdown форматування."""
             ).with_model("gemini", "gemini-2.5-flash")
             
-            response = chat.send_message(
+            response = await chat.send_message(
                 UserMessage(text="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
                            file_contents=[file_content])
             )
