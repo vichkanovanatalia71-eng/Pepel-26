@@ -250,6 +250,32 @@ class SharedReport(BaseModel):
 class SharedReportCreate(BaseModel):
     data: Dict[str, Any]
 
+# ====== Settings Models ======
+
+class AgeCoefficient(BaseModel):
+    """Коефіцієнт для вікової групи"""
+    age_group: str  # "0-5", "6-17", "18-39", "40-64", "65+"
+    label: str  # "від 0 до 5 років"
+    coefficient: float
+
+class PMGSettings(BaseModel):
+    """Налаштування ПМГ: капітаційна ставка та коефіцієнти"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = "pmg_settings"  # Фіксований ID
+    capitation_rate: float = 1007.3
+    age_coefficients: List[AgeCoefficient] = [
+        AgeCoefficient(age_group="0-5", label="від 0 до 5 років", coefficient=2.465),
+        AgeCoefficient(age_group="6-17", label="від 6 до 17 років", coefficient=1.25),
+        AgeCoefficient(age_group="18-39", label="від 18 до 39 років", coefficient=0.616),
+        AgeCoefficient(age_group="40-64", label="від 40 до 64 років", coefficient=0.86),
+        AgeCoefficient(age_group="65+", label="понад 65 років", coefficient=1.3)
+    ]
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PMGSettingsUpdate(BaseModel):
+    capitation_rate: float
+    age_coefficients: List[Dict[str, Any]]
+
 # ==== HELPER FUNCTIONS ====
 
 async def analyze_document_with_ai(file_path: str, file_type: str, doc_type: str) -> Dict[str, Any]:
