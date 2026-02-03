@@ -30,7 +30,7 @@ const Sidebar = () => {
         </NavLink>
         <NavLink to="/incomes" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-incomes">
           <i className="icon">💰</i>
-          <span>Доходи</span>
+          <span>Дохід за ПМГ</span>
         </NavLink>
         <NavLink to="/expenses" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-expenses">
           <i className="icon">📉</i>
