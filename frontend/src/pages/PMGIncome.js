@@ -415,8 +415,8 @@ const PMGIncome = () => {
   // Get selected doctor name
   const selectedDoctorName = doctors.find(d => d.id === formDoctor)?.name || '';
 
-  // Calculate form totals (verified patients only)
-  const formTotalPatients = formAgeGroups.reduce((sum, ag) => sum + (ag.patients_count - ag.not_verified), 0);
+  // Calculate form totals (all patients, including unverified)
+  const formTotalPatients = formAgeGroups.reduce((sum, ag) => sum + ag.patients_count, 0);
 
   if (loading) {
     return (
