@@ -1174,11 +1174,54 @@ async def create_or_update_pmg_declaration(data: PMGDeclarationCreate):
 
 @api_router.delete("/pmg-declarations/{month}/{year}")
 async def delete_pmg_declaration(month: int, year: int):
-    """Видалити ПМГ декларацію"""
+    """Видалити ПМГ декларацію за період"""
     result = await db.pmg_declarations.delete_one({"month": month, "year": year})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Декларацію не знайдено")
     return {"success": True}
+
+@api_router.delete("/pmg-declarations/{month}/{year}/{doctor_id}")
+async def delete_doctor_from_declaration(month: int, year: int, doctor_id: str):
+    """Видалити дані лікаря з ПМГ декларації"""
+    existing = await db.pmg_declarations.find_one({"month": month, "year": year}, {"_id": 0})
+    
+    if not existing:
+        raise HTTPException(status_code=404, detail="Декларацію не знайдено")
+    
+    # Видалити лікаря з doctors_data
+    doctors_data = existing.get('doctors_data', [])
+    updated_doctors_data = [d for d in doctors_data if d.get('doctor_id') != doctor_id]
+    
+    if len(updated_doctors_data) == len(doctors_data):
+        raise HTTPException(status_code=404, detail="Лікаря не знайдено в цій декларації")
+    
+    # Якщо це був останній лікар, видалити всю декларацію
+    if len(updated_doctors_data) == 0:
+        await db.pmg_declarations.delete_one({"month": month, "year": year})
+        return {"success": True, "declaration_deleted": True}
+    
+    # Перерахувати totals
+    total_patients = sum(d.get('total_patients', 0) for d in updated_doctors_data)
+    total_amount = sum(d.get('total_amount', 0) for d in updated_doctors_data)
+    total_ep = total_amount * 0.05
+    total_vz = total_amount * 0.01
+    net_amount = total_amount - total_ep - total_vz
+    
+    # Оновити декларацію
+    await db.pmg_declarations.update_one(
+        {"month": month, "year": year},
+        {"$set": {
+            "doctors_data": updated_doctors_data,
+            "total_patients": total_patients,
+            "total_amount": round(total_amount, 2),
+            "total_ep": round(total_ep, 2),
+            "total_vz": round(total_vz, 2),
+            "net_amount": round(net_amount, 2),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {"success": True, "declaration_deleted": False}
 
 @api_router.post("/pmg-declarations/analyze-image")
 async def analyze_pmg_image(file: UploadFile = File(...)):
