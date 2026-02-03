@@ -206,7 +206,108 @@
   margin-top: 4px;
 }
 
-/* Entries List */
+/* Entries List Controls */
+.entries-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.btn-bulk-delete {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-bulk-delete:hover {
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+}
+
+.entries-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(40, 40, 48, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-input,
+.sort-select {
+  padding: 10px 14px;
+  background: rgba(40, 40, 48, 0.6);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.search-input:focus,
+.sort-select:focus {
+  outline: none;
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.search-input::placeholder {
+  color: #666666;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #CCCCCC;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Entry with checkbox */
+.entry-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+}
+
+.entry-card.selected-entry {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.entry-checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 16px;
+}
+
+.entry-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.entry-content {
+  flex: 1;
+}
+
+/* Mobile optimizations for list controls */
 .entries-list {
   display: grid;
   gap: 12px;
