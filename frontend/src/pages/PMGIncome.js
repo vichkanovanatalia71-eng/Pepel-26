@@ -36,6 +36,7 @@ const PMGIncome = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [selectedDoctorForUpload, setSelectedDoctorForUpload] = useState('');
   
   // Form state for manual entry
   const [formMonth, setFormMonth] = useState(new Date().getMonth() + 1);
