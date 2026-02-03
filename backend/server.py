@@ -981,6 +981,56 @@ async def get_cash_balance(month: int, year: int):
     
     return {"exists": True, "data": balance}
 
+# Bank Balance API
+@api_router.get("/bank-balance", response_model=List[BankBalance])
+async def get_all_bank_balances():
+    balances = await db.bank_balance.find({}, {"_id": 0}).to_list(1000)
+    for balance in balances:
+        if isinstance(balance.get('created_at'), str):
+            balance['created_at'] = datetime.fromisoformat(balance['created_at'])
+        if isinstance(balance.get('updated_at'), str):
+            balance['updated_at'] = datetime.fromisoformat(balance['updated_at'])
+    return balances
+
+@api_router.post("/bank-balance", response_model=BankBalance)
+async def create_or_update_bank_balance(data: BankBalanceCreate):
+    # Перевірити чи вже є запис
+    existing = await db.bank_balance.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+    
+    if existing:
+        # Оновити
+        await db.bank_balance.update_one(
+            {"month": data.month, "year": data.year},
+            {"$set": {"amount": data.amount, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        updated = await db.bank_balance.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+        if isinstance(updated['created_at'], str):
+            updated['created_at'] = datetime.fromisoformat(updated['created_at'])
+        if isinstance(updated['updated_at'], str):
+            updated['updated_at'] = datetime.fromisoformat(updated['updated_at'])
+        return updated
+    else:
+        # Створити новий
+        balance = BankBalance(**data.model_dump())
+        balance_dict = balance.model_dump()
+        balance_dict['created_at'] = balance_dict['created_at'].isoformat()
+        balance_dict['updated_at'] = balance_dict['updated_at'].isoformat()
+        await db.bank_balance.insert_one(balance_dict)
+        return balance
+
+@api_router.get("/bank-balance/{month}/{year}")
+async def get_bank_balance(month: int, year: int):
+    balance = await db.bank_balance.find_one({"month": month, "year": year}, {"_id": 0})
+    if not balance:
+        return {"exists": False, "amount": None}
+    
+    if isinstance(balance.get('created_at'), str):
+        balance['created_at'] = datetime.fromisoformat(balance['created_at'])
+    if isinstance(balance.get('updated_at'), str):
+        balance['updated_at'] = datetime.fromisoformat(balance['updated_at'])
+    
+    return {"exists": True, "data": balance}
+
 # Shared Reports
 @api_router.post("/reports/share")
 async def create_shared_report(report: SharedReportCreate):
