@@ -48,6 +48,7 @@ const PMGIncome = () => {
     AGE_GROUPS.map(ag => ({
       age_group: ag.key,
       patients_count: 0,
+      not_verified: 0,
       coefficient: ag.coefficient
     }))
   );
@@ -208,6 +209,7 @@ const PMGIncome = () => {
     setFormAgeGroups(AGE_GROUPS.map(ag => ({
       age_group: ag.key,
       patients_count: 0,
+      not_verified: 0,
       coefficient: ag.coefficient
     })));
     if (doctors.length > 0) {
