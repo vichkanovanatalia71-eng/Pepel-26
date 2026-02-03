@@ -67,9 +67,10 @@
 }
 
 .pmg-filters .chips-scrollable {
-  overflow-x: auto;
-  flex-wrap: nowrap;
-  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
 }
 
 .pmg-filters .chip {
@@ -83,6 +84,9 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pmg-filters .chip:hover {
