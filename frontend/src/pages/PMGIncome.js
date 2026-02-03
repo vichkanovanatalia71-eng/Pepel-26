@@ -125,16 +125,25 @@ const PMGIncome = () => {
     };
   }, [filteredDeclarations]);
 
-  // Data for charts
-  const ageGroupChartData = useMemo(() => {
+  // Data for charts - використовуємо тільки останній період для кількості декларацій
+  const latestPeriodDeclarations = useMemo(() => {
     if (filteredDeclarations.length === 0) return [];
+    
+    const latest = filteredDeclarations[0];
+    return filteredDeclarations.filter(
+      d => d.month === latest.month && d.year === latest.year
+    );
+  }, [filteredDeclarations]);
+
+  const ageGroupChartData = useMemo(() => {
+    if (latestPeriodDeclarations.length === 0) return [];
     
     const grouped = {};
     AGE_GROUPS.forEach(ag => {
       grouped[ag.key] = { name: ag.label, patients: 0, amount: 0 };
     });
     
-    filteredDeclarations.forEach(decl => {
+    latestPeriodDeclarations.forEach(decl => {
       decl.doctors_data?.forEach(doc => {
         doc.age_groups?.forEach(ag => {
           if (grouped[ag.age_group]) {
@@ -146,14 +155,14 @@ const PMGIncome = () => {
     });
     
     return Object.values(grouped);
-  }, [filteredDeclarations]);
+  }, [latestPeriodDeclarations]);
 
   const doctorChartData = useMemo(() => {
-    if (filteredDeclarations.length === 0) return [];
+    if (latestPeriodDeclarations.length === 0) return [];
     
     const grouped = {};
     
-    filteredDeclarations.forEach(decl => {
+    latestPeriodDeclarations.forEach(decl => {
       decl.doctors_data?.forEach(doc => {
         if (!grouped[doc.doctor_name]) {
           grouped[doc.doctor_name] = { name: doc.doctor_name, patients: 0, amount: 0 };
