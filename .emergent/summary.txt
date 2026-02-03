@@ -1,0 +1,195 @@
+<analysis>**original_problem_statement:**
+The user, a Ukrainian sole proprietor (ФОП) running a medical practice, wants to build a full-stack application to replace their current Excel-based system for financial management.
+
+PRODUCT REQUIREMENTS:
+1.  **Core Functionality:** The application should replicate and enhance the logic from the user's provided Excel file, which tracks income, expenses, taxes, and service calculations for multiple doctors.
+2.  **Paid Services Management (Платні послуги):**
+    *   Manage a list of ~22 paid services with detailed cost breakdowns.
+    *   Allow an administrator to enter the quantity of each service provided by each doctor monthly.
+    *   Automatically calculate total revenue, doctor's income, organization's income, and taxes based on the user's formula.
+    *   Provide features for sorting, searching, and bulk deleting monthly entries.
+3.  **PMG Income Management (Дохід за ПМГ):**
+    *   Create a new section to track income from the National Health Service of Ukraine (НСЗУ) based on patient declarations.
+    *   Display data via KPI cards, charts, and tables as per the user's design.
+    *   Data should be filterable by period (year/month) and doctor.
+    *   The number of active declarations should reflect the latest period's data, not a cumulative sum.
+4.  **AI-Powered Data Entry:**
+    *   Analyze uploaded images of НСЗУ dashboards to automatically populate the number of declarations per age group for a specific doctor.
+    *   Analyze uploaded images/text of monthly service counts for the Платні послуги section.
+5.  **Dashboard & Analytics:**
+    *   A main dashboard with 6 key metric cards.
+    *   The Bank Account card should be an automatic calculation: .
+    *   Clickable dashboard cards that open detailed statistical modals.
+    *   Generate shareable, expiring, read-only report links for doctor income.
+6.  **UI/UX:**
+    *   A responsive, dark-themed, futuristic design with neon orange accents.
+    *   Modals must match the site's dark theme and be mobile-friendly.
+    *   Create a Налаштування (Settings) section to house the management of Послуги (Services) and Лікарі (Doctors).
+7.  **Data Export:** Ability to export reports to Excel.
+
+**User's preferred language**: Ukrainian (Українська)
+
+**what currently exists?**
+A full-stack application with a FastAPI backend, React frontend, and MongoDB, featuring a dark, futuristic theme.
+
+-   **Платні послуги (Paid Services):** A heavily refactored and stable page with a 6-card dashboard. It supports filtering (doctor, year, month), CRUD for services, and monthly data entry. Bulk actions (sort, search, delete) are fully implemented and tested. Detailed modals for Revenue, Doctor's Income, and Expenses are functional. The Bank Account card now auto-calculates based on Revenue and Cash.
+-   **Дохід за ПМГ (Income from PMG):** A new, fully functional page displaying analytics on НСЗУ income. It includes KPI cards, donut and bar charts, and a detailed data table. It supports filtering by period. Data can be entered via a unified modal that allows either manual input or AI-powered analysis of an uploaded screenshot for a specific doctor.
+-   **Налаштування (Settings):** The sidebar has been restructured to include a Settings section, which contains the pages for managing Services and Doctors.
+-   **Other Features:** Shareable reports and Excel export are functional. The application is highly optimized for mobile.
+
+**Last working item**:
+-   **Last item agent was working:** The user requested two changes for the Дохід за ПМГ page:
+    1.  Remove the Динаміка по місяцях (Monthly Dynamics) chart.
+    2.  Add a filter for doctors.
+    The agent successfully removed the chart logic and started implementing the doctor filter by adding the state () and modifying the data calculation logic in  hooks within . However, the work is incomplete. The UI dropdown for the filter has not been added, and the full implementation has not been tested.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent. This is a logic and UI change on a complex page () that requires verification to ensure all calculations and charts update correctly based on the new filter without regressions.
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Finalize and Test Doctor Filter on PMG Page (P0)**
+    -   **Description:** The implementation of the doctor filter on the  page is half-done. The backend logic supports it, but the frontend needs to be completed.
+    -   **Next debug checklist:**
+        1.  Add a dropdown component to the UI of  to allow the user to select a doctor (or All Doctors).
+        2.  Ensure the  state is correctly updated by this dropdown.
+        3.  Verify that all data calculations (, , chart data) correctly use the  state to filter the data.
+        4.  Test that all KPI cards, charts, and the table update correctly when the doctor filter is applied.
+        5.  Verify that the filter works in conjunction with the existing period (year/month) filter.
+    -   **Why fix this issue and what will be achieved with the fix?** This will complete a direct user request, allowing for more granular analysis of PMG income.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+-   **Issue 2: PDF Export is Broken (P1)**
+    -   **Description:** The user wants to export stylized PDF reports, but attempts with  and  failed due to issues rendering Cyrillic characters. The feature was postponed.
+    -   **Attempted fixes:**  (garbled text),  (empty squares for characters).
+    -   **Next debug checklist:** Investigate embedding a Cyrillic-compatible font (e.g., DejaVu Sans) into the backend  process or explore alternative libraries like .
+    -   **Why fix this issue and what will be achieved with the fix?** Fulfills a user requirement for data export in PDF format.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Backend.
+
+**In progress Task List**:
+-   **Task 1: AI-Powered Service Entry for Paid Services (P1)**
+    -   **Description:** Implement the end-to-end flow for uploading an image/text of monthly service counts for the Платні послуги page. While a similar feature was built for the PMG page, this original request is still pending.
+    -   **Where to resume:** The frontend UI button and backend API endpoint () exist. The  function in  (now likely in  after refactoring) needs to be implemented to call the API and populate the form fields with the parsed data.
+    -   **What will be achieved with this?** A time-saving data entry feature for the primary Paid Services section.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Blocked on something:** No.
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **Implement Дохід організації Modal (P1):** Create the detailed statistics modal for the Organization Income dashboard card, matching the style and functionality of the other modals.
+    -   **Implement Full Витрати (Expenses) Page (P2):** Create a dedicated page for managing general business expenses not tied to specific paid services.
+-   **Future Tasks:**
+    -   **Implement Документи (Documents) Page (P2):** Implement the UI for uploading and viewing НСЗУ PDF reports, and integrate it with a backend AI service to parse and extract data from them.
+    -   **Implement Лікарі (Doctors) Page (P2):** While a page exists under settings, it's currently just a placeholder route. It needs full CRUD functionality for managing doctors.
+
+**Completed work in this session**
+-   **Bulk Actions Tested & Finalized:** The sort, search, and bulk delete features on the Платні послуги page were fully tested and confirmed to be working without regressions.
+-   **Major Refactoring of :** The monolithic 1790-line component was successfully broken down into 2 custom hooks and 7 smaller, single-responsibility components, making the code organized and maintainable. The main file was reduced to ~350 lines.
+-   **Navigation Restructure:** Renamed Облік послуг to Платні послуги and created a new Налаштування (Settings) section in the sidebar containing Послуги and Лікарі.
+-   **Bank Account Card Logic:** Implemented the Рахунок у банку card. Per user feedback, the logic was changed from manual entry to an automatic calculation: , which correctly ignores the doctor filter.
+-   **New Page: Дохід за ПМГ (PMG Income):**
+    -   Created backend models and API endpoints for storing and retrieving PMG declaration data.
+    -   Built a new frontend page () with KPI cards, donut/bar charts, and a detailed data table.
+    -   Implemented a unified modal for data entry, allowing both manual input and AI analysis of uploaded screenshots.
+    -   Fixed several backend bugs in the AI image parsing logic.
+    -   Restyled the modal to match the site's dark theme and fixed all associated UI/CSS issues (inputs, scrolling).
+    -   Corrected the KPI calculation logic to show active declarations for the *latest* period only, not a cumulative sum.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Issue 1: PDF Export**
+    -   **Debug checklist:** See All Pending/In progress Issue list, Issue 2.
+    -   **Why to solve this issue and what will be achieved with this?** It's a user-requested feature for report generation.
+    -   **Should Test frontend/backend/both after fix:** Backend.
+    -   **Is recurring issue?** Y
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:**  in .
+-   **Recurrence count:** High.
+-   **Status:** RESOLVED. The major refactoring of this file has significantly mitigated the risk of this recurring.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend:** FastAPI, Pydantic, MongoDB (motor),  (for Gemini Vision).
+-   **Frontend:** React (Hooks), Axios, Recharts, Shadcn UI components.
+-   **Design:** Custom CSS for a dark, futuristic theme with responsive layouts.
+
+**key DB schema**
+-   : 
+-   : 
+-   : 
+-   : 
+-   : 
+-   : 
+
+**changes in tech stack**
+-   None.
+
+**All files of reference**
+-   : The new, complex page for PMG income analytics. **Last worked on.**
+-   : Styles for the PMG page.
+-   : Directory containing all the refactored components from the old .
+-   : Directory with custom hooks for data fetching and calculations.
+-   : Contains all backend logic, including the new endpoints for PMG declarations.
+
+**Areas that need refactoring**:
+-   The monolithic  was **successfully refactored**.
+-   The  file is now over 1300 lines long. It could be beneficial to split the API routes into separate files (e.g., , ) for better organization in the future.
+
+**key api endpoints**
+-   : CRUD for paid service entries.
+-   : CRUD for PMG declaration entries.
+-   : POST to analyze an НСЗУ screenshot and extract declaration data.
+-   : POST to generate an Excel file.
+-   : POST to create a shareable report.
+
+**Critical Info for New Agent**
+-   You are in the middle of implementing the doctor filter on the Дохід за ПМГ page. You need to add the UI dropdown and test the complete filtering logic.
+-   The calculation logic on the PMG page is nuanced: financial totals (like Сума за ПМГ) are summed across the filtered period, but declaration counts (Активних декларацій) must only show data from the most recent entry within the filtered period. This logic must be preserved.
+-   The  page is now much more stable due to the refactoring. New components are located in .
+-   PDF export is a known, unresolved issue due to font/character encoding problems. Do not work on it unless the user specifically asks.
+
+**documents and test reports created in this job**
+-   /app/test_reports/iteration_3.json
+-   /app/test_reports/iteration_4.json
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:** The number of declarations should reflect the latest period, not a sum over time. (Completed)
+2.  **User:** The modal for PMG data entry is light-themed and doesn't match the site. (Completed)
+3.  **User:** The data entry for PMG should be tied to a specific doctor, and the manual/AI upload options should be in one unified modal. (Completed)
+4.  **User:** I'm getting an  error on image upload. (Completed - a series of bug fixes for the AI parsing endpoint followed).
+5.  **User:** Change the PMG data import from PDF to image upload. (Completed)
+6.  **User:** Create the new Дохід за ПМГ page based on the provided Excel file, design image, and sample НСЗУ report. (Completed)
+7.  **User:** The Bank Account card should be an automatic calculation (), not a manual entry. (Completed)
+8.  **User:** The Bank Account card is not showing information. (Completed - Initial implementation was done here).
+9.  **User:** Restructure the navigation: rename Облік послуг and create a Налаштування section. (Completed)
+10. **User:** Request to remove the Monthly Dynamics chart and add a doctor filter to the Дохід за ПМГ page. (In Progress)
+
+**Project Health Check:**
+-   **Broken:**
+    -   PDF Export functionality.
+-   **Mocked:**
+    -   None.
+
+**3rd Party Integrations**
+-   **Gemini Vision** (via ) — uses Emergent LLM Key.
+-   **Recharts** (v2.12.7) — for charts.
+-   **SheetJS (xlsx)** (v0.18.5) — for Excel export.
+-   **jsPDF & jspdf-autotable** — installed but non-functional for Cyrillic.
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES (after bulk actions implementation and after the major refactoring).
+-   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Test files created:** None.
+-   **Known regressions:** None currently.
+
+**Credentials to test flow:**
+-   No user credentials are required for the application.
+
+**What agent forgot to execute**
+-   The agent did not forget but was in the middle of completing the user's latest request: adding a doctor filter to the  page. This task needs to be finished and tested.</analysis>
