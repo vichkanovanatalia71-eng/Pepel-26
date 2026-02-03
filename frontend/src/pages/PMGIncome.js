@@ -183,10 +183,15 @@ const PMGIncome = () => {
     }
   };
 
-  // Handle PDF upload
-  const handlePdfUpload = async (e) => {
+  // Handle Image upload
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    if (!selectedDoctorForUpload) {
+      alert('Спочатку оберіть лікаря');
+      return;
+    }
     
     setUploading(true);
     
@@ -194,41 +199,50 @@ const PMGIncome = () => {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await axios.post(`${API_URL}/api/pmg-declarations/analyze-pdf`, formData, {
+      const response = await axios.post(`${API_URL}/api/pmg-declarations/analyze-image`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       if (response.data.success && response.data.parsed_data) {
         const parsed = response.data.parsed_data;
         
-        // Populate form with parsed data
-        if (parsed.month) setFormMonth(parsed.month);
-        if (parsed.year) setFormYear(parsed.year);
-        if (parsed.capitation_rate) setFormCapitationRate(parsed.capitation_rate);
+        // Find the doctor in form data and update their age groups
+        const newDoctorsData = formDoctorsData.map(doc => {
+          if (doc.doctor_id === selectedDoctorForUpload || 
+              doc.doctor_name.toLowerCase().includes(parsed.doctor_name?.toLowerCase().split(' ')[0] || '')) {
+            return {
+              ...doc,
+              age_groups: AGE_GROUPS.map(ag => {
+                const parsedGroup = parsed.age_groups?.find(pg => pg.age_group === ag.key);
+                return {
+                  age_group: ag.key,
+                  patients_count: parsedGroup?.patients_count || 0,
+                  coefficient: ag.coefficient,
+                  amount: 0
+                };
+              }),
+              total_patients: parsed.total_declarations || 0
+            };
+          }
+          return doc;
+        });
         
-        if (parsed.doctors && parsed.doctors.length > 0) {
-          const doctorsData = parsed.doctors.map(doc => ({
-            doctor_id: doctors.find(d => d.name.includes(doc.name.split(' ')[0]))?.id || '',
-            doctor_name: doc.name,
-            age_groups: doc.age_groups || AGE_GROUPS.map(ag => ({
-              age_group: ag.key,
-              patients_count: 0,
-              coefficient: ag.coefficient,
-              amount: 0
-            })),
-            total_patients: doc.total_patients,
-            total_amount: doc.total_amount
-          }));
-          setFormDoctorsData(doctorsData);
-        }
-        
+        setFormDoctorsData(newDoctorsData);
         setShowUploadModal(false);
         setShowAddModal(true);
-        alert('✅ PDF успішно проаналізовано! Перевірте дані та збережіть.');
+        
+        const doctorName = doctors.find(d => d.id === selectedDoctorForUpload)?.name || parsed.doctor_name;
+        alert(`✅ Зображення проаналізовано для ${doctorName}!\nЗнайдено: ${parsed.total_declarations || 0} декларацій.\nПеревірте дані та збережіть.`);
       } else {
-        alert('Помилка аналізу PDF: ' + (response.data.error || 'Невідома помилка'));
+        alert('Помилка аналізу зображення: ' + (response.data.error || 'Невідома помилка'));
       }
     } catch (error) {
+      console.error('Upload error:', error);
+      alert('Помилка завантаження зображення');
+    } finally {
+      setUploading(false);
+    }
+  }; {
       console.error('Upload error:', error);
       alert('Помилка завантаження PDF');
     } finally {
