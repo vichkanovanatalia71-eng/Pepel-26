@@ -247,6 +247,7 @@ const PMGIncome = () => {
           return {
             age_group: ag.key,
             patients_count: parsedGroup?.patients_count || 0,
+            not_verified: 0,
             coefficient: ag.coefficient
           };
         });
@@ -273,6 +274,13 @@ const PMGIncome = () => {
   const updatePatientCount = (index, value) => {
     const newGroups = [...formAgeGroups];
     newGroups[index].patients_count = parseInt(value) || 0;
+    setFormAgeGroups(newGroups);
+  };
+
+  // Update not verified count
+  const updateNotVerifiedCount = (index, value) => {
+    const newGroups = [...formAgeGroups];
+    newGroups[index].not_verified = parseInt(value) || 0;
     setFormAgeGroups(newGroups);
   };
 
