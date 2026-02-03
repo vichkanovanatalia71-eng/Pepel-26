@@ -1101,6 +1101,31 @@ async def get_pmg_declaration(month: int, year: int):
     
     return {"exists": True, "data": decl}
 
+@api_router.get("/pmg-declarations/{month}/{year}/{doctor_id}")
+async def get_doctor_declaration(month: int, year: int, doctor_id: str):
+    """Отримати дані лікаря з ПМГ декларації"""
+    decl = await db.pmg_declarations.find_one({"month": month, "year": year}, {"_id": 0})
+    
+    if not decl:
+        raise HTTPException(status_code=404, detail="Декларацію не знайдено")
+    
+    # Знайти дані лікаря
+    doctor_data = None
+    for doc in decl.get('doctors_data', []):
+        if doc.get('doctor_id') == doctor_id:
+            doctor_data = doc
+            break
+    
+    if not doctor_data:
+        raise HTTPException(status_code=404, detail="Дані лікаря не знайдено")
+    
+    return {
+        "month": month,
+        "year": year,
+        "capitation_rate": decl.get('capitation_rate', 1007.3),
+        "doctor_data": doctor_data
+    }
+
 @api_router.post("/pmg-declarations")
 async def create_or_update_pmg_declaration(data: PMGDeclarationCreate):
     """Створити або оновити ПМГ декларацію"""
