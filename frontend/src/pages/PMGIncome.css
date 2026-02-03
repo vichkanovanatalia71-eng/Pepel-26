@@ -1324,8 +1324,8 @@
   }
 }
 
-/* Enhanced Mobile Optimization - 768px and below */
-@media (max-width: 768px) {
+/* Mobile Responsive Design - Following MonthlyServices pattern */
+@media (max-width: 767px) {
   .pmg-income-page {
     padding: 12px;
     padding-bottom: 100px;
@@ -1333,12 +1333,13 @@
   
   .pmg-income-page .page-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 10px;
+    margin-bottom: 14px;
   }
   
   .pmg-income-page .page-header h1 {
-    font-size: 20px;
+    font-size: 1.5rem;
   }
   
   .pmg-income-page .header-actions {
@@ -1346,68 +1347,88 @@
   }
   
   .pmg-income-page .header-actions .btn {
-    flex: 1;
-    font-size: 13px;
-    padding: 10px 14px;
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 16px;
   }
   
-  /* Compact filters */
+  /* Filters - Vertical stack */
   .pmg-filters {
     padding: 12px;
+    margin-bottom: 12px;
   }
   
   .pmg-filters .filter-group {
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .pmg-filters .filter-group:last-child {
+    margin-bottom: 0;
   }
   
   .pmg-filters .filter-group label {
-    font-size: 11px;
-    margin-bottom: 5px;
-  }
-  
-  .pmg-filters .chip {
-    padding: 5px 10px;
-    font-size: 11px;
-    max-width: calc(50% - 3px);
+    font-size: 10px;
+    margin-bottom: 0;
+    margin-right: 0;
   }
   
   .pmg-filters .chips-group {
-    gap: 4px;
+    width: 100%;
+    gap: 5px;
+  }
+  
+  .pmg-filters .chips-scrollable {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .pmg-filters .chip {
+    padding: 7px 12px;
+    font-size: 11px;
+    max-width: 100%;
   }
   
   /* KPI Cards - 2 columns on mobile */
   .pmg-kpi-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    margin-bottom: 14px;
   }
   
   .kpi-card {
     flex-direction: column;
-    align-items: flex-start;
+    text-align: center;
+    align-items: center;
     padding: 12px;
     gap: 8px;
   }
   
   .kpi-icon {
-    font-size: 24px;
+    font-size: 28px;
+    margin: 0 auto;
   }
   
   .kpi-label {
-    font-size: 10px;
+    font-size: 9px;
   }
   
   .kpi-value {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .kpi-period {
-    font-size: 9px;
+    font-size: 10px;
   }
   
   /* Charts - Stack vertically */
   .pmg-charts {
     grid-template-columns: 1fr;
     gap: 12px;
+    margin-bottom: 14px;
   }
   
   .chart-card {
@@ -1423,7 +1444,7 @@
     min-height: 220px;
   }
   
-  /* Table - Horizontal scroll */
+  /* Table - Horizontal scroll container */
   .declarations-table-section {
     padding: 14px;
     overflow-x: auto;
@@ -1441,6 +1462,15 @@
   .declarations-table td {
     font-size: 11px;
     padding: 8px 6px;
+  }
+  
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .action-btn {
+    padding: 4px 8px;
+    font-size: 12px;
   }
 }
 
