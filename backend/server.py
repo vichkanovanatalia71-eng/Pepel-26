@@ -1166,12 +1166,13 @@ async def create_or_update_pmg_declaration(data: PMGDeclarationCreate):
         for age_group in doctor_data.get('age_groups', []):
             patients = age_group.get('patients_count', 0)
             not_verified = age_group.get('not_verified', 0)
-            # Враховуємо тільки верифіковані декларації для розрахунків
+            # Для кількості декларацій - враховуємо всі (не віднімаємо неверифіковані)
+            doctor_total += patients
+            # Для суми - віднімаємо неверифіковані (за них не платять)
             verified_patients = patients - not_verified
             coeff = age_group.get('coefficient', 1.0)
             amount = verified_patients * data.capitation_rate * coeff / 12  # Місячна ставка
             age_group['amount'] = round(amount, 2)
-            doctor_total += verified_patients
             doctor_amount += amount
         
         doctor_data['total_patients'] = doctor_total
