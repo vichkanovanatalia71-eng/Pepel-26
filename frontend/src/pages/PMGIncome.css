@@ -353,6 +353,26 @@
   50% { opacity: 0.5; }
 }
 
+.upload-area.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.upload-warning {
+  text-align: center;
+  color: #FFA500;
+  font-size: 13px;
+  margin: 12px 0 0 0;
+}
+
+.form-row.compact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 .full-width {
   width: 100%;
 }
