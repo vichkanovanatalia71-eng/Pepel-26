@@ -62,12 +62,25 @@ const PMGIncome = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [declRes, doctorsRes] = await Promise.all([
+      const [declRes, doctorsRes, settingsRes] = await Promise.all([
         axios.get(`${API_URL}/api/pmg-declarations`),
-        axios.get(`${API_URL}/api/doctors`)
+        axios.get(`${API_URL}/api/doctors`),
+        axios.get(`${API_URL}/api/pmg-settings`)
       ]);
       setDeclarations(declRes.data || []);
       setDoctors(doctorsRes.data || []);
+      
+      // Load PMG settings
+      if (settingsRes.data) {
+        const ageCoefs = settingsRes.data.age_coefficients.map(c => ({
+          key: c.age_group,
+          label: c.label,
+          coefficient: c.coefficient
+        }));
+        setAgeGroups(ageCoefs);
+        setCapitationRate(settingsRes.data.capitation_rate);
+        setFormCapitationRate(settingsRes.data.capitation_rate);
+      }
       
       // Set default doctor
       if (doctorsRes.data.length > 0 && !formDoctor) {
