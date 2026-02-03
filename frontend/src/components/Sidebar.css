@@ -53,6 +53,11 @@
   transition: all 0.3s ease;
   margin-bottom: 4px;
   position: relative;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .nav-link:hover {
@@ -81,4 +86,46 @@
 
 .nav-link .icon {
   font-size: 20px;
+  font-style: normal;
+}
+
+/* Settings section with submenu */
+.nav-section {
+  margin-top: 8px;
+}
+
+.nav-section-header {
+  justify-content: flex-start;
+}
+
+.nav-section-header .chevron {
+  margin-left: auto;
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  font-style: normal;
+}
+
+.nav-section-header .chevron.open {
+  transform: rotate(180deg);
+}
+
+.nav-submenu {
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255, 140, 0, 0.2);
+  margin-top: 4px;
+}
+
+.nav-link.sub-link {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.nav-link.sub-link .icon {
+  font-size: 16px;
+}
+
+.nav-link.sub-link.active::before {
+  left: -14px;
+  height: 60%;
 }
