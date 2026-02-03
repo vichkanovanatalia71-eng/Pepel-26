@@ -409,6 +409,30 @@ const PMGIncome = () => {
             </div>
           </div>
         )}
+        
+        {doctors.length > 0 && (
+          <div className="filter-group">
+            <label>👨‍⚕️ Лікар:</label>
+            <div className="chips-group">
+              <button 
+                className={`chip ${selectedDoctorFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setSelectedDoctorFilter('all')}
+              >
+                Всі лікарі
+              </button>
+              {doctors.map(doctor => (
+                <button
+                  key={doctor.id}
+                  className={`chip ${selectedDoctorFilter === doctor.id ? 'active' : ''}`}
+                  onClick={() => setSelectedDoctorFilter(doctor.id)}
+                  data-testid={`doctor-filter-${doctor.id}`}
+                >
+                  {doctor.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* KPI Cards */}
@@ -553,32 +577,6 @@ const PMGIncome = () => {
               </ResponsiveContainer>
             </div>
           </div>
-
-          {/* Monthly Trend */}
-          {monthlyChartData.length > 1 && (
-            <div className="chart-card wide">
-              <h3>📈 Динаміка по місяцях</h3>
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={monthlyChartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="name" stroke="#888" fontSize={12} />
-                    <YAxis stroke="#888" fontSize={12} />
-                    <Tooltip 
-                      contentStyle={{ background: '#1a1a1d', border: '1px solid #FF8C00' }}
-                      formatter={(value, name) => [
-                        value.toLocaleString('uk-UA') + (name === 'amount' ? ' ₴' : ''),
-                        name === 'amount' ? 'Сума' : 'Пацієнтів'
-                      ]}
-                    />
-                    <Legend />
-                    <Bar dataKey="amount" name="Сума (₴)" fill="#FF8C00" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="patients" name="Пацієнтів" fill="#4ECDC4" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
         <div className="empty-state">
