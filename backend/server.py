@@ -1235,8 +1235,8 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
             ).with_model("gemini", "gemini-2.5-flash")
             
             response = chat.send_message(
-                UserMessage(content="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
-                           files=[file_content])
+                UserMessage(text="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
+                           file_contents=[file_content])
             )
             
             # Парсити JSON з відповіді
