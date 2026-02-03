@@ -1074,6 +1074,194 @@ async def get_bank_balance(month: int, year: int):
     
     return {"exists": True, "data": balance}
 
+# ====== PMG Declarations API ======
+
+@api_router.get("/pmg-declarations")
+async def get_all_pmg_declarations():
+    """Отримати всі ПМГ декларації"""
+    declarations = await db.pmg_declarations.find({}, {"_id": 0}).to_list(1000)
+    for decl in declarations:
+        if isinstance(decl.get('created_at'), str):
+            decl['created_at'] = datetime.fromisoformat(decl['created_at'])
+        if isinstance(decl.get('updated_at'), str):
+            decl['updated_at'] = datetime.fromisoformat(decl['updated_at'])
+    return declarations
+
+@api_router.get("/pmg-declarations/{month}/{year}")
+async def get_pmg_declaration(month: int, year: int):
+    """Отримати ПМГ декларацію за місяць/рік"""
+    decl = await db.pmg_declarations.find_one({"month": month, "year": year}, {"_id": 0})
+    if not decl:
+        return {"exists": False, "data": None}
+    
+    if isinstance(decl.get('created_at'), str):
+        decl['created_at'] = datetime.fromisoformat(decl['created_at'])
+    if isinstance(decl.get('updated_at'), str):
+        decl['updated_at'] = datetime.fromisoformat(decl['updated_at'])
+    
+    return {"exists": True, "data": decl}
+
+@api_router.post("/pmg-declarations")
+async def create_or_update_pmg_declaration(data: PMGDeclarationCreate):
+    """Створити або оновити ПМГ декларацію"""
+    # Розрахувати totals
+    total_patients = 0
+    total_amount = 0.0
+    
+    for doctor_data in data.doctors_data:
+        doctor_total = 0
+        doctor_amount = 0.0
+        
+        for age_group in doctor_data.get('age_groups', []):
+            patients = age_group.get('patients_count', 0)
+            coeff = age_group.get('coefficient', 1.0)
+            amount = patients * data.capitation_rate * coeff / 12  # Місячна ставка
+            age_group['amount'] = round(amount, 2)
+            doctor_total += patients
+            doctor_amount += amount
+        
+        doctor_data['total_patients'] = doctor_total
+        doctor_data['total_amount'] = round(doctor_amount, 2)
+        total_patients += doctor_total
+        total_amount += doctor_amount
+    
+    total_ep = total_amount * 0.05
+    total_vz = total_amount * 0.01
+    net_amount = total_amount - total_ep - total_vz
+    
+    # Перевірити чи існує
+    existing = await db.pmg_declarations.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+    
+    if existing:
+        # Оновити
+        await db.pmg_declarations.update_one(
+            {"month": data.month, "year": data.year},
+            {"$set": {
+                "capitation_rate": data.capitation_rate,
+                "doctors_data": data.doctors_data,
+                "total_patients": total_patients,
+                "total_amount": round(total_amount, 2),
+                "total_ep": round(total_ep, 2),
+                "total_vz": round(total_vz, 2),
+                "net_amount": round(net_amount, 2),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        updated = await db.pmg_declarations.find_one({"month": data.month, "year": data.year}, {"_id": 0})
+        return updated
+    else:
+        # Створити новий
+        decl = PMGDeclaration(
+            month=data.month,
+            year=data.year,
+            capitation_rate=data.capitation_rate,
+            doctors_data=data.doctors_data,
+            total_patients=total_patients,
+            total_amount=round(total_amount, 2),
+            total_ep=round(total_ep, 2),
+            total_vz=round(total_vz, 2),
+            net_amount=round(net_amount, 2),
+            source="manual"
+        )
+        decl_dict = decl.model_dump()
+        decl_dict['created_at'] = decl_dict['created_at'].isoformat()
+        decl_dict['updated_at'] = decl_dict['updated_at'].isoformat()
+        await db.pmg_declarations.insert_one(decl_dict)
+        return decl_dict
+
+@api_router.delete("/pmg-declarations/{month}/{year}")
+async def delete_pmg_declaration(month: int, year: int):
+    """Видалити ПМГ декларацію"""
+    result = await db.pmg_declarations.delete_one({"month": month, "year": year})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Декларацію не знайдено")
+    return {"success": True}
+
+@api_router.post("/pmg-declarations/analyze-pdf")
+async def analyze_pmg_pdf(file: UploadFile = File(...)):
+    """Аналізувати PDF звіт від НСЗУ"""
+    try:
+        # Зберегти файл тимчасово
+        content = await file.read()
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
+            tmp_file.write(content)
+            tmp_path = tmp_file.name
+        
+        # Конвертувати PDF в base64 для AI
+        file_content = FileContentWithMimeType(
+            content=base64.b64encode(content).decode('utf-8'),
+            mime_type="application/pdf"
+        )
+        
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"pmg-pdf-{uuid.uuid4()}",
+            model="gemini-2.5-flash",
+            system_message="""Ти експерт з аналізу медичних фінансових звітів від НСЗУ (Національна служба здоров'я України).
+            
+Проаналізуй PDF звіт та витягни дані у форматі JSON:
+{
+    "month": число (1-12),
+    "year": число,
+    "capitation_rate": число (капітаційна ставка, зазвичай 1007.3),
+    "total_amount": загальна сума,
+    "doctors": [
+        {
+            "name": "ПІБ лікаря",
+            "age_groups": [
+                {"age_group": "0-5", "patients_count": число, "coefficient": число, "amount": сума},
+                {"age_group": "6-17", "patients_count": число, "coefficient": число, "amount": сума},
+                {"age_group": "18-39", "patients_count": число, "coefficient": число, "amount": сума},
+                {"age_group": "40-64", "patients_count": число, "coefficient": число, "amount": сума},
+                {"age_group": "65+", "patients_count": число, "coefficient": число, "amount": сума}
+            ],
+            "total_patients": загальна кількість,
+            "total_amount": загальна сума
+        }
+    ]
+}
+
+Вікові коефіцієнти стандартні:
+- 0-5 років: 2.465
+- 6-17 років: 1.25
+- 18-39 років: 0.616
+- 40-64 років: 0.86
+- 65+ років: 1.3
+
+Поверни ТІЛЬКИ валідний JSON без markdown форматування."""
+        )
+        
+        response = await chat.send_message_async(
+            UserMessage(content="Проаналізуй цей PDF звіт від НСЗУ та витягни структуровані дані.", 
+                       files=[file_content])
+        )
+        
+        # Очистити тимчасовий файл
+        os.unlink(tmp_path)
+        
+        # Парсити JSON з відповіді
+        import json
+        response_text = response.text.strip()
+        if response_text.startswith('```'):
+            response_text = response_text.split('```')[1]
+            if response_text.startswith('json'):
+                response_text = response_text[4:]
+        
+        parsed_data = json.loads(response_text)
+        
+        return {
+            "success": True,
+            "parsed_data": parsed_data
+        }
+        
+    except Exception as e:
+        logging.error(f"PMG PDF analysis error: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 # Shared Reports
 @api_router.post("/reports/share")
 async def create_shared_report(report: SharedReportCreate):
