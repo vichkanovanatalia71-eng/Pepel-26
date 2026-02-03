@@ -175,22 +175,6 @@ const PMGIncome = () => {
     return Object.values(grouped);
   }, [latestPeriodDeclarations]);
 
-  const monthlyChartData = useMemo(() => {
-    if (declarations.length === 0) return [];
-    
-    const filtered = selectedYear !== 'all' 
-      ? declarations.filter(d => d.year === selectedYear)
-      : declarations;
-    
-    return filtered
-      .sort((a, b) => a.month - b.month)
-      .map(d => ({
-        name: MONTH_NAMES[d.month - 1],
-        amount: d.total_amount,
-        patients: d.total_patients
-      }));
-  }, [declarations, selectedYear]);
-
   // Reset form when opening modal
   const openEntryModal = () => {
     setFormAgeGroups(AGE_GROUPS.map(ag => ({
