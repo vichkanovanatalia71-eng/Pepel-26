@@ -230,12 +230,7 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "Add unverified declarations field in form"
-    - "Edit/Delete functionality for PMG declarations"
-    - "Add unverified declarations logic (backend)"
-    - "Delete doctor from declaration API"
-    - "Get doctor declaration data API"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -251,3 +246,5 @@ agent_communication:
     message: "✅ TESTING COMPLETE - Both tasks working perfectly! Doctor filter implementation is excellent with proper UI, data filtering, and chart behavior. Monthly Dynamics chart successfully removed. All functionality tested thoroughly including edge cases. No issues found. Ready for production use."
   - agent: "main"
     message: "Implemented unverified declarations feature and edit/delete functionality. Backend changes: 1) Updated calculation logic to subtract not_verified from patients_count for all financial calculations. 2) Added DELETE endpoint for removing specific doctor from declaration. 3) Added GET endpoint for retrieving doctor data for editing. Frontend changes: 1) Enhanced form UI with 3-column layout (Total, Unverified, Paid) with visual formula. 2) Added edit/delete buttons to each table row. 3) Restructured table to show per-doctor rows. 4) Edit mode disables period/doctor fields. Need comprehensive testing of: data entry with unverified counts, edit flow, delete flow, calculation accuracy, API endpoints."
+  - agent: "testing"
+    message: "🎉 COMPREHENSIVE PMG INCOME TESTING COMPLETED! All unverified declarations and edit/delete features working perfectly: ✅ Form: Three-column layout (Total, Unverified, Paid) with correct calculations ✅ Validation: Max limits prevent unverified > total ✅ Edit: Modal opens with pre-filled data, disabled period/doctor fields ✅ Delete: Confirmation dialog and row removal working ✅ Table: Per-doctor rows with all required columns and action buttons ✅ KPI Cards: Show verified patient calculations (1,785 declarations, 502,960₴) ✅ Filters: Doctor filter integration working ✅ Charts: Age group distribution displaying correctly ✅ Edge Cases: Zero and all-unverified scenarios handled ✅ Backend APIs: All CRUD operations functional. No critical issues found. Ready for production use!"
