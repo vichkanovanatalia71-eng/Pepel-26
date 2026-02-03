@@ -117,6 +117,34 @@ export const useMonthlyServicesData = () => {
     };
   }, [allCashBalances, selectedYear, selectedMonth]);
 
+  // Calculate displayed bank balance
+  const displayedBankBalance = useMemo(() => {
+    let filtered = [...allBankBalances];
+    
+    if (selectedYear !== 'all') {
+      filtered = filtered.filter(b => b.year === selectedYear);
+    }
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(b => b.month === selectedMonth);
+    }
+    
+    if (filtered.length === 0) return null;
+    if (filtered.length === 1) return filtered[0];
+    
+    const total = filtered.reduce((sum, b) => sum + b.amount, 0);
+    const latestPeriod = filtered.sort((a, b) => {
+      if (a.year !== b.year) return b.year - a.year;
+      return b.month - a.month;
+    })[0];
+    
+    return {
+      amount: total,
+      month: latestPeriod.month,
+      year: latestPeriod.year,
+      isAggregate: true
+    };
+  }, [allBankBalances, selectedYear, selectedMonth]);
+
   return {
     // Data
     services,
@@ -124,7 +152,9 @@ export const useMonthlyServicesData = () => {
     allEntries,
     filteredEntries,
     allCashBalances,
+    allBankBalances,
     displayedCashBalance,
+    displayedBankBalance,
     loading,
     monthNames,
     
