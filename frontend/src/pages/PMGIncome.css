@@ -306,8 +306,30 @@
 }
 
 /* Unified Entry Modal */
+.entry-modal {
+  max-height: 85vh !important;
+  overflow: hidden !important;
+}
+
 .entry-modal .entry-modal-content {
   padding: 8px 0;
+  max-height: calc(85vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 140, 0, 0.3) transparent;
+}
+
+.entry-modal .entry-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.entry-modal .entry-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.entry-modal .entry-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 140, 0, 0.3);
+  border-radius: 3px;
 }
 
 .entry-section {
