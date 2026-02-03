@@ -1261,3 +1261,185 @@
     font-size: 14px;
   }
 }
+
+/* Enhanced Mobile Optimization - 768px and below */
+@media (max-width: 768px) {
+  .pmg-income-page {
+    padding: 12px;
+    padding-bottom: 100px;
+  }
+  
+  .pmg-income-page .page-header h1 {
+    font-size: 20px;
+  }
+  
+  .pmg-income-page .header-actions {
+    width: 100%;
+  }
+  
+  .pmg-income-page .header-actions .btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+  
+  /* Compact filters */
+  .pmg-filters {
+    padding: 12px;
+  }
+  
+  .pmg-filters .filter-group label {
+    font-size: 11px;
+  }
+  
+  .pmg-filters .chip {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+  
+  /* KPI Cards - 2 columns on mobile */
+  .pmg-kpi-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .kpi-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .kpi-icon {
+    font-size: 24px;
+  }
+  
+  .kpi-label {
+    font-size: 10px;
+  }
+  
+  .kpi-value {
+    font-size: 18px;
+  }
+  
+  .kpi-period {
+    font-size: 9px;
+  }
+  
+  /* Charts - Stack vertically */
+  .pmg-charts {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .chart-card {
+    padding: 14px;
+  }
+  
+  .chart-card h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .chart-container {
+    min-height: 220px;
+  }
+  
+  /* Table - Horizontal scroll */
+  .declarations-table-section {
+    padding: 14px;
+    overflow-x: auto;
+  }
+  
+  .declarations-table-wrapper {
+    min-width: 700px;
+  }
+  
+  .declarations-table th {
+    font-size: 11px;
+    padding: 8px 6px;
+  }
+  
+  .declarations-table td {
+    font-size: 11px;
+    padding: 8px 6px;
+  }
+}
+
+/* Ultra-compact for very small screens - 480px and below */
+@media (max-width: 480px) {
+  .pmg-income-page {
+    padding: 8px;
+  }
+  
+  .pmg-income-page .page-header {
+    margin-bottom: 12px;
+  }
+  
+  .pmg-income-page .page-header h1 {
+    font-size: 18px;
+  }
+  
+  /* KPI Cards - Stack to single column if needed */
+  .pmg-kpi-cards {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .kpi-card {
+    padding: 10px;
+  }
+  
+  .kpi-value {
+    font-size: 16px;
+  }
+  
+  /* Charts */
+  .chart-container {
+    min-height: 200px;
+  }
+  
+  /* Filters */
+  .pmg-filters {
+    padding: 10px;
+  }
+  
+  .pmg-filters .chip {
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Desktop optimization - 1200px and above */
+@media (min-width: 1200px) {
+  .pmg-income-page {
+    padding: 24px 32px;
+  }
+  
+  /* KPI Cards - Fixed 5 columns for consistency */
+  .pmg-kpi-cards {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  
+  /* Charts - Better spacing */
+  .pmg-charts {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .chart-card.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Large desktop - 1600px and above */
+@media (min-width: 1600px) {
+  .pmg-income-page {
+    max-width: 1800px;
+  }
+  
+  .pmg-charts {
+    gap: 24px;
+  }
+}
