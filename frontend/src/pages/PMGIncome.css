@@ -385,9 +385,11 @@
   max-width: 1600px !important;
   max-height: 90vh;
   overflow-y: auto;
+  border: 2px solid rgba(255, 140, 0, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
 }
 
-.entry-modal-grid {
+.pmg-entry-modal-wide .entry-modal-grid {
   display: grid;
   grid-template-columns: 450px 1fr;
   gap: 40px;
