@@ -195,6 +195,49 @@ class BankBalanceCreate(BaseModel):
     year: int
     amount: float
 
+# ====== ПМГ (Декларації) Models ======
+
+class AgeGroupData(BaseModel):
+    """Дані за віковою групою"""
+    age_group: str  # "0-5", "6-17", "18-39", "40-64", "65+"
+    patients_count: int = 0
+    not_verified: int = 0
+    coefficient: float = 1.0
+    amount: float = 0.0
+
+class DoctorDeclarationData(BaseModel):
+    """Дані декларацій по лікарю"""
+    doctor_id: str
+    doctor_name: str
+    age_groups: List[AgeGroupData] = []
+    total_patients: int = 0
+    total_amount: float = 0.0
+
+class PMGDeclaration(BaseModel):
+    """Місячний звіт ПМГ декларацій"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    month: int
+    year: int
+    capitation_rate: float = 1007.3  # Капітаційна ставка
+    doctors_data: List[DoctorDeclarationData] = []
+    total_patients: int = 0
+    total_amount: float = 0.0
+    ep_rate: float = 0.05  # ЄП 5%
+    vz_rate: float = 0.01  # ВЗ 1%
+    total_ep: float = 0.0
+    total_vz: float = 0.0
+    net_amount: float = 0.0  # Чиста сума після податків
+    source: str = "manual"  # "manual" або "pdf"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PMGDeclarationCreate(BaseModel):
+    month: int
+    year: int
+    capitation_rate: float = 1007.3
+    doctors_data: List[Dict[str, Any]] = []
+
 class SharedReport(BaseModel):
     """Поширений звіт з обмеженим доступом"""
     model_config = ConfigDict(extra="ignore")
