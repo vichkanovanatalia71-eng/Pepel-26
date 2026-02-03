@@ -963,8 +963,18 @@
     align-items: stretch;
   }
   
-  .age-inputs-group {
+  .age-inputs-group-simple {
+    flex-direction: row;
     justify-content: space-between;
+  }
+  
+  .age-input-wrapper-large {
+    flex: 1;
+  }
+  
+  .age-input {
+    width: 100%;
+    font-size: 14px;
   }
   
   .age-input-small,
