@@ -28,6 +28,8 @@ body {
   flex: 1;
   padding: 20px;
   padding-bottom: 90px;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .main-content.with-sidebar {
