@@ -381,56 +381,56 @@
 }
 /* New Wide Modal Layout for Desktop */
 .pmg-entry-modal-wide {
-  background: #1a1a1d;
-  max-width: 1000px !important;
-  max-height: 85vh;
+  background: #1a1a1d !important;
+  max-width: 1600px !important;
+  max-height: 90vh;
   overflow-y: auto;
 }
 
 .entry-modal-grid {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  margin-top: 20px;
+  grid-template-columns: 450px 1fr;
+  gap: 40px;
+  margin-top: 28px;
 }
 
 .entry-left-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .entry-right-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* Compact Form Elements */
 .entry-section-compact {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .entry-label-compact {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #FF8C00;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .entry-select-compact,
 .entry-input-compact {
   width: 100%;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 140, 0, 0.2);
-  border-radius: 10px;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 140, 0, 0.25);
+  border-radius: 12px;
   color: #FFFFFF;
-  font-size: 14px;
+  font-size: 15px;
   transition: all 0.2s ease;
 }
 
@@ -438,7 +438,7 @@
 .entry-input-compact:focus {
   border-color: #FF8C00;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
 }
 
 .entry-select-compact:disabled,
@@ -449,30 +449,30 @@
 
 .period-inputs {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .year-input {
-  width: 90px;
+  width: 120px;
 }
 
 .upload-btn-compact {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 14px;
-  background: rgba(255, 140, 0, 0.1);
-  border: 2px dashed rgba(255, 140, 0, 0.3);
-  border-radius: 10px;
+  padding: 14px 18px;
+  background: rgba(255, 140, 0, 0.12);
+  border: 2px dashed rgba(255, 140, 0, 0.35);
+  border-radius: 12px;
   color: #FF8C00;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .upload-btn-compact:hover {
-  background: rgba(255, 140, 0, 0.15);
+  background: rgba(255, 140, 0, 0.18);
   border-color: rgba(255, 140, 0, 0.5);
 }
 
@@ -489,22 +489,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
-  background: rgba(255, 140, 0, 0.1);
-  border: 1px solid rgba(255, 140, 0, 0.3);
-  border-radius: 10px;
+  padding: 16px 18px;
+  background: rgba(255, 140, 0, 0.12);
+  border: 1px solid rgba(255, 140, 0, 0.35);
+  border-radius: 12px;
   margin-top: auto;
 }
 
 .entry-total-compact span {
-  font-size: 12px;
-  color: #888;
+  font-size: 13px;
+  color: #999;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .entry-total-compact strong {
-  font-size: 20px;
+  font-size: 24px;
   color: #FF8C00;
   font-weight: 700;
 }
@@ -513,21 +514,21 @@
 .age-groups-table {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
 }
 
 .age-table-header {
   display: grid;
-  grid-template-columns: 1fr 70px 110px 110px;
-  gap: 8px;
-  padding: 8px 10px;
-  background: rgba(255, 140, 0, 0.1);
-  border-radius: 8px;
-  font-size: 11px;
+  grid-template-columns: 1fr 90px 140px 140px;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 140, 0, 0.12);
+  border-radius: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: #FF8C00;
   text-transform: uppercase;
@@ -536,16 +537,16 @@
 
 .age-table-row {
   display: grid;
-  grid-template-columns: 1fr 70px 110px 110px;
-  gap: 8px;
-  padding: 6px 10px;
+  grid-template-columns: 1fr 90px 140px 140px;
+  gap: 12px;
+  padding: 10px 14px;
   align-items: center;
   transition: background 0.2s ease;
+  border-radius: 10px;
 }
 
 .age-table-row:hover {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .age-col {
@@ -554,13 +555,13 @@
 }
 
 .age-col-group {
-  font-size: 13px;
+  font-size: 14px;
   color: #CCCCCC;
   font-weight: 500;
 }
 
 .age-col-coef {
-  font-size: 12px;
+  font-size: 13px;
   color: #FF8C00;
   font-weight: 600;
   justify-content: center;
@@ -572,12 +573,12 @@
 
 .age-input-table {
   width: 100%;
-  padding: 8px 10px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 140, 0, 0.2);
-  border-radius: 8px;
+  padding: 11px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 140, 0, 0.25);
+  border-radius: 10px;
   color: #FFFFFF;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   text-align: center;
   transition: all 0.2s ease;
@@ -586,34 +587,40 @@
 .age-input-table:focus {
   border-color: #FF8C00;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
 }
 
 .age-input-table.warning-subtle {
-  border-color: rgba(239, 68, 68, 0.2);
-  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .age-input-table.warning-subtle:focus {
   border-color: #EF4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
 }
 
 .input-hint-small {
-  font-size: 11px;
-  color: #666;
-  margin: 4px 0 0 0;
-  line-height: 1.4;
+  font-size: 12px;
+  color: #777;
+  margin: 6px 0 0 0;
+  line-height: 1.5;
 }
 
 /* Actions Bar */
 .entry-actions-horizontal {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 14px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.entry-actions-horizontal .btn {
+  padding: 13px 32px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 /* Responsive - Mobile falls back to vertical */
