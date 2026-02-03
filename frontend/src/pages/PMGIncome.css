@@ -567,9 +567,9 @@
   width: 100%;
 }
 
-/* Manual Entry Form */
+/* Manual Entry Form - Hidden (replaced by unified modal) */
 .manual-entry-form {
-  padding: 16px 0;
+  display: none;
 }
 
 .manual-entry-form .form-row {
