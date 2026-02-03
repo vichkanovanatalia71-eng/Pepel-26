@@ -226,12 +226,13 @@ const PMGIncome = () => {
   // Reset form when opening modal
   const openEntryModal = () => {
     setEditMode(false);
-    setFormAgeGroups(AGE_GROUPS.map(ag => ({
+    setFormAgeGroups(ageGroups.map(ag => ({
       age_group: ag.key,
       patients_count: 0,
       not_verified: 0,
       coefficient: ag.coefficient
     })));
+    setFormCapitationRate(capitationRate);
     if (doctors.length > 0) {
       setFormDoctor(doctors[0].id);
     }
@@ -252,8 +253,8 @@ const PMGIncome = () => {
       setFormYear(year);
       setFormCapitationRate(data.capitation_rate);
       
-      // Load age groups data
-      const ageGroups = AGE_GROUPS.map(ag => {
+      // Load age groups data with current coefficients
+      const ageGroupsData = ageGroups.map(ag => {
         const existingGroup = data.doctor_data.age_groups?.find(g => g.age_group === ag.key);
         return {
           age_group: ag.key,
@@ -263,7 +264,7 @@ const PMGIncome = () => {
         };
       });
       
-      setFormAgeGroups(ageGroups);
+      setFormAgeGroups(ageGroupsData);
       setShowEntryModal(true);
     } catch (error) {
       console.error('Load error:', error);
