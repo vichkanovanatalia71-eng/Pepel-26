@@ -38,6 +38,7 @@ function AppContent() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/pmg-settings" element={<PMGSettings />} />
           <Route path="/monthly-services" element={<MonthlyServices />} />
           <Route path="/share/:token" element={<ShareReport />} />
         </Routes>
