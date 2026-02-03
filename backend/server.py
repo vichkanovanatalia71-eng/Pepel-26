@@ -1241,7 +1241,8 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
             
             # Парсити JSON з відповіді
             import json
-            response_text = response.text.strip()
+            response_text = response if isinstance(response, str) else response.text
+            response_text = response_text.strip()
             if response_text.startswith('```'):
                 response_text = response_text.split('```')[1]
                 if response_text.startswith('json'):
