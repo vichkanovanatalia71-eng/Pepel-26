@@ -1177,68 +1177,55 @@ async def delete_pmg_declaration(month: int, year: int):
         raise HTTPException(status_code=404, detail="Декларацію не знайдено")
     return {"success": True}
 
-@api_router.post("/pmg-declarations/analyze-pdf")
-async def analyze_pmg_pdf(file: UploadFile = File(...)):
-    """Аналізувати PDF звіт від НСЗУ"""
+@api_router.post("/pmg-declarations/analyze-image")
+async def analyze_pmg_image(file: UploadFile = File(...)):
+    """Аналізувати зображення звіту від НСЗУ"""
     try:
         # Зберегти файл тимчасово
         content = await file.read()
         
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-            tmp_file.write(content)
-            tmp_path = tmp_file.name
-        
-        # Конвертувати PDF в base64 для AI
+        # Конвертувати в base64 для AI
         file_content = FileContentWithMimeType(
             content=base64.b64encode(content).decode('utf-8'),
-            mime_type="application/pdf"
+            mime_type=file.content_type or "image/jpeg"
         )
         
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
-            session_id=f"pmg-pdf-{uuid.uuid4()}",
+            session_id=f"pmg-image-{uuid.uuid4()}",
             model="gemini-2.5-flash",
             system_message="""Ти експерт з аналізу медичних фінансових звітів від НСЗУ (Національна служба здоров'я України).
-            
-Проаналізуй PDF звіт та витягни дані у форматі JSON:
+
+Проаналізуй скріншот дашборду НСЗУ та витягни дані у форматі JSON:
 {
-    "month": число (1-12),
-    "year": число,
-    "capitation_rate": число (капітаційна ставка, зазвичай 1007.3),
-    "total_amount": загальна сума,
-    "doctors": [
-        {
-            "name": "ПІБ лікаря",
-            "age_groups": [
-                {"age_group": "0-5", "patients_count": число, "coefficient": число, "amount": сума},
-                {"age_group": "6-17", "patients_count": число, "coefficient": число, "amount": сума},
-                {"age_group": "18-39", "patients_count": число, "coefficient": число, "amount": сума},
-                {"age_group": "40-64", "patients_count": число, "coefficient": число, "amount": сума},
-                {"age_group": "65+", "patients_count": число, "coefficient": число, "amount": сума}
-            ],
-            "total_patients": загальна кількість,
-            "total_amount": загальна сума
-        }
-    ]
+    "doctor_name": "ПІБ лікаря (повне ім'я якщо видно)",
+    "total_declarations": число (К-сть активних декларацій),
+    "age_groups": [
+        {"age_group": "0-5", "patients_count": число з графіка},
+        {"age_group": "6-17", "patients_count": число з графіка},
+        {"age_group": "18-39", "patients_count": число з графіка},
+        {"age_group": "40-64", "patients_count": число з графіка},
+        {"age_group": "65+", "patients_count": число з графіка}
+    ],
+    "gender": {
+        "male_percent": число,
+        "female_percent": число
+    }
 }
 
-Вікові коефіцієнти стандартні:
-- 0-5 років: 2.465
-- 6-17 років: 1.25
-- 18-39 років: 0.616
-- 40-64 років: 0.86
-- 65+ років: 1.3
+ВАЖЛИВО:
+- Знайди числа на графіку "Розподіл декларацій за віковими групами" - це вертикальна гістограма
+- Числа над стовпчиками показують кількість пацієнтів в кожній віковій групі
+- "К-сть активних декларацій" - це загальна кількість
+- Ім'я лікаря може бути в фільтрі "ПІБ лікаря" або в заголовку
 
 Поверни ТІЛЬКИ валідний JSON без markdown форматування."""
         )
         
         response = await chat.send_message_async(
-            UserMessage(content="Проаналізуй цей PDF звіт від НСЗУ та витягни структуровані дані.", 
+            UserMessage(content="Проаналізуй цей скріншот дашборду НСЗУ та витягни дані про декларації.", 
                        files=[file_content])
         )
-        
-        # Очистити тимчасовий файл
-        os.unlink(tmp_path)
         
         # Парсити JSON з відповіді
         import json
@@ -1247,6 +1234,7 @@ async def analyze_pmg_pdf(file: UploadFile = File(...)):
             response_text = response_text.split('```')[1]
             if response_text.startswith('json'):
                 response_text = response_text[4:]
+        response_text = response_text.strip()
         
         parsed_data = json.loads(response_text)
         
@@ -1256,7 +1244,7 @@ async def analyze_pmg_pdf(file: UploadFile = File(...)):
         }
         
     except Exception as e:
-        logging.error(f"PMG PDF analysis error: {e}")
+        logging.error(f"PMG Image analysis error: {e}")
         return {
             "success": False,
             "error": str(e)
