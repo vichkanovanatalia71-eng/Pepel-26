@@ -107,28 +107,34 @@ user_problem_statement: "Ukrainian medical practice management system for tracki
 backend:
   - task: "Update PMG calculation logic for unverified declarations"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated logic: total_patients = ALL declarations (patients_count), total_amount = ONLY verified (patients_count - not_verified) × coefficient × rate / 12. Changed not_verified from int to float to support decimal values (e.g., 4.5)."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Backend correctly handles decimal unverified values (4.5, 6.5). API accepts float values and calculation logic works properly. Total declarations count includes ALL declarations while payment amount correctly subtracts unverified declarations. Save/update operations successful."
 
 frontend:
   - task: "Update PMG form UI for unverified declarations"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/PMGIncome.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Simplified form UI to 2 fields per age group: Декларацій (all) and Неверифіковані (decimal supported with step=0.1). Removed 3-column calculation display. Added hint explaining unverified count logic. Updated formTotalPatients to show all declarations, not subtract unverified. Changed updateNotVerifiedCount to use parseFloat for decimal support."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: UI correctly supports decimal input (4.5, 6.5, 0.5) with step=0.1. Total calculation shows 150 (100+50) including all declarations. 2-field layout implemented correctly. Form saves successfully and KPI cards update properly showing 'Активних декларацій: 150' and payment amount reflects verified calculations. Edge cases (0.5, 0) work correctly."
 
 metadata:
   created_by: "main_agent"
