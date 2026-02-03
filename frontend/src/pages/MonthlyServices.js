@@ -944,12 +944,14 @@ const MonthlyServices = () => {
             {getSortedAndFilteredEntries().map(entry => {
               const service = services.find(s => s.id === entry.service_id);
               const doctor = doctors.find(d => d.id === entry.doctor_id);
+              const isSelected = selectedEntries.has(entry.id);
+              
               return (
-                <div key={entry.id} className="entry-card">
-                  <div className="entry-header">
+                <div key={entry.id} className={`entry-card ${isSelected ? 'selected-entry' : ''}`}>
+                  <div className="entry-checkbox-wrapper">
                     <input 
                       type="checkbox"
-                      checked={selectedEntries.has(entry.id)}
+                      checked={isSelected}
                       onChange={(e) => {
                         const newSelected = new Set(selectedEntries);
                         if (e.target.checked) {
@@ -961,7 +963,10 @@ const MonthlyServices = () => {
                       }}
                       className="entry-checkbox"
                     />
-                    <div className="entry-service">
+                  </div>
+                  <div className="entry-content">
+                    <div className="entry-header">
+                      <div className="entry-service">
                       {service?.code && <span className="service-code-small">{service.code}</span>}
                       <span className="service-name">{service?.name || 'N/A'}</span>
                     </div>
