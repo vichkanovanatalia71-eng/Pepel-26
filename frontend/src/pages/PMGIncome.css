@@ -532,6 +532,14 @@
   justify-content: flex-end;
 }
 
+.age-inputs-group-simple {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
 .age-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -539,11 +547,47 @@
   gap: 4px;
 }
 
+.age-input-wrapper-large {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .input-micro-label {
   font-size: 9px;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.age-input {
+  width: 100px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.age-input:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.age-input.warning-subtle {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.age-input.warning-subtle:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .age-input-small {
