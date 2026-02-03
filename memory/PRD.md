@@ -65,14 +65,18 @@ The user, a Ukrainian sole proprietor (ФОП) running a medical practice, needs
 ## What's Been Implemented
 
 ### Session: February 2026
-- ✅ Fixed mobile responsiveness for "Дохід за ПМГ" page
-  - Page header stacks vertically
-  - Full-width buttons
-  - 2-column KPI grid
-  - Single-column charts
-  - Horizontally scrollable table
-  - Responsive modal
-  - Tested on 375px, 414px, 480px viewports
+- ✅ Fixed mobile responsiveness for ALL pages:
+  - "Дохід за ПМГ" (Incomes)
+  - "Платні послуги" (Monthly Services)
+  - "Послуги" (Services)
+  - "Налаштування ПМГ" (PMG Settings)
+  - "Головна" (Dashboard)
+- ✅ Fixed modal window for declaration entry on mobile:
+  - Full-screen modal on mobile devices
+  - Vertical layout for form elements
+  - All buttons visible with proper scrolling
+- ✅ Added `overflow-x: hidden` globally to prevent horizontal scroll
+- ✅ All pages: bodyWidth = windowWidth (no overflow)
 
 ## Known Issues
 - **PDF Export**: Blocked due to Cyrillic character rendering issues with jsPDF
