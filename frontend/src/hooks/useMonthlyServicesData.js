@@ -117,33 +117,31 @@ export const useMonthlyServicesData = () => {
     };
   }, [allCashBalances, selectedYear, selectedMonth]);
 
-  // Calculate displayed bank balance
-  const displayedBankBalance = useMemo(() => {
-    let filtered = [...allBankBalances];
+  // Calculate total revenue for period (ignoring doctor filter)
+  const totalRevenueForPeriod = useMemo(() => {
+    let filtered = [...allEntries];
     
+    // Filter ONLY by period, NOT by doctor
     if (selectedYear !== 'all') {
-      filtered = filtered.filter(b => b.year === selectedYear);
+      filtered = filtered.filter(e => e.year === selectedYear);
     }
     if (selectedMonth !== 'all') {
-      filtered = filtered.filter(b => b.month === selectedMonth);
+      filtered = filtered.filter(e => e.month === selectedMonth);
     }
     
-    if (filtered.length === 0) return null;
-    if (filtered.length === 1) return filtered[0];
-    
-    const total = filtered.reduce((sum, b) => sum + b.amount, 0);
-    const latestPeriod = filtered.sort((a, b) => {
-      if (a.year !== b.year) return b.year - a.year;
-      return b.month - a.month;
-    })[0];
+    return filtered.reduce((sum, e) => sum + (e.total_revenue || 0), 0);
+  }, [allEntries, selectedYear, selectedMonth]);
+
+  // Calculate bank balance = Total Revenue - Cash Balance
+  const displayedBankBalance = useMemo(() => {
+    const cashAmount = displayedCashBalance?.amount || 0;
+    const bankAmount = totalRevenueForPeriod - cashAmount;
     
     return {
-      amount: total,
-      month: latestPeriod.month,
-      year: latestPeriod.year,
-      isAggregate: true
+      amount: bankAmount,
+      isCalculated: true
     };
-  }, [allBankBalances, selectedYear, selectedMonth]);
+  }, [totalRevenueForPeriod, displayedCashBalance]);
 
   return {
     // Data
@@ -152,9 +150,9 @@ export const useMonthlyServicesData = () => {
     allEntries,
     filteredEntries,
     allCashBalances,
-    allBankBalances,
     displayedCashBalance,
     displayedBankBalance,
+    totalRevenueForPeriod,
     loading,
     monthNames,
     
