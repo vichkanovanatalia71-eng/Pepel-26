@@ -417,22 +417,25 @@
 
 .entry-label-compact {
   font-size: 15px;
-  font-weight: 600;
-  color: #FF8C00;
+  font-weight: 700;
+  color: #FFA500;
   display: flex;
   align-items: center;
   gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .entry-select-compact,
 .entry-input-compact {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 140, 0, 0.25);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(255, 140, 0, 0.3);
   border-radius: 12px;
   color: #FFFFFF;
   font-size: 15px;
+  font-weight: 500;
   transition: all 0.2s ease;
 }
 
@@ -440,7 +443,8 @@
 .entry-input-compact:focus {
   border-color: #FF8C00;
   outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .entry-select-compact:disabled,
@@ -463,10 +467,10 @@
   align-items: center;
   justify-content: center;
   padding: 14px 18px;
-  background: rgba(255, 140, 0, 0.12);
-  border: 2px dashed rgba(255, 140, 0, 0.35);
+  background: rgba(255, 140, 0, 0.15);
+  border: 2px dashed rgba(255, 140, 0, 0.4);
   border-radius: 12px;
-  color: #FF8C00;
+  color: #FFA500;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -474,8 +478,8 @@
 }
 
 .upload-btn-compact:hover {
-  background: rgba(255, 140, 0, 0.18);
-  border-color: rgba(255, 140, 0, 0.5);
+  background: rgba(255, 140, 0, 0.22);
+  border-color: rgba(255, 140, 0, 0.6);
 }
 
 .upload-btn-compact.uploading {
@@ -492,23 +496,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 18px;
-  background: rgba(255, 140, 0, 0.12);
-  border: 1px solid rgba(255, 140, 0, 0.35);
+  background: rgba(255, 140, 0, 0.15);
+  border: 1.5px solid rgba(255, 140, 0, 0.4);
   border-radius: 12px;
   margin-top: auto;
 }
 
 .entry-total-compact span {
   font-size: 13px;
-  color: #999;
+  color: #CCC;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
+  letter-spacing: 0.8px;
+  font-weight: 700;
 }
 
 .entry-total-compact strong {
   font-size: 24px;
-  color: #FF8C00;
+  color: #FFA500;
   font-weight: 700;
 }
 
