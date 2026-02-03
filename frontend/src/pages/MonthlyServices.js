@@ -355,6 +355,13 @@ const MonthlyServices = () => {
         monthNames={monthNames}
         onSave={loadData}
       />
+
+      <BankBalanceModal
+        isOpen={showBankBalanceModal}
+        onClose={() => setShowBankBalanceModal(false)}
+        monthNames={monthNames}
+        onSave={loadData}
+      />
     </div>
   );
 };
