@@ -1577,7 +1577,7 @@
   }
   
   /* Charts - Better spacing */
-  .pmg-charts {
+  .pmg-charts-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
@@ -1593,7 +1593,7 @@
     max-width: 1800px;
   }
   
-  .pmg-charts {
+  .pmg-charts-grid {
     gap: 24px;
   }
 }
