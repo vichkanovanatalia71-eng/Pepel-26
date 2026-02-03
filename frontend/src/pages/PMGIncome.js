@@ -652,7 +652,14 @@ const PMGIncome = () => {
                     contentStyle={{ background: '#1a1a1d', border: '1px solid #FF8C00' }}
                     formatter={(value) => [value.toLocaleString('uk-UA'), 'Пацієнтів']}
                   />
-                  <Bar dataKey="patients" fill="#FF8C00" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="patients" fill="#FF8C00" radius={[4, 4, 0, 0]}>
+                    <LabelList 
+                      dataKey="patients" 
+                      position="top" 
+                      style={{ fill: '#FFA500', fontSize: 13, fontWeight: 600 }}
+                      formatter={(value) => value.toLocaleString('uk-UA')}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
