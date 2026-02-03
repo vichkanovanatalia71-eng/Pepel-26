@@ -207,6 +207,7 @@ const PMGIncome = () => {
 
   // Reset form when opening modal
   const openEntryModal = () => {
+    setEditMode(false);
     setFormAgeGroups(AGE_GROUPS.map(ag => ({
       age_group: ag.key,
       patients_count: 0,
@@ -216,7 +217,56 @@ const PMGIncome = () => {
     if (doctors.length > 0) {
       setFormDoctor(doctors[0].id);
     }
+    setFormMonth(new Date().getMonth() + 1);
+    setFormYear(new Date().getFullYear());
     setShowEntryModal(true);
+  };
+
+  // Open edit modal with existing data
+  const openEditModal = async (month, year, doctorId) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/pmg-declarations/${month}/${year}/${doctorId}`);
+      const data = response.data;
+      
+      setEditMode(true);
+      setFormDoctor(doctorId);
+      setFormMonth(month);
+      setFormYear(year);
+      setFormCapitationRate(data.capitation_rate);
+      
+      // Load age groups data
+      const ageGroups = AGE_GROUPS.map(ag => {
+        const existingGroup = data.doctor_data.age_groups?.find(g => g.age_group === ag.key);
+        return {
+          age_group: ag.key,
+          patients_count: existingGroup?.patients_count || 0,
+          not_verified: existingGroup?.not_verified || 0,
+          coefficient: ag.coefficient
+        };
+      });
+      
+      setFormAgeGroups(ageGroups);
+      setShowEntryModal(true);
+    } catch (error) {
+      console.error('Load error:', error);
+      alert('Помилка завантаження даних');
+    }
+  };
+
+  // Delete doctor data from declaration
+  const handleDelete = async (month, year, doctorId, doctorName) => {
+    if (!window.confirm(`Видалити дані лікаря ${doctorName} за ${MONTH_NAMES[month - 1]} ${year}?`)) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API_URL}/api/pmg-declarations/${month}/${year}/${doctorId}`);
+      loadData();
+      alert('✅ Дані видалено!');
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Помилка видалення');
+    }
   };
 
   // Handle Image upload
