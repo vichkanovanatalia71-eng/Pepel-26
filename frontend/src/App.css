@@ -16,6 +16,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
   touch-action: pan-y;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 .app {
