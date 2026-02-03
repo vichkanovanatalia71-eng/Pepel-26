@@ -565,31 +565,69 @@ const PMGIncome = () => {
         </div>
       )}
 
-      {/* Upload PDF Modal */}
+      {/* Upload Image Modal */}
       <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>📄 Завантажити PDF звіт НСЗУ</DialogTitle>
+            <DialogTitle>📷 Завантажити скріншот НСЗУ</DialogTitle>
           </DialogHeader>
           <div className="upload-modal-content">
             <p className="upload-hint">
-              Завантажте PDF звіт від Національної служби здоров'я України. 
-              AI проаналізує документ та автоматично заповнить дані.
+              Завантажте скріншот дашборду НСЗУ для конкретного лікаря. 
+              AI проаналізує зображення та автоматично заповнить дані про декларації.
             </p>
             
-            <label className="upload-area">
+            {/* Doctor Selection */}
+            <div className="form-group">
+              <label>Оберіть лікаря:</label>
+              <select 
+                value={selectedDoctorForUpload} 
+                onChange={(e) => setSelectedDoctorForUpload(e.target.value)}
+              >
+                <option value="">-- Оберіть лікаря --</option>
+                {doctors.map(doc => (
+                  <option key={doc.id} value={doc.id}>{doc.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Month/Year */}
+            <div className="form-row compact">
+              <div className="form-group">
+                <label>Місяць:</label>
+                <select value={formMonth} onChange={(e) => setFormMonth(parseInt(e.target.value))}>
+                  {MONTH_NAMES.map((name, i) => (
+                    <option key={i} value={i + 1}>{name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Рік:</label>
+                <input 
+                  type="number" 
+                  value={formYear} 
+                  onChange={(e) => setFormYear(parseInt(e.target.value))}
+                />
+              </div>
+            </div>
+            
+            <label className={`upload-area ${!selectedDoctorForUpload ? 'disabled' : ''}`}>
               <input 
                 type="file" 
-                accept=".pdf"
-                onChange={handlePdfUpload}
-                disabled={uploading}
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading || !selectedDoctorForUpload}
               />
               {uploading ? (
-                <span className="uploading">🔄 Аналіз AI...</span>
+                <span className="uploading">🤖 AI аналізує...</span>
               ) : (
-                <span>📁 Оберіть PDF файл</span>
+                <span>📷 Оберіть зображення</span>
               )}
             </label>
+            
+            {!selectedDoctorForUpload && (
+              <p className="upload-warning">⚠️ Спочатку оберіть лікаря</p>
+            )}
             
             <button 
               className="btn btn-secondary full-width"
