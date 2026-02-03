@@ -33,16 +33,23 @@ const PMGIncome = () => {
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState('all');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [selectedDoctorForUpload, setSelectedDoctorForUpload] = useState('');
   
-  // Form state for manual entry
+  // Unified modal state
+  const [showEntryModal, setShowEntryModal] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  
+  // Form state
+  const [formDoctor, setFormDoctor] = useState('');
   const [formMonth, setFormMonth] = useState(new Date().getMonth() + 1);
   const [formYear, setFormYear] = useState(new Date().getFullYear());
   const [formCapitationRate, setFormCapitationRate] = useState(1007.3);
-  const [formDoctorsData, setFormDoctorsData] = useState([]);
+  const [formAgeGroups, setFormAgeGroups] = useState(
+    AGE_GROUPS.map(ag => ({
+      age_group: ag.key,
+      patients_count: 0,
+      coefficient: ag.coefficient
+    }))
+  );
 
   const loadData = async () => {
     setLoading(true);
@@ -54,18 +61,9 @@ const PMGIncome = () => {
       setDeclarations(declRes.data || []);
       setDoctors(doctorsRes.data || []);
       
-      // Initialize form with doctors
-      if (doctorsRes.data.length > 0 && formDoctorsData.length === 0) {
-        setFormDoctorsData(doctorsRes.data.map(doc => ({
-          doctor_id: doc.id,
-          doctor_name: doc.name,
-          age_groups: AGE_GROUPS.map(ag => ({
-            age_group: ag.key,
-            patients_count: 0,
-            coefficient: ag.coefficient,
-            amount: 0
-          }))
-        })));
+      // Set default doctor
+      if (doctorsRes.data.length > 0 && !formDoctor) {
+        setFormDoctor(doctorsRes.data[0].id);
       }
     } catch (error) {
       console.error('Load error:', error);
@@ -165,22 +163,17 @@ const PMGIncome = () => {
       }));
   }, [declarations, selectedYear]);
 
-  // Handle manual form submission
-  const handleManualSubmit = async () => {
-    try {
-      await axios.post(`${API_URL}/api/pmg-declarations`, {
-        month: formMonth,
-        year: formYear,
-        capitation_rate: formCapitationRate,
-        doctors_data: formDoctorsData
-      });
-      
-      setShowAddModal(false);
-      loadData();
-    } catch (error) {
-      console.error('Save error:', error);
-      alert('Помилка збереження');
+  // Reset form when opening modal
+  const openEntryModal = () => {
+    setFormAgeGroups(AGE_GROUPS.map(ag => ({
+      age_group: ag.key,
+      patients_count: 0,
+      coefficient: ag.coefficient
+    })));
+    if (doctors.length > 0) {
+      setFormDoctor(doctors[0].id);
     }
+    setShowEntryModal(true);
   };
 
   // Handle Image upload
@@ -188,7 +181,7 @@ const PMGIncome = () => {
     const file = e.target.files[0];
     if (!file) return;
     
-    if (!selectedDoctorForUpload) {
+    if (!formDoctor) {
       alert('Спочатку оберіть лікаря');
       return;
     }
@@ -206,49 +199,88 @@ const PMGIncome = () => {
       if (response.data.success && response.data.parsed_data) {
         const parsed = response.data.parsed_data;
         
-        // Find the doctor in form data and update their age groups
-        const newDoctorsData = formDoctorsData.map(doc => {
-          if (doc.doctor_id === selectedDoctorForUpload || 
-              doc.doctor_name.toLowerCase().includes(parsed.doctor_name?.toLowerCase().split(' ')[0] || '')) {
-            return {
-              ...doc,
-              age_groups: AGE_GROUPS.map(ag => {
-                const parsedGroup = parsed.age_groups?.find(pg => pg.age_group === ag.key);
-                return {
-                  age_group: ag.key,
-                  patients_count: parsedGroup?.patients_count || 0,
-                  coefficient: ag.coefficient,
-                  amount: 0
-                };
-              }),
-              total_patients: parsed.total_declarations || 0
-            };
-          }
-          return doc;
+        // Update age groups for selected doctor
+        const newAgeGroups = AGE_GROUPS.map(ag => {
+          const parsedGroup = parsed.age_groups?.find(pg => pg.age_group === ag.key);
+          return {
+            age_group: ag.key,
+            patients_count: parsedGroup?.patients_count || 0,
+            coefficient: ag.coefficient
+          };
         });
         
-        setFormDoctorsData(newDoctorsData);
-        setShowUploadModal(false);
-        setShowAddModal(true);
+        setFormAgeGroups(newAgeGroups);
         
-        const doctorName = doctors.find(d => d.id === selectedDoctorForUpload)?.name || parsed.doctor_name;
-        alert(`✅ Зображення проаналізовано для ${doctorName}!\nЗнайдено: ${parsed.total_declarations || 0} декларацій.\nПеревірте дані та збережіть.`);
+        const totalPatients = newAgeGroups.reduce((sum, ag) => sum + ag.patients_count, 0);
+        const doctorName = doctors.find(d => d.id === formDoctor)?.name || '';
+        
+        alert(`✅ Зображення проаналізовано!\n\nЛікар: ${doctorName}\nЗнайдено: ${totalPatients} декларацій\n\nПеревірте дані та збережіть.`);
       } else {
-        alert('Помилка аналізу зображення: ' + (response.data.error || 'Невідома помилка'));
+        alert('Помилка аналізу: ' + (response.data.error || 'Невідома помилка'));
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Помилка завантаження зображення');
+      alert('Помилка завантаження');
     } finally {
       setUploading(false);
+      e.target.value = '';
     }
   };
 
-  // Update form patient count
-  const updatePatientCount = (doctorIndex, ageGroupIndex, value) => {
-    const newData = [...formDoctorsData];
-    newData[doctorIndex].age_groups[ageGroupIndex].patients_count = parseInt(value) || 0;
-    setFormDoctorsData(newData);
+  // Update patient count
+  const updatePatientCount = (index, value) => {
+    const newGroups = [...formAgeGroups];
+    newGroups[index].patients_count = parseInt(value) || 0;
+    setFormAgeGroups(newGroups);
+  };
+
+  // Save declaration
+  const handleSave = async () => {
+    if (!formDoctor) {
+      alert('Оберіть лікаря');
+      return;
+    }
+    
+    const totalPatients = formAgeGroups.reduce((sum, ag) => sum + ag.patients_count, 0);
+    if (totalPatients === 0) {
+      alert('Введіть кількість декларацій');
+      return;
+    }
+    
+    const doctorName = doctors.find(d => d.id === formDoctor)?.name || '';
+    
+    try {
+      // Check if declaration exists for this month/year
+      const existingRes = await axios.get(`${API_URL}/api/pmg-declarations/${formMonth}/${formYear}`);
+      
+      let doctorsData = [];
+      
+      if (existingRes.data.exists) {
+        // Update existing declaration
+        doctorsData = existingRes.data.data.doctors_data.filter(d => d.doctor_id !== formDoctor);
+      }
+      
+      // Add/update selected doctor's data
+      doctorsData.push({
+        doctor_id: formDoctor,
+        doctor_name: doctorName,
+        age_groups: formAgeGroups
+      });
+      
+      await axios.post(`${API_URL}/api/pmg-declarations`, {
+        month: formMonth,
+        year: formYear,
+        capitation_rate: formCapitationRate,
+        doctors_data: doctorsData
+      });
+      
+      setShowEntryModal(false);
+      loadData();
+      alert(`✅ Дані збережено для ${doctorName}!`);
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Помилка збереження');
+    }
   };
 
   // Available years
@@ -259,6 +291,12 @@ const PMGIncome = () => {
     }
     return years.sort((a, b) => b - a);
   }, [declarations]);
+
+  // Get selected doctor name
+  const selectedDoctorName = doctors.find(d => d.id === formDoctor)?.name || '';
+
+  // Calculate form totals
+  const formTotalPatients = formAgeGroups.reduce((sum, ag) => sum + ag.patients_count, 0);
 
   if (loading) {
     return (
@@ -272,22 +310,13 @@ const PMGIncome = () => {
     <div className="pmg-income-page" data-testid="pmg-income-page">
       <div className="page-header">
         <h1>💰 Дохід за ПМГ (Декларації)</h1>
-        <div className="header-actions">
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowUploadModal(true)}
-            data-testid="upload-pdf-btn"
-          >
-            📷 Завантажити скріншот
-          </button>
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowAddModal(true)}
-            data-testid="add-declaration-btn"
-          >
-            + Додати вручну
-          </button>
-        </div>
+        <button 
+          className="btn btn-primary"
+          onClick={openEntryModal}
+          data-testid="add-declaration-btn"
+        >
+          + Додати дані
+        </button>
       </div>
 
       {/* Filters */}
@@ -411,7 +440,7 @@ const PMGIncome = () => {
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value, name) => [value.toLocaleString('uk-UA'), 'Пацієнтів']}
+                    formatter={(value) => [value.toLocaleString('uk-UA'), 'Пацієнтів']}
                     contentStyle={{ background: '#1a1a1d', border: '1px solid #FF8C00' }}
                   />
                 </PieChart>
@@ -441,14 +470,14 @@ const PMGIncome = () => {
                       innerRadius={50}
                       outerRadius={100}
                       dataKey="patients"
-                      label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                     >
                       {doctorChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={DOCTOR_COLORS[index % DOCTOR_COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip 
-                      formatter={(value, name) => [value.toLocaleString('uk-UA'), 'Пацієнтів']}
+                      formatter={(value) => [value.toLocaleString('uk-UA'), 'Пацієнтів']}
                       contentStyle={{ background: '#1a1a1d', border: '1px solid #FF8C00' }}
                     />
                   </PieChart>
@@ -514,15 +543,10 @@ const PMGIncome = () => {
         <div className="empty-state">
           <div className="empty-icon">📊</div>
           <h3>Немає даних</h3>
-          <p>Додайте дані про декларації вручну або завантажте PDF звіт від НСЗУ</p>
-          <div className="empty-actions">
-            <button className="btn btn-secondary" onClick={() => setShowUploadModal(true)}>
-              📄 Завантажити PDF
-            </button>
-            <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
-              + Додати вручну
-            </button>
-          </div>
+          <p>Додайте дані про декларації вручну або завантажте скріншот з дашборду НСЗУ</p>
+          <button className="btn btn-primary" onClick={openEntryModal}>
+            + Додати дані
+          </button>
         </div>
       )}
 
@@ -565,145 +589,121 @@ const PMGIncome = () => {
         </div>
       )}
 
-      {/* Upload Image Modal */}
-      <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
-        <DialogContent className="max-w-md">
+      {/* Unified Entry Modal */}
+      <Dialog open={showEntryModal} onOpenChange={setShowEntryModal}>
+        <DialogContent className="max-w-lg entry-modal">
           <DialogHeader>
-            <DialogTitle>📷 Завантажити скріншот НСЗУ</DialogTitle>
+            <DialogTitle>📝 Внесення даних декларацій</DialogTitle>
           </DialogHeader>
-          <div className="upload-modal-content">
-            <p className="upload-hint">
-              Завантажте скріншот дашборду НСЗУ для конкретного лікаря. 
-              AI проаналізує зображення та автоматично заповнить дані про декларації.
-            </p>
-            
+          
+          <div className="entry-modal-content">
             {/* Doctor Selection */}
-            <div className="form-group">
-              <label>Оберіть лікаря:</label>
+            <div className="entry-section">
+              <label className="entry-label">👨‍⚕️ Лікар</label>
               <select 
-                value={selectedDoctorForUpload} 
-                onChange={(e) => setSelectedDoctorForUpload(e.target.value)}
+                value={formDoctor} 
+                onChange={(e) => setFormDoctor(e.target.value)}
+                className="entry-select"
               >
-                <option value="">-- Оберіть лікаря --</option>
                 {doctors.map(doc => (
                   <option key={doc.id} value={doc.id}>{doc.name}</option>
                 ))}
               </select>
             </div>
 
-            {/* Month/Year */}
-            <div className="form-row compact">
-              <div className="form-group">
-                <label>Місяць:</label>
-                <select value={formMonth} onChange={(e) => setFormMonth(parseInt(e.target.value))}>
+            {/* Period Selection */}
+            <div className="entry-row">
+              <div className="entry-section">
+                <label className="entry-label">📅 Місяць</label>
+                <select 
+                  value={formMonth} 
+                  onChange={(e) => setFormMonth(parseInt(e.target.value))}
+                  className="entry-select"
+                >
                   {MONTH_NAMES.map((name, i) => (
                     <option key={i} value={i + 1}>{name}</option>
                   ))}
                 </select>
               </div>
-              <div className="form-group">
-                <label>Рік:</label>
+              <div className="entry-section">
+                <label className="entry-label">📅 Рік</label>
                 <input 
-                  type="number" 
-                  value={formYear} 
+                  type="number"
+                  value={formYear}
                   onChange={(e) => setFormYear(parseInt(e.target.value))}
-                />
-              </div>
-            </div>
-            
-            <label className={`upload-area ${!selectedDoctorForUpload ? 'disabled' : ''}`}>
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={uploading || !selectedDoctorForUpload}
-              />
-              {uploading ? (
-                <span className="uploading">🤖 AI аналізує...</span>
-              ) : (
-                <span>📷 Оберіть зображення</span>
-              )}
-            </label>
-            
-            {!selectedDoctorForUpload && (
-              <p className="upload-warning">⚠️ Спочатку оберіть лікаря</p>
-            )}
-            
-            <button 
-              className="btn btn-secondary full-width"
-              onClick={() => setShowUploadModal(false)}
-            >
-              Скасувати
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Manual Entry Modal */}
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>📝 Додати дані декларацій</DialogTitle>
-          </DialogHeader>
-          <div className="manual-entry-form">
-            {/* Period & Rate */}
-            <div className="form-row">
-              <div className="form-group">
-                <label>Місяць</label>
-                <select value={formMonth} onChange={(e) => setFormMonth(parseInt(e.target.value))}>
-                  {MONTH_NAMES.map((name, i) => (
-                    <option key={i} value={i + 1}>{name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Рік</label>
-                <input 
-                  type="number" 
-                  value={formYear} 
-                  onChange={(e) => setFormYear(parseInt(e.target.value))}
-                />
-              </div>
-              <div className="form-group">
-                <label>Капітаційна ставка (₴)</label>
-                <input 
-                  type="number" 
-                  step="0.1"
-                  value={formCapitationRate} 
-                  onChange={(e) => setFormCapitationRate(parseFloat(e.target.value))}
+                  className="entry-input"
                 />
               </div>
             </div>
 
-            {/* Doctors Data */}
-            {formDoctorsData.map((doctor, docIndex) => (
-              <div key={docIndex} className="doctor-entry-section">
-                <h4>👨‍⚕️ {doctor.doctor_name}</h4>
-                <div className="age-groups-grid">
-                  {doctor.age_groups.map((ag, agIndex) => (
-                    <div key={ag.age_group} className="age-group-input">
-                      <label>{AGE_GROUPS.find(a => a.key === ag.age_group)?.label}</label>
-                      <div className="input-with-coeff">
-                        <input 
-                          type="number"
-                          min="0"
-                          value={ag.patients_count}
-                          onChange={(e) => updatePatientCount(docIndex, agIndex, e.target.value)}
-                          placeholder="0"
-                        />
-                        <span className="coeff-badge">×{ag.coefficient}</span>
-                      </div>
+            {/* Upload Image */}
+            <div className="entry-section">
+              <label className="entry-label">📷 Завантажити скріншот НСЗУ</label>
+              <label className={`upload-btn ${uploading ? 'uploading' : ''}`}>
+                <input 
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                />
+                {uploading ? (
+                  <span>🤖 AI аналізує...</span>
+                ) : (
+                  <span>📷 Обрати зображення</span>
+                )}
+              </label>
+              <p className="upload-hint-small">AI автоматично заповнить дані з скріншоту</p>
+            </div>
+
+            {/* Divider */}
+            <div className="entry-divider">
+              <span>або введіть вручну</span>
+            </div>
+
+            {/* Age Groups */}
+            <div className="entry-section">
+              <label className="entry-label">👥 Кількість декларацій за віком</label>
+              <div className="age-groups-list">
+                {formAgeGroups.map((ag, index) => (
+                  <div key={ag.age_group} className="age-group-row">
+                    <div className="age-group-info">
+                      <span className="age-label">{AGE_GROUPS[index].label}</span>
+                      <span className="age-coeff">×{ag.coefficient}</span>
                     </div>
-                  ))}
-                </div>
+                    <input 
+                      type="number"
+                      min="0"
+                      value={ag.patients_count || ''}
+                      onChange={(e) => updatePatientCount(index, e.target.value)}
+                      placeholder="0"
+                      className="age-input"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
 
-            <div className="modal-actions">
-              <button className="btn btn-success" onClick={handleManualSubmit}>
+            {/* Total */}
+            {formTotalPatients > 0 && (
+              <div className="entry-total">
+                <span>Всього декларацій:</span>
+                <strong>{formTotalPatients.toLocaleString('uk-UA')}</strong>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="entry-actions">
+              <button 
+                className="btn btn-success"
+                onClick={handleSave}
+                disabled={formTotalPatients === 0}
+              >
                 ✓ Зберегти
               </button>
-              <button className="btn btn-secondary" onClick={() => setShowAddModal(false)}>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowEntryModal(false)}
+              >
                 Скасувати
               </button>
             </div>
