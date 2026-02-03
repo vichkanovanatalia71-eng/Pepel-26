@@ -710,7 +710,9 @@ const PMGIncome = () => {
       <Dialog open={showEntryModal} onOpenChange={setShowEntryModal}>
         <DialogContent className="max-w-lg entry-modal max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>📝 Внесення даних декларацій</DialogTitle>
+            <DialogTitle>
+              {editMode ? '✏️ Редагування даних декларацій' : '📝 Внесення даних декларацій'}
+            </DialogTitle>
           </DialogHeader>
           
           <div className="entry-modal-content">
@@ -721,6 +723,7 @@ const PMGIncome = () => {
                 value={formDoctor} 
                 onChange={(e) => setFormDoctor(e.target.value)}
                 className="entry-select"
+                disabled={editMode}
               >
                 {doctors.map(doc => (
                   <option key={doc.id} value={doc.id}>{doc.name}</option>
@@ -736,6 +739,7 @@ const PMGIncome = () => {
                   value={formMonth} 
                   onChange={(e) => setFormMonth(parseInt(e.target.value))}
                   className="entry-select"
+                  disabled={editMode}
                 >
                   {MONTH_NAMES.map((name, i) => (
                     <option key={i} value={i + 1}>{name}</option>
@@ -749,32 +753,35 @@ const PMGIncome = () => {
                   value={formYear}
                   onChange={(e) => setFormYear(parseInt(e.target.value))}
                   className="entry-input"
+                  disabled={editMode}
                 />
               </div>
             </div>
 
-            {/* Upload Image */}
-            <div className="entry-section">
-              <label className="entry-label">📷 Завантажити скріншот НСЗУ</label>
-              <label className={`upload-btn ${uploading ? 'uploading' : ''}`}>
-                <input 
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                />
-                {uploading ? (
-                  <span>🤖 AI аналізує...</span>
-                ) : (
-                  <span>📷 Обрати зображення</span>
-                )}
-              </label>
-              <p className="upload-hint-small">AI автоматично заповнить дані з скріншоту</p>
-            </div>
+            {/* Upload Image - only in add mode */}
+            {!editMode && (
+              <div className="entry-section">
+                <label className="entry-label">📷 Завантажити скріншот НСЗУ</label>
+                <label className={`upload-btn ${uploading ? 'uploading' : ''}`}>
+                  <input 
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                  />
+                  {uploading ? (
+                    <span>🤖 AI аналізує...</span>
+                  ) : (
+                    <span>📷 Обрати зображення</span>
+                  )}
+                </label>
+                <p className="upload-hint-small">AI автоматично заповнить дані з скріншоту</p>
+              </div>
+            )}
 
             {/* Divider */}
             <div className="entry-divider">
-              <span>або введіть вручну</span>
+              <span>{editMode ? 'Оновити дані' : 'або введіть вручну'}</span>
             </div>
 
             {/* Age Groups */}
