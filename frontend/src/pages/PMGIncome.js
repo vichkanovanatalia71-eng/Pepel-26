@@ -727,150 +727,148 @@ const PMGIncome = () => {
 
       {/* Unified Entry Modal */}
       <Dialog open={showEntryModal} onOpenChange={setShowEntryModal}>
-        <DialogContent className="max-w-lg entry-modal max-h-[90vh] overflow-y-auto">
+        <DialogContent className="pmg-entry-modal-wide">
           <DialogHeader>
             <DialogTitle>
               {editMode ? '✏️ Редагування даних декларацій' : '📝 Внесення даних декларацій'}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="entry-modal-content">
-            {/* Doctor Selection */}
-            <div className="entry-section">
-              <label className="entry-label">👨‍⚕️ Лікар</label>
-              <select 
-                value={formDoctor} 
-                onChange={(e) => setFormDoctor(e.target.value)}
-                className="entry-select"
-                disabled={editMode}
-              >
-                {doctors.map(doc => (
-                  <option key={doc.id} value={doc.id}>{doc.name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Period Selection */}
-            <div className="entry-row">
-              <div className="entry-section">
-                <label className="entry-label">📅 Місяць</label>
+          <div className="entry-modal-grid">
+            {/* Left Column - Basic Info */}
+            <div className="entry-left-column">
+              {/* Doctor Selection */}
+              <div className="entry-section-compact">
+                <label className="entry-label-compact">👨‍⚕️ Лікар</label>
                 <select 
-                  value={formMonth} 
-                  onChange={(e) => setFormMonth(parseInt(e.target.value))}
-                  className="entry-select"
+                  value={formDoctor} 
+                  onChange={(e) => setFormDoctor(e.target.value)}
+                  className="entry-select-compact"
                   disabled={editMode}
                 >
-                  {MONTH_NAMES.map((name, i) => (
-                    <option key={i} value={i + 1}>{name}</option>
+                  {doctors.map(doc => (
+                    <option key={doc.id} value={doc.id}>{doc.name}</option>
                   ))}
                 </select>
               </div>
-              <div className="entry-section">
-                <label className="entry-label">📅 Рік</label>
-                <input 
-                  type="number"
-                  value={formYear}
-                  onChange={(e) => setFormYear(parseInt(e.target.value))}
-                  className="entry-input"
-                  disabled={editMode}
-                />
-              </div>
-            </div>
 
-            {/* Upload Image - only in add mode */}
-            {!editMode && (
-              <div className="entry-section">
-                <label className="entry-label">📷 Завантажити скріншот НСЗУ</label>
-                <label className={`upload-btn ${uploading ? 'uploading' : ''}`}>
+              {/* Period Selection */}
+              <div className="entry-section-compact">
+                <label className="entry-label-compact">📅 Період</label>
+                <div className="period-inputs">
+                  <select 
+                    value={formMonth} 
+                    onChange={(e) => setFormMonth(parseInt(e.target.value))}
+                    className="entry-select-compact"
+                    disabled={editMode}
+                  >
+                    {MONTH_NAMES.map((name, i) => (
+                      <option key={i} value={i + 1}>{name}</option>
+                    ))}
+                  </select>
                   <input 
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
+                    type="number"
+                    value={formYear}
+                    onChange={(e) => setFormYear(parseInt(e.target.value))}
+                    className="entry-input-compact year-input"
+                    disabled={editMode}
                   />
-                  {uploading ? (
-                    <span>🤖 AI аналізує...</span>
-                  ) : (
-                    <span>📷 Обрати зображення</span>
-                  )}
-                </label>
-                <p className="upload-hint-small">AI автоматично заповнить дані з скріншоту</p>
+                </div>
               </div>
-            )}
 
-            {/* Divider */}
-            <div className="entry-divider">
-              <span>{editMode ? 'Оновити дані' : 'або введіть вручну'}</span>
+              {/* Upload Image - only in add mode */}
+              {!editMode && (
+                <div className="entry-section-compact">
+                  <label className="entry-label-compact">📷 AI-аналіз</label>
+                  <label className={`upload-btn-compact ${uploading ? 'uploading' : ''}`}>
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                    {uploading ? (
+                      <span>🤖 Аналізує...</span>
+                    ) : (
+                      <span>📷 Скріншот НСЗУ</span>
+                    )}
+                  </label>
+                </div>
+              )}
+
+              {/* Total */}
+              {formTotalPatients > 0 && (
+                <div className="entry-total-compact">
+                  <span>Всього декларацій:</span>
+                  <strong>{formTotalPatients.toLocaleString('uk-UA')}</strong>
+                </div>
+              )}
             </div>
 
-            {/* Age Groups */}
-            <div className="entry-section">
-              <label className="entry-label">👥 Кількість декларацій за віком</label>
-              <div className="age-groups-list">
+            {/* Right Column - Age Groups Table */}
+            <div className="entry-right-column">
+              <label className="entry-label-compact">👥 Декларації за віковими групами</label>
+              <div className="age-groups-table">
+                <div className="age-table-header">
+                  <div className="age-col age-col-group">Вікова група</div>
+                  <div className="age-col age-col-coef">Коеф.</div>
+                  <div className="age-col age-col-input">Декларацій</div>
+                  <div className="age-col age-col-input">Невериф.</div>
+                </div>
                 {formAgeGroups.map((ag, index) => (
-                  <div key={ag.age_group} className="age-group-row-extended">
-                    <div className="age-group-info">
-                      <span className="age-label">{ageGroups[index]?.label || ag.age_group}</span>
-                      <span className="age-coeff">×{ag.coefficient}</span>
+                  <div key={ag.age_group} className="age-table-row">
+                    <div className="age-col age-col-group">
+                      {ageGroups[index]?.label || ag.age_group}
                     </div>
-                    <div className="age-inputs-group-simple">
-                      <div className="age-input-wrapper-large">
-                        <label className="input-micro-label">Декларацій</label>
-                        <input 
-                          type="number"
-                          min="0"
-                          value={ag.patients_count || ''}
-                          onChange={(e) => updatePatientCount(index, e.target.value)}
-                          placeholder="0"
-                          className="age-input"
-                        />
-                      </div>
-                      <div className="age-input-wrapper-large">
-                        <label className="input-micro-label">Неверифіковані</label>
-                        <input 
-                          type="number"
-                          min="0"
-                          step="0.1"
-                          max={ag.patients_count}
-                          value={ag.not_verified || ''}
-                          onChange={(e) => updateNotVerifiedCount(index, e.target.value)}
-                          placeholder="0"
-                          className="age-input warning-subtle"
-                        />
-                      </div>
+                    <div className="age-col age-col-coef">
+                      ×{ag.coefficient}
+                    </div>
+                    <div className="age-col age-col-input">
+                      <input 
+                        type="number"
+                        min="0"
+                        value={ag.patients_count || ''}
+                        onChange={(e) => updatePatientCount(index, e.target.value)}
+                        placeholder="0"
+                        className="age-input-table"
+                      />
+                    </div>
+                    <div className="age-col age-col-input">
+                      <input 
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        max={ag.patients_count}
+                        value={ag.not_verified || ''}
+                        onChange={(e) => updateNotVerifiedCount(index, e.target.value)}
+                        placeholder="0"
+                        className="age-input-table warning-subtle"
+                      />
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="input-hint">
-                💡 Неверифіковані декларації враховуються в загальній кількості, але не оплачуються
+              <p className="input-hint-small">
+                💡 Неверифіковані не оплачуються, але враховуються в загальній кількості
               </p>
             </div>
+          </div>
 
-            {/* Total */}
-            {formTotalPatients > 0 && (
-              <div className="entry-total">
-                <span>Всього декларацій:</span>
-                <strong>{formTotalPatients.toLocaleString('uk-UA')}</strong>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="entry-actions">
-              <button 
-                className="btn btn-success"
-                onClick={handleSave}
-                disabled={formTotalPatients === 0}
-              >
-                {editMode ? '✓ Оновити' : '✓ Зберегти'}
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => setShowEntryModal(false)}
-              >
-                Скасувати
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="entry-actions-horizontal">
+            <button 
+              className="btn btn-secondary"
+              onClick={() => setShowEntryModal(false)}
+            >
+              Скасувати
+            </button>
+            <button 
+              className="btn btn-success"
+              onClick={handleSave}
+              disabled={formTotalPatients === 0}
+            >
+              {editMode ? '✓ Оновити' : '✓ Зберегти'}
+            </button>
           </div>
         </DialogContent>
       </Dialog>
