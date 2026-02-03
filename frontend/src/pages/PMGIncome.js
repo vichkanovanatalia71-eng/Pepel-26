@@ -714,19 +714,44 @@ const PMGIncome = () => {
               <label className="entry-label">👥 Кількість декларацій за віком</label>
               <div className="age-groups-list">
                 {formAgeGroups.map((ag, index) => (
-                  <div key={ag.age_group} className="age-group-row">
+                  <div key={ag.age_group} className="age-group-row-extended">
                     <div className="age-group-info">
                       <span className="age-label">{AGE_GROUPS[index].label}</span>
                       <span className="age-coeff">×{ag.coefficient}</span>
                     </div>
-                    <input 
-                      type="number"
-                      min="0"
-                      value={ag.patients_count || ''}
-                      onChange={(e) => updatePatientCount(index, e.target.value)}
-                      placeholder="0"
-                      className="age-input"
-                    />
+                    <div className="age-inputs-group">
+                      <div className="age-input-wrapper">
+                        <label className="input-micro-label">Всього</label>
+                        <input 
+                          type="number"
+                          min="0"
+                          value={ag.patients_count || ''}
+                          onChange={(e) => updatePatientCount(index, e.target.value)}
+                          placeholder="0"
+                          className="age-input-small"
+                        />
+                      </div>
+                      <span className="minus-sign">−</span>
+                      <div className="age-input-wrapper">
+                        <label className="input-micro-label">Невериф.</label>
+                        <input 
+                          type="number"
+                          min="0"
+                          max={ag.patients_count}
+                          value={ag.not_verified || ''}
+                          onChange={(e) => updateNotVerifiedCount(index, e.target.value)}
+                          placeholder="0"
+                          className="age-input-small warning"
+                        />
+                      </div>
+                      <span className="equals-sign">=</span>
+                      <div className="age-input-wrapper">
+                        <label className="input-micro-label">Оплачено</label>
+                        <div className="verified-count">
+                          {(ag.patients_count - ag.not_verified) || 0}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
