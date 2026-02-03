@@ -40,6 +40,9 @@ const MonthlyServices = () => {
   const [quantities, setQuantities] = useState({});
   const [uploadedImage, setUploadedImage] = useState(null);
   const [aiProcessing, setAiProcessing] = useState(false);
+  const [sortBy, setSortBy] = useState('date-desc'); // date-desc, date-asc, amount-desc, etc
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedEntries, setSelectedEntries] = useState(new Set());
 
   const monthNames = [
     'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
