@@ -180,6 +180,21 @@ class CashBalanceCreate(BaseModel):
     year: int
     amount: float
 
+class BankBalance(BaseModel):
+    """Залишок на банківському рахунку на кінець місяця"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    month: int
+    year: int
+    amount: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BankBalanceCreate(BaseModel):
+    month: int
+    year: int
+    amount: float
+
 class SharedReport(BaseModel):
     """Поширений звіт з обмеженим доступом"""
     model_config = ConfigDict(extra="ignore")
