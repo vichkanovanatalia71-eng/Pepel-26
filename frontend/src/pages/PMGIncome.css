@@ -1213,83 +1213,176 @@
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Mobile Responsive Design - Following MonthlyServices pattern */
+@media (max-width: 767px) {
   .pmg-income-page {
-    padding: 16px;
+    padding: 12px;
     padding-bottom: 100px;
   }
   
+  /* Page Header - Full width vertical stack */
   .pmg-income-page .page-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 14px;
   }
   
   .pmg-income-page .page-header h1 {
-    font-size: 22px;
+    font-size: 1.5rem;
   }
   
-  .header-actions {
+  .pmg-income-page .header-actions {
     width: 100%;
   }
   
-  .header-actions .btn {
-    flex: 1;
-    text-align: center;
-    font-size: 13px;
+  .pmg-income-page .header-actions .btn,
+  .pmg-income-page .page-header .btn {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 16px;
   }
   
+  /* Filters Panel - Vertical layout */
+  .pmg-filters {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .pmg-filters .filter-group {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .pmg-filters .filter-group:last-child {
+    margin-bottom: 0;
+  }
+  
+  .pmg-filters .filter-group label {
+    font-size: 10px;
+    margin-bottom: 0;
+    margin-right: 0;
+    min-width: auto;
+  }
+  
+  .pmg-filters .chips-group {
+    width: 100%;
+    gap: 5px;
+  }
+  
+  .pmg-filters .chips-scrollable {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .pmg-filters .chip {
+    padding: 7px 12px;
+    font-size: 11px;
+    max-width: 100%;
+  }
+  
+  /* KPI Cards - 2 columns grid */
   .pmg-kpi-cards {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
   }
   
   .kpi-card {
-    padding: 14px;
     flex-direction: column;
     text-align: center;
+    align-items: center;
+    padding: 12px;
+    gap: 8px;
   }
   
   .kpi-icon {
-    font-size: 24px;
-  }
-  
-  .kpi-value {
-    font-size: 18px;
+    font-size: 28px;
+    margin: 0 auto;
   }
   
   .kpi-label {
+    font-size: 9px;
+  }
+  
+  .kpi-value {
+    font-size: 16px;
+  }
+  
+  .kpi-period {
     font-size: 10px;
   }
   
+  /* Charts Grid - Single column */
   .pmg-charts-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  
+  .chart-card {
+    padding: 14px;
   }
   
   .chart-card.wide {
     grid-column: span 1;
   }
   
+  .chart-card h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
   .chart-container {
     min-height: 220px;
   }
   
-  .manual-entry-form .form-row {
-    grid-template-columns: 1fr;
+  .chart-legend {
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
   }
   
-  .age-groups-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .legend-item {
+    font-size: 10px;
   }
   
-  .declarations-table th,
+  /* Table Section - Horizontal scroll */
+  .declarations-table-section {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  
+  .declarations-table-section h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .declarations-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .declarations-table {
+    min-width: 700px;
+  }
+  
+  .declarations-table th {
+    font-size: 10px;
+    padding: 8px 6px;
+    white-space: nowrap;
+  }
+  
   .declarations-table td {
-    padding: 8px 10px;
-    font-size: 12px;
+    font-size: 11px;
+    padding: 8px 6px;
   }
   
   .action-buttons {
-    flex-direction: row;
+    gap: 4px;
   }
   
   .action-btn {
@@ -1297,6 +1390,153 @@
     font-size: 12px;
   }
   
+  /* Empty State */
+  .empty-state {
+    padding: 40px 16px;
+  }
+  
+  .empty-icon {
+    font-size: 36px;
+  }
+  
+  .empty-state h3 {
+    font-size: 16px;
+  }
+  
+  .empty-state p {
+    font-size: 13px;
+  }
+  
+  .empty-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .empty-actions .btn {
+    width: 100%;
+  }
+  
+  /* Entry Modal - Mobile Optimized */
+  .pmg-entry-modal-wide {
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    padding: 16px;
+  }
+  
+  .pmg-entry-modal-wide .entry-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+  
+  .entry-left-column {
+    order: 1;
+    gap: 16px;
+  }
+  
+  .entry-right-column {
+    order: 2;
+    gap: 12px;
+  }
+  
+  .entry-section-compact {
+    gap: 8px;
+  }
+  
+  .entry-label-compact {
+    font-size: 13px;
+  }
+  
+  .entry-select-compact,
+  .entry-input-compact {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .period-inputs {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .period-inputs .entry-select-compact,
+  .period-inputs .entry-input-compact {
+    width: 100%;
+  }
+  
+  .year-input {
+    width: 100%;
+  }
+  
+  .upload-btn-compact {
+    padding: 14px;
+    font-size: 14px;
+  }
+  
+  .entry-total-compact {
+    padding: 14px;
+  }
+  
+  .entry-total-compact span {
+    font-size: 12px;
+  }
+  
+  .entry-total-compact strong {
+    font-size: 20px;
+  }
+  
+  /* Age Groups Table - Mobile */
+  .age-groups-table {
+    padding: 12px;
+  }
+  
+  .age-table-header {
+    grid-template-columns: 1fr 50px 70px 70px;
+    padding: 10px;
+    font-size: 9px;
+    gap: 6px;
+  }
+  
+  .age-table-row {
+    grid-template-columns: 1fr 50px 70px 70px;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  
+  .age-col-group {
+    font-size: 11px;
+  }
+  
+  .age-col-coef {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+  
+  .age-input-table {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  
+  .input-hint-small {
+    font-size: 11px;
+  }
+  
+  /* Actions - Full width buttons */
+  .entry-actions-horizontal {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+  
+  .entry-actions-horizontal .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 14px;
+  }
+  
+  /* Age group rows - Legacy support */
   .age-group-row-extended {
     flex-direction: column;
     gap: 12px;
@@ -1321,156 +1561,6 @@
   .verified-count {
     width: 60px;
     font-size: 14px;
-  }
-}
-
-/* Mobile Responsive Design - Following MonthlyServices pattern */
-@media (max-width: 767px) {
-  .pmg-income-page {
-    padding: 12px !important;
-    padding-bottom: 100px !important;
-  }
-  
-  .pmg-income-page .page-header {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-    margin-bottom: 14px !important;
-  }
-  
-  .pmg-income-page .page-header h1 {
-    font-size: 1.5rem !important;
-  }
-  
-  .pmg-income-page .header-actions {
-    width: 100% !important;
-  }
-  
-  .pmg-income-page .header-actions .btn {
-    width: 100% !important;
-    font-size: 14px !important;
-    padding: 12px 16px !important;
-  }
-  
-  /* Filters - Vertical stack */
-  .pmg-filters {
-    padding: 12px !important;
-    margin-bottom: 12px !important;
-  }
-  
-  .pmg-filters .filter-group {
-    margin-bottom: 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 6px !important;
-  }
-  
-  .pmg-filters .filter-group:last-child {
-    margin-bottom: 0 !important;
-  }
-  
-  .pmg-filters .filter-group label {
-    font-size: 10px !important;
-    margin-bottom: 0 !important;
-    margin-right: 0 !important;
-  }
-  
-  .pmg-filters .chips-group {
-    width: 100% !important;
-    gap: 5px !important;
-  }
-  
-  .pmg-filters .chips-scrollable {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  .pmg-filters .chip {
-    padding: 7px 12px !important;
-    font-size: 11px !important;
-    max-width: 100% !important;
-  }
-  
-  /* KPI Cards - 2 columns on mobile */
-  .pmg-kpi-cards {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-    margin-bottom: 14px !important;
-  }
-  
-  .kpi-card {
-    flex-direction: column !important;
-    text-align: center !important;
-    align-items: center !important;
-    padding: 12px !important;
-    gap: 8px !important;
-  }
-  
-  .kpi-icon {
-    font-size: 28px !important;
-    margin: 0 auto !important;
-  }
-  
-  .kpi-label {
-    font-size: 9px !important;
-  }
-  
-  .kpi-value {
-    font-size: 16px !important;
-  }
-  
-  .kpi-period {
-    font-size: 10px !important;
-  }
-  
-  /* Charts - Stack vertically */
-  .pmg-charts {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    margin-bottom: 14px !important;
-  }
-  
-  .chart-card {
-    padding: 14px !important;
-  }
-  
-  .chart-card h3 {
-    font-size: 14px !important;
-    margin-bottom: 12px !important;
-  }
-  
-  .chart-container {
-    min-height: 220px !important;
-  }
-  
-  /* Table - Horizontal scroll container */
-  .declarations-table-section {
-    padding: 14px !important;
-    overflow-x: auto !important;
-  }
-  
-  .declarations-table-wrapper {
-    min-width: 700px !important;
-  }
-  
-  .declarations-table th {
-    font-size: 11px !important;
-    padding: 8px 6px !important;
-  }
-  
-  .declarations-table td {
-    font-size: 11px !important;
-    padding: 8px 6px !important;
-  }
-  
-  .action-buttons {
-    gap: 4px !important;
-  }
-  
-  .action-btn {
-    padding: 4px 8px !important;
-    font-size: 12px !important;
   }
 }
 
