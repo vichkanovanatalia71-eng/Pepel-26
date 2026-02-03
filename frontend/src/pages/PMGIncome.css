@@ -3,6 +3,12 @@
   padding: 20px;
   max-width: 1600px;
   margin: 0 auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.pmg-income-page * {
+  box-sizing: border-box;
 }
 
 .pmg-income-page.loading {
