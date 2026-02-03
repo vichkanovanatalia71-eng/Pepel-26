@@ -201,7 +201,7 @@ class AgeGroupData(BaseModel):
     """Дані за віковою групою"""
     age_group: str  # "0-5", "6-17", "18-39", "40-64", "65+"
     patients_count: int = 0
-    not_verified: int = 0
+    not_verified: float = 0.0  # Може бути десятковим числом
     coefficient: float = 1.0
     amount: float = 0.0
 
