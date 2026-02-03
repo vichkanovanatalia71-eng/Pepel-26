@@ -1364,6 +1364,41 @@ async def analyze_pmg_image(file: UploadFile = File(...)):
             "error": str(e)
         }
 
+# ====== PMG Settings ======
+
+@api_router.get("/pmg-settings")
+async def get_pmg_settings():
+    """Отримати налаштування ПМГ"""
+    settings = await db.pmg_settings.find_one({"id": "pmg_settings"}, {"_id": 0})
+    
+    if not settings:
+        # Створити дефолтні налаштування
+        default_settings = PMGSettings()
+        settings_dict = default_settings.model_dump()
+        settings_dict['updated_at'] = settings_dict['updated_at'].isoformat()
+        await db.pmg_settings.insert_one(settings_dict)
+        return settings_dict
+    
+    return settings
+
+@api_router.put("/pmg-settings")
+async def update_pmg_settings(settings: PMGSettingsUpdate):
+    """Оновити налаштування ПМГ"""
+    updated_settings = {
+        "id": "pmg_settings",
+        "capitation_rate": settings.capitation_rate,
+        "age_coefficients": settings.age_coefficients,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.pmg_settings.update_one(
+        {"id": "pmg_settings"},
+        {"$set": updated_settings},
+        upsert=True
+    )
+    
+    return updated_settings
+
 # Shared Reports
 @api_router.post("/reports/share")
 async def create_shared_report(report: SharedReportCreate):
