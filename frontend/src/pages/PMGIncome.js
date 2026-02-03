@@ -77,8 +77,8 @@ const PMGIncome = () => {
     loadData();
   }, []);
 
-  // Filter declarations
-  const filteredDeclarations = useMemo(() => {
+  // Filter declarations by period
+  const filteredByPeriod = useMemo(() => {
     let filtered = [...declarations];
     
     if (selectedYear !== 'all') {
@@ -94,9 +94,36 @@ const PMGIncome = () => {
     });
   }, [declarations, selectedYear, selectedMonth]);
 
+  // Filter declarations - also filter doctors_data by selected doctor
+  const filteredDeclarations = useMemo(() => {
+    if (selectedDoctorFilter === 'all') {
+      return filteredByPeriod;
+    }
+    
+    // Filter doctors_data inside each declaration
+    return filteredByPeriod.map(decl => ({
+      ...decl,
+      doctors_data: decl.doctors_data?.filter(doc => doc.doctor_id === selectedDoctorFilter) || [],
+      total_patients: decl.doctors_data?.filter(doc => doc.doctor_id === selectedDoctorFilter)
+        .reduce((sum, doc) => sum + (doc.total_patients || 0), 0) || 0,
+      total_amount: decl.doctors_data?.filter(doc => doc.doctor_id === selectedDoctorFilter)
+        .reduce((sum, doc) => sum + (doc.total_amount || 0), 0) || 0
+    })).filter(decl => decl.doctors_data.length > 0);
+  }, [filteredByPeriod, selectedDoctorFilter]);
+
+  // Recalculate taxes for filtered data
+  const filteredWithTaxes = useMemo(() => {
+    return filteredDeclarations.map(decl => ({
+      ...decl,
+      total_ep: decl.total_amount * 0.05,
+      total_vz: decl.total_amount * 0.01,
+      net_amount: decl.total_amount * 0.94
+    }));
+  }, [filteredDeclarations]);
+
   // Calculate totals
   const totals = useMemo(() => {
-    if (filteredDeclarations.length === 0) return null;
+    if (filteredWithTaxes.length === 0) return null;
     
     // Фінансові дані сумуються за всі періоди
     const totalAmount = filteredDeclarations.reduce((sum, d) => sum + d.total_amount, 0);
