@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Dashboard from './pages/Dashboard';
-import Incomes from './pages/Incomes';
+import PMGIncome from './pages/PMGIncome';
 import Expenses from './pages/Expenses';
 import Documents from './pages/Documents';
 import Doctors from './pages/Doctors';
@@ -32,7 +32,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/incomes" element={<Incomes />} />
+          <Route path="/incomes" element={<PMGIncome />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/doctors" element={<Doctors />} />
