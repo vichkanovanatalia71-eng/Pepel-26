@@ -173,7 +173,7 @@ const PMGIncome = () => {
     });
     
     return Object.values(grouped);
-  }, [filteredDeclarations]);
+  }, [latestPeriodDeclarations]);
 
   const monthlyChartData = useMemo(() => {
     if (declarations.length === 0) return [];
