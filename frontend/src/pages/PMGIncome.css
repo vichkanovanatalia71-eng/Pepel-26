@@ -1520,6 +1520,61 @@
   }
 }
 
+/* Extra small screens - 375px (iPhone) and below */
+@media (max-width: 375px) {
+  .pmg-income-page {
+    padding: 8px;
+    padding-bottom: 85px;
+  }
+  
+  .pmg-income-page .page-header h1 {
+    font-size: 16px;
+  }
+  
+  .pmg-filters {
+    padding: 8px;
+  }
+  
+  .pmg-filters .filter-group {
+    margin-bottom: 6px;
+  }
+  
+  .pmg-filters .chip {
+    padding: 4px 6px;
+    font-size: 9px;
+    max-width: 100%;
+  }
+  
+  .pmg-kpi-cards {
+    gap: 6px;
+  }
+  
+  .kpi-card {
+    padding: 8px;
+  }
+  
+  .kpi-label {
+    font-size: 9px;
+  }
+  
+  .kpi-value {
+    font-size: 14px;
+  }
+  
+  .kpi-icon {
+    font-size: 20px;
+  }
+  
+  .chart-card {
+    padding: 10px;
+  }
+  
+  .chart-card h3 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+}
+
 /* Desktop optimization - 1200px and above */
 @media (min-width: 1200px) {
   .pmg-income-page {
