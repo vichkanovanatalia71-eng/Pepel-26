@@ -139,13 +139,11 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 3
+  test_sequence: 4
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "Update PMG calculation logic for unverified declarations"
-    - "Update PMG form UI for unverified declarations"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -153,3 +151,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Updated unverified declarations logic per user requirements: 1) Allow decimal values (4.5, 6.5, etc) using step=0.1 in input. 2) Changed calculation: total_patients includes ALL declarations (not subtracting unverified), but total_amount only counts verified declarations (patients_count - not_verified) for payment. Backend model changed not_verified from int to float. Frontend simplified to 2-field layout per age group. Need to test: decimal input works, total patients shows full count, payment amount subtracts unverified correctly."
+  - agent: "testing"
+    message: "✅ COMPREHENSIVE TESTING COMPLETED: All unverified declarations logic working correctly. Key findings: 1) Decimal input (4.5, 6.5, 0.5) fully supported with step=0.1 attribute. 2) Total declarations correctly shows 150 (100+50) including ALL declarations. 3) KPI cards display properly: 'Активних декларацій: 150' and payment calculations reflect verified amounts only. 4) 2-field UI layout implemented correctly. 5) Save/edit functionality works with decimal values. 6) Edge cases (0.5, 0) handled properly. 7) No JavaScript errors or validation issues. The implementation matches all user requirements perfectly."
