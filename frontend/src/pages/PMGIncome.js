@@ -659,30 +659,47 @@ const PMGIncome = () => {
               <thead>
                 <tr>
                   <th>Період</th>
+                  <th>Лікар</th>
                   <th>Пацієнтів</th>
                   <th>Сума</th>
                   <th>ЄП (5%)</th>
                   <th>ВЗ (1%)</th>
                   <th>Чистий дохід</th>
-                  <th>Джерело</th>
+                  <th>Дії</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredDeclarations.map(decl => (
-                  <tr key={decl.id}>
-                    <td><strong>{MONTH_NAMES[decl.month - 1]} {decl.year}</strong></td>
-                    <td>{decl.total_patients.toLocaleString('uk-UA')}</td>
-                    <td className="amount-cell">{decl.total_amount.toLocaleString('uk-UA')} ₴</td>
-                    <td>{decl.total_ep.toLocaleString('uk-UA')} ₴</td>
-                    <td>{decl.total_vz.toLocaleString('uk-UA')} ₴</td>
-                    <td className="highlight-cell">{decl.net_amount.toLocaleString('uk-UA')} ₴</td>
-                    <td>
-                      <span className={`source-badge ${decl.source}`}>
-                        {decl.source === 'pdf' ? '📄 PDF' : '✏️ Вручну'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {filteredDeclarations.map(decl => 
+                  decl.doctors_data?.map(doctor => (
+                    <tr key={`${decl.id}-${doctor.doctor_id}`}>
+                      <td><strong>{MONTH_NAMES[decl.month - 1]} {decl.year}</strong></td>
+                      <td>{doctor.doctor_name}</td>
+                      <td>{doctor.total_patients.toLocaleString('uk-UA')}</td>
+                      <td className="amount-cell">{doctor.total_amount.toLocaleString('uk-UA')} ₴</td>
+                      <td>{(doctor.total_amount * 0.05).toLocaleString('uk-UA')} ₴</td>
+                      <td>{(doctor.total_amount * 0.01).toLocaleString('uk-UA')} ₴</td>
+                      <td className="highlight-cell">{(doctor.total_amount * 0.94).toLocaleString('uk-UA')} ₴</td>
+                      <td>
+                        <div className="action-buttons">
+                          <button 
+                            className="action-btn edit"
+                            onClick={() => openEditModal(decl.month, decl.year, doctor.doctor_id)}
+                            title="Редагувати"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="action-btn delete"
+                            onClick={() => handleDelete(decl.month, decl.year, doctor.doctor_id, doctor.doctor_name)}
+                            title="Видалити"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
