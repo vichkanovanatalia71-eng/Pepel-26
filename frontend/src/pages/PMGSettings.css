@@ -1,0 +1,355 @@
+/* PMG Settings Page Styles */
+.pmg-settings-page {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.pmg-settings-page.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.pmg-settings-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pmg-settings-page .page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.unsaved-badge {
+  background: rgba(255, 140, 0, 0.2);
+  border: 1px solid rgba(255, 140, 0, 0.4);
+  color: #FFA500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.settings-description {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.settings-description p {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.settings-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.settings-card:hover {
+  border-color: rgba(255, 140, 0, 0.2);
+}
+
+.settings-card.info-card {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.settings-card-header {
+  margin-bottom: 20px;
+}
+
+.settings-card-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+}
+
+.card-description {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+.settings-card-body {
+  /* No specific styling needed */
+}
+
+/* Capitation Rate Input */
+.capitation-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.capitation-input {
+  flex: 1;
+  max-width: 200px;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 140, 0, 0.3);
+  border-radius: 12px;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.capitation-input:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
+}
+
+.input-unit {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FF8C00;
+}
+
+.input-hint {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Coefficients List */
+.coefficients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coefficient-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.coefficient-row:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 140, 0, 0.15);
+}
+
+.coefficient-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.age-group-badge {
+  background: rgba(255, 140, 0, 0.2);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  color: #FFA500;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 70px;
+  text-align: center;
+}
+
+.age-group-name {
+  font-size: 14px;
+  color: #CCCCCC;
+  font-weight: 500;
+}
+
+.coefficient-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coefficient-input {
+  width: 100px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.coefficient-input:focus {
+  border-color: #FF8C00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.input-multiplier {
+  font-size: 18px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Action Buttons */
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.settings-actions .btn {
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.settings-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Example Calculation */
+.example-calculation {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.example-title {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.calculation-formula {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.formula-part {
+  font-size: 14px;
+  color: #CCCCCC;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+}
+
+.formula-part.highlight {
+  color: #FFA500;
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  font-weight: 600;
+}
+
+.formula-operator {
+  font-size: 16px;
+  color: #666;
+  font-weight: 600;
+}
+
+.formula-result {
+  font-size: 18px;
+  color: #22C55E;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pmg-settings-page {
+    padding: 16px;
+    padding-bottom: 100px;
+  }
+
+  .pmg-settings-page .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pmg-settings-page .page-header h1 {
+    font-size: 22px;
+  }
+
+  .settings-card {
+    padding: 16px;
+  }
+
+  .capitation-input-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .capitation-input {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .coefficient-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .coefficient-label {
+    width: 100%;
+  }
+
+  .coefficient-input-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .coefficient-input {
+    flex: 1;
+  }
+
+  .settings-actions {
+    flex-direction: column;
+  }
+
+  .settings-actions .btn {
+    width: 100%;
+  }
+
+  .calculation-formula {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
