@@ -38,6 +38,7 @@ const PMGIncome = () => {
   // Unified modal state
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   
   // Form state
   const [formDoctor, setFormDoctor] = useState('');
