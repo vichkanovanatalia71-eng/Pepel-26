@@ -847,7 +847,7 @@ const PMGIncome = () => {
                 onClick={handleSave}
                 disabled={formTotalPatients === 0}
               >
-                ✓ Зберегти
+                {editMode ? '✓ Оновити' : '✓ Зберегти'}
               </button>
               <button 
                 className="btn btn-secondary"
