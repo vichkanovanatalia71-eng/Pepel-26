@@ -1005,6 +1005,7 @@ const MonthlyServices = () => {
                       <strong>{entry.fop_income.toLocaleString('uk-UA')} ₴</strong>
                     </div>
                   </div>
+                  </div>
                 </div>
               );
             })}
