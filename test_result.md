@@ -101,3 +101,61 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Ukrainian medical practice management system for tracking income, expenses, taxes, and declarations (PMG) for multiple doctors"
+
+backend:
+  - task: "PMG Declarations API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "API endpoints for PMG declarations CRUD operations working correctly"
+
+frontend:
+  - task: "Doctor filter on PMG Income page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PMGIncome.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented doctor filter UI with chip buttons. Filter state (selectedDoctorFilter) added. Data calculations updated to filter by selected doctor in useMemo hooks. Monthly dynamics chart removed as per user request. Need to test that: 1) Filter UI displays correctly, 2) KPI cards update based on selected doctor, 3) Charts (age groups and doctor distribution) update correctly, 4) Data table shows only selected doctor's data, 5) Filter works in conjunction with period filters (year/month)"
+
+  - task: "Remove Monthly Dynamics chart"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/PMGIncome.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed Monthly Dynamics chart section and monthlyChartData reference from code as per user request"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Doctor filter on PMG Income page"
+    - "Remove Monthly Dynamics chart"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Implemented doctor filter on PMG Income page. Added chip-based filter UI after period filters. Updated all data calculation logic (filteredDeclarations, totals, chart data) to respect selectedDoctorFilter state. Also removed the Monthly Dynamics chart section that referenced undefined monthlyChartData. Please test: 1) Doctor filter UI rendering, 2) All KPI cards update correctly when doctor filter changes, 3) Charts update to show only selected doctor's data, 4) Table filters correctly, 5) No console errors, 6) Filter interactions with year/month filters work correctly"
