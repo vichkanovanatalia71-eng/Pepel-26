@@ -4,6 +4,7 @@ const DashboardCards = ({
   dashboardStats,
   displayedCashBalance,
   displayedBankBalance,
+  totalRevenueForPeriod,
   selectedDoctor,
   doctors,
   selectedYear,
@@ -12,8 +13,7 @@ const DashboardCards = ({
   onRevenueClick,
   onDoctorIncomeClick,
   onExpensesClick,
-  onCashBalanceClick,
-  onBankBalanceClick
+  onCashBalanceClick
 }) => {
   if (!dashboardStats) return null;
 
@@ -97,8 +97,7 @@ const DashboardCards = ({
       </div>
 
       <div 
-        className="summary-card clickable bank-card"
-        onClick={onBankBalanceClick}
+        className="summary-card bank-card"
         data-testid="bank-balance-card"
       >
         <div className="summary-icon">🏦</div>
@@ -107,15 +106,10 @@ const DashboardCards = ({
           <div className="summary-value">
             {displayedBankBalance ? displayedBankBalance.amount.toLocaleString('uk-UA') : '0'} ₴
           </div>
-          <div className="summary-count">
-            {displayedBankBalance 
-              ? (displayedBankBalance.isAggregate 
-                  ? 'Сума за період' 
-                  : `${monthNames[displayedBankBalance.month - 1]} ${displayedBankBalance.year}`)
-              : 'Не вказано'}
+          <div className="summary-count calculated-hint">
+            = Послуги − Каса
           </div>
         </div>
-        <div className="card-click-hint">✏️</div>
       </div>
     </div>
   );
