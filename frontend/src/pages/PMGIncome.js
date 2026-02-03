@@ -810,7 +810,7 @@ const PMGIncome = () => {
                 {formAgeGroups.map((ag, index) => (
                   <div key={ag.age_group} className="age-group-row-extended">
                     <div className="age-group-info">
-                      <span className="age-label">{AGE_GROUPS[index].label}</span>
+                      <span className="age-label">{ageGroups[index]?.label || ag.age_group}</span>
                       <span className="age-coeff">×{ag.coefficient}</span>
                     </div>
                     <div className="age-inputs-group">
