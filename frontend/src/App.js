@@ -7,6 +7,7 @@ import Expenses from './pages/Expenses';
 import Documents from './pages/Documents';
 import Doctors from './pages/Doctors';
 import Services from './pages/Services';
+import PMGSettings from './pages/PMGSettings';
 import MonthlyServices from './pages/MonthlyServices';
 import ShareReport from './pages/ShareReport';
 import Sidebar from './components/Sidebar';
