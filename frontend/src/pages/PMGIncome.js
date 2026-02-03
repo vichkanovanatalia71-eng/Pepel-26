@@ -203,7 +203,7 @@ const PMGIncome = () => {
     });
     
     return Object.values(grouped);
-  }, [latestPeriodDeclarations]);
+  }, [latestPeriodDeclarations, ageGroups]);
 
   const doctorChartData = useMemo(() => {
     if (latestPeriodDeclarations.length === 0) return [];
