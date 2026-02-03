@@ -941,12 +941,26 @@ const MonthlyServices = () => {
           </div>
         ) : (
           <div className="entries-list">
-            {filteredEntries.map(entry => {
+            {getSortedAndFilteredEntries().map(entry => {
               const service = services.find(s => s.id === entry.service_id);
               const doctor = doctors.find(d => d.id === entry.doctor_id);
               return (
                 <div key={entry.id} className="entry-card">
                   <div className="entry-header">
+                    <input 
+                      type="checkbox"
+                      checked={selectedEntries.has(entry.id)}
+                      onChange={(e) => {
+                        const newSelected = new Set(selectedEntries);
+                        if (e.target.checked) {
+                          newSelected.add(entry.id);
+                        } else {
+                          newSelected.delete(entry.id);
+                        }
+                        setSelectedEntries(newSelected);
+                      }}
+                      className="entry-checkbox"
+                    />
                     <div className="entry-service">
                       {service?.code && <span className="service-code-small">{service.code}</span>}
                       <span className="service-name">{service?.name || 'N/A'}</span>
