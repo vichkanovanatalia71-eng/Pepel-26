@@ -350,7 +350,7 @@ const PMGIncome = () => {
   // Update not verified count
   const updateNotVerifiedCount = (index, value) => {
     const newGroups = [...formAgeGroups];
-    newGroups[index].not_verified = parseInt(value) || 0;
+    newGroups[index].not_verified = parseFloat(value) || 0;
     setFormAgeGroups(newGroups);
   };
 
