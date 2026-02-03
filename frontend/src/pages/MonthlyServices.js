@@ -278,6 +278,7 @@ const MonthlyServices = () => {
         dashboardStats={dashboardStats}
         displayedCashBalance={displayedCashBalance}
         displayedBankBalance={displayedBankBalance}
+        totalRevenueForPeriod={totalRevenueForPeriod}
         selectedDoctor={selectedDoctor}
         doctors={doctors}
         selectedYear={selectedYear}
@@ -287,7 +288,6 @@ const MonthlyServices = () => {
         onDoctorIncomeClick={() => setShowDoctorIncomeModal(true)}
         onExpensesClick={() => setShowExpensesModal(true)}
         onCashBalanceClick={() => setShowCashBalanceModal(true)}
-        onBankBalanceClick={() => setShowBankBalanceModal(true)}
       />
 
       {/* Entries List */}
