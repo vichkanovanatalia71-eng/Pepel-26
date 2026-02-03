@@ -195,27 +195,33 @@ frontend:
 
   - task: "Add unverified declarations field in form"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/PMGIncome.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated form layout to show three columns: Total declarations, Unverified, Paid (Total - Unverified). Added not_verified field to form state. Updated form total calculation to use only verified patients. Visual formula display: Всього - Невериф. = Оплачено"
+      - working: true
+        agent: "testing"
+        comment: "✅ UNVERIFIED DECLARATIONS FORM TESTED - Three-column layout working perfectly: 'Всього', 'Невериф.', 'Оплачено'. Calculations correct (100-10=90). Form validation prevents unverified > total with max attribute. Total declarations shows verified patients only (270 for test data). Edge cases tested: zero unverified (50-0=50) and all unverified (50-50=0) work correctly."
 
   - task: "Edit/Delete functionality for PMG declarations"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/PMGIncome.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added edit/delete action buttons to declaration table. Each row now shows individual doctor data with action buttons. Edit button opens modal with existing data (period/doctor fields disabled in edit mode). Delete button removes doctor's data from that period with confirmation. Table restructured to show per-doctor rows instead of per-period."
+      - working: true
+        agent: "testing"
+        comment: "✅ EDIT/DELETE FUNCTIONALITY TESTED - All features working correctly: 1) Table shows per-doctor rows (3 rows found with individual doctors), 2) Edit buttons (✏️) open modal with 'Редагування даних декларацій' title, doctor/period fields disabled, data pre-filled, 3) Delete buttons (🗑️) show confirmation dialog and remove rows (4→3 rows), 4) Action buttons present in all rows (3 edit + 3 delete buttons), 5) Table has all required columns: Період, Лікар, Пацієнтів, Сума, ЄП, ВЗ, Чистий дохід, Дії."
 
 metadata:
   created_by: "main_agent"
