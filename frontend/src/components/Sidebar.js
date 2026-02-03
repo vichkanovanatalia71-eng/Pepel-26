@@ -1,8 +1,15 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const location = useLocation();
+  const [settingsOpen, setSettingsOpen] = useState(
+    location.pathname === '/services' || location.pathname === '/doctors'
+  );
+
+  const isSettingsActive = location.pathname === '/services' || location.pathname === '/doctors';
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -18,8 +25,8 @@ const Sidebar = () => {
           <span>Dashboard</span>
         </NavLink>
         <NavLink to="/monthly-services" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-monthly-services">
-          <i className="icon">📋</i>
-          <span>Облік послуг</span>
+          <i className="icon">💳</i>
+          <span>Платні послуги</span>
         </NavLink>
         <NavLink to="/incomes" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-incomes">
           <i className="icon">💰</i>
@@ -29,18 +36,44 @@ const Sidebar = () => {
           <i className="icon">📉</i>
           <span>Витрати</span>
         </NavLink>
-        <NavLink to="/doctors" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-doctors">
-          <i className="icon">👥</i>
-          <span>Лікарі</span>
-        </NavLink>
-        <NavLink to="/services" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-services">
-          <i className="icon">🏥</i>
-          <span>Послуги</span>
-        </NavLink>
         <NavLink to="/documents" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} data-testid="nav-documents">
           <i className="icon">📄</i>
           <span>Документи</span>
         </NavLink>
+
+        {/* Settings section with submenu */}
+        <div className="nav-section">
+          <button 
+            className={`nav-link nav-section-header ${isSettingsActive ? 'active' : ''}`}
+            onClick={() => setSettingsOpen(!settingsOpen)}
+            data-testid="nav-settings"
+          >
+            <i className="icon">⚙️</i>
+            <span>Налаштування</span>
+            <i className={`chevron ${settingsOpen ? 'open' : ''}`}>▼</i>
+          </button>
+          
+          {settingsOpen && (
+            <div className="nav-submenu">
+              <NavLink 
+                to="/services" 
+                className={({ isActive }) => isActive ? 'nav-link sub-link active' : 'nav-link sub-link'} 
+                data-testid="nav-services"
+              >
+                <i className="icon">🏥</i>
+                <span>Послуги</span>
+              </NavLink>
+              <NavLink 
+                to="/doctors" 
+                className={({ isActive }) => isActive ? 'nav-link sub-link active' : 'nav-link sub-link'} 
+                data-testid="nav-doctors"
+              >
+                <i className="icon">👥</i>
+                <span>Лікарі</span>
+              </NavLink>
+            </div>
+          )}
+        </div>
       </nav>
     </aside>
   );
