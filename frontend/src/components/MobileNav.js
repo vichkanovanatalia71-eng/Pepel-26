@@ -6,7 +6,7 @@ const MobileNav = () => {
   const location = useLocation();
   const [showMore, setShowMore] = useState(false);
   
-  const isSettingsActive = location.pathname === '/services' || location.pathname === '/doctors';
+  const isSettingsActive = location.pathname === '/services' || location.pathname === '/doctors' || location.pathname === '/pmg-settings';
 
   return (
     <>
@@ -61,6 +61,14 @@ const MobileNav = () => {
             >
               <i className="icon">👥</i>
               <span>Лікарі</span>
+            </NavLink>
+            <NavLink 
+              to="/pmg-settings" 
+              className={({ isActive }) => isActive ? 'mobile-more-link active' : 'mobile-more-link'}
+              onClick={() => setShowMore(false)}
+            >
+              <i className="icon">📊</i>
+              <span>Капітація та коефіцієнти</span>
             </NavLink>
             <NavLink 
               to="/incomes" 
