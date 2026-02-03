@@ -312,7 +312,7 @@ const PMGIncome = () => {
         const parsed = response.data.parsed_data;
         
         // Update age groups for selected doctor
-        const newAgeGroups = AGE_GROUPS.map(ag => {
+        const newAgeGroups = ageGroups.map(ag => {
           const parsedGroup = parsed.age_groups?.find(pg => pg.age_group === ag.key);
           return {
             age_group: ag.key,
