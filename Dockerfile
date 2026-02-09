@@ -2,7 +2,7 @@
 FROM node:20-slim AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps && npm install ajv@8.17.1 --legacy-peer-deps
 COPY frontend/ ./
 RUN REACT_APP_BACKEND_URL="" npm run build
 
