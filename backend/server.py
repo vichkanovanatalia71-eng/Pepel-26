@@ -12,7 +12,12 @@ from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone, timedelta
 import base64
-from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType
+except ImportError:
+    LlmChat = None
+    UserMessage = None
+    FileContentWithMimeType = None
 import tempfile
 import io
 from gridfs import GridFS
