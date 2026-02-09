@@ -199,3 +199,126 @@
   font-size: 18px;
   text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
 }
+
+/* Expense items in modal */
+.expense-items-section {
+  margin-top: 16px;
+}
+
+.expense-items-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.expense-item-row {
+  display: grid;
+  grid-template-columns: 2fr 80px 80px 100px auto 40px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.expense-item-row .material-name {
+  min-width: 0;
+}
+
+.expense-item-row .quantity,
+.expense-item-row .unit,
+.expense-item-row .price {
+  min-width: 0;
+}
+
+.expense-item-row .total {
+  font-weight: 600;
+  color: #FFA500;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.expense-item-row .btn-delete {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.expense-item-row .btn-delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #EF4444;
+}
+
+/* Calculation summary */
+.calculation-summary {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(20, 20, 24, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 140, 0, 0.1);
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: #CCCCCC;
+}
+
+.calc-row.highlight {
+  padding-top: 10px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255, 140, 0, 0.2);
+  font-size: 15px;
+}
+
+.calc-row .positive {
+  color: #10B981;
+}
+
+.calc-row .negative {
+  color: #EF4444;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Mobile overrides for expense items */
+@media (max-width: 767px) {
+  .expense-item-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .expense-item-row .material-name {
+    grid-column: 1 / -1;
+  }
+
+  .expense-item-row .total {
+    text-align: left;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  .expense-items-section .section-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+}

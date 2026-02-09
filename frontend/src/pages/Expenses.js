@@ -57,7 +57,7 @@ const Expenses = () => {
 
   return (
     <div data-testid="expenses-page">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <h1>📉 Витрати</h1>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)} data-testid="add-expense-btn">
           + Додати витрату
@@ -115,7 +115,7 @@ const Expenses = () => {
                 data-testid="expense-description-input"
               />
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button type="submit" className="btn btn-success" data-testid="save-expense-btn">Зберегти</button>
               <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)} data-testid="cancel-expense-btn">Скасувати</button>
             </div>

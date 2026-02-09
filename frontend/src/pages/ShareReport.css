@@ -293,7 +293,7 @@
   }
 
   .expiry-label {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .expiry-days {
@@ -312,7 +312,7 @@
   }
 
   .share-title p {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .tabs-list-share {
@@ -361,12 +361,12 @@
   }
 
   .chart-header h4 {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .btn-toggle-chart {
     padding: 2px 6px;
-    font-size: 7px;
+    font-size: 9px;
   }
 
   /* Remove height constraints - let Recharts render naturally */
@@ -397,12 +397,12 @@
   }
 
   .share-table {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .share-table th {
     padding: 4px 2px;
-    font-size: 6px;
+    font-size: 8px;
   }
 
   .share-table td {
@@ -415,7 +415,7 @@
 
   .share-footer {
     padding: 6px;
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .share-footer p {
@@ -423,6 +423,6 @@
   }
 
   .expiry-warning {
-    font-size: 6px;
+    font-size: 9px;
   }
 }
