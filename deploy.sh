@@ -9,11 +9,13 @@ if [ -z "$1" ]; then
 fi
 
 MONGO_PASS="$1"
+PROJECT_ID=$(gcloud config get-value project)
+REGION="europe-west1"
+IMAGE="gcr.io/${PROJECT_ID}/medtrack"
 
-# Create Dockerfile if it doesn't exist
-if [ ! -f "Dockerfile" ]; then
-  echo "Creating Dockerfile..."
-  cat > Dockerfile << 'DOCKERFILE'
+# Create Dockerfile
+echo "Creating Dockerfile..."
+cat > Dockerfile << 'DOCKERFILE'
 FROM node:20-slim AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
@@ -31,12 +33,9 @@ COPY --from=frontend-build /app/frontend/build ./static
 EXPOSE 8080
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
 DOCKERFILE
-fi
 
-# Create .dockerignore if it doesn't exist
-if [ ! -f ".dockerignore" ]; then
-  echo "Creating .dockerignore..."
-  cat > .dockerignore << 'IGNORE'
+# Create .dockerignore
+cat > .dockerignore << 'IGNORE'
 node_modules
 frontend/node_modules
 frontend/build
@@ -48,14 +47,22 @@ test_reports
 tests
 memory
 IGNORE
+
+echo "=== Step 1: Building Docker image ==="
+gcloud builds submit --tag "$IMAGE" .
+
+if [ $? -ne 0 ]; then
+  echo "Build failed!"
+  exit 1
 fi
 
-echo "Starting deployment..."
-
+echo "=== Step 2: Deploying to Cloud Run ==="
 gcloud run deploy medtrack \
-  --source . \
-  --region europe-west1 \
+  --image "$IMAGE" \
+  --region "$REGION" \
   --allow-unauthenticated \
   --memory 1Gi \
   --timeout 300 \
   --set-env-vars "MONGO_URL=mongodb+srv://romankolontaj_db_user:${MONGO_PASS}@cluster0.qdqmfpm.mongodb.net/?appName=Cluster0,DB_NAME=medtrack,CORS_ORIGINS=*,EMERGENT_LLM_KEY="
+
+echo "=== Done! ==="
